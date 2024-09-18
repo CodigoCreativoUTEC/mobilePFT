@@ -83,7 +83,8 @@
                 android:id="@+id/usernameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre de Usuario" />
+                android:hint="Nombre de Usuario"
+                android:padding="15dp"/>
 
             <View
                 android:id="@+id/spacingView2"
@@ -102,7 +103,8 @@
                 android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contraseña" />
+                android:hint="Contraseña"
+                android:padding="15dp"/>
 
             <RelativeLayout
                 android:id="@+id/optionsLayout"
@@ -125,7 +127,8 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:padding="20dp"/>
 
             </RelativeLayout>
 
@@ -163,12 +166,13 @@
 
                 <ImageView
                     android:id="@+id/googleLoginImageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_margin="12dp"
                     android:background="@drawable/googleIcon"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:contentDescription="Iniciar sesión con Google"/>
 
             </LinearLayout>
 
@@ -193,7 +197,8 @@
                     android:textStyle="bold"
                     android:layout_marginLeft="50dp"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:padding="15dp"/>
             </LinearLayout>
 
         </LinearLayout>
