@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "499083785687",
+    "project_id": "pft-android-fb922",
+    "storage_bucket": "pft-android-fb922.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499083785687:android:4fe612660e6c9b25be4792",
+        "android_client_info": {
+          "package_name": "com.codigocreativo.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC39bfHzXqubI957r9Ln99DPpL_tnsMjlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
