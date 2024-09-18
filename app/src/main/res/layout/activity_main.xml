@@ -5,15 +5,18 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/hospital"
     tools:context=".MainActivity">
 
     <RelativeLayout
+        android:id="@+id/backgroundLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/my_primary"
         android:alpha="0.7" />
 
     <LinearLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -21,6 +24,7 @@
         android:padding="28dp">
 
         <TextView
+            android:id="@+id/hospitalTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="HOSPITAL"
@@ -29,9 +33,10 @@
             android:textSize="32sp"
             android:textColor="@color/white" />
 
-    </LinearLayout> <!-- Cierre de LinearLayout -->
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/loginCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -39,12 +44,14 @@
         android:layout_marginBottom="-20dp">
 
         <LinearLayout
+            android:id="@+id/formLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="28dp">
 
             <TextView
+                android:id="@+id/welcomeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bienvenido!"
@@ -53,16 +60,19 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/loginPromptTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Inicia sesión con tu usuario y contraseña"
                 android:alpha="0.7" />
 
             <View
+                android:id="@+id/spacingView1"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp" />
 
             <TextView
+                android:id="@+id/usernameLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre de Usuario"
@@ -70,15 +80,18 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/usernameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nombre de Usuario" />
 
             <View
+                android:id="@+id/spacingView2"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp" />
 
             <TextView
+                android:id="@+id/passwordLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Contraseña"
@@ -86,15 +99,18 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña" />
 
             <RelativeLayout
+                android:id="@+id/optionsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <CheckBox
+                    android:id="@+id/rememberMeCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Recordarme"
@@ -102,38 +118,86 @@
                     android:alpha="0.7" />
 
                 <TextView
+                    android:id="@+id/forgotPasswordTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Olvidé mi contraseña"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
             </RelativeLayout>
 
             <View
+                android:id="@+id/spacingView3"
                 android:layout_width="wrap_content"
                 android:layout_height="10dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Iniciar Sesión"
                 app:cornerRadius="32dp" />
 
             <View
+                android:id="@+id/spacingView4"
                 android:layout_width="wrap_content"
                 android:layout_height="10dp" />
 
             <TextView
+                android:id="@+id/alternativeLoginTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="o Inicia Sesión con"
                 android:layout_gravity="center"
                 android:alpha="0.7" />
 
+            <LinearLayout
+                android:id="@+id/socialLoginLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
 
-        </LinearLayout> <!-- Cierre del RelativeLayout -->
-    </androidx.cardview.widget.CardView> <!-- Cierre del CardView -->
+                <ImageView
+                    android:id="@+id/googleLoginImageView"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/googleIcon"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
+            </LinearLayout>
 
-</RelativeLayout> <!-- Cierre del RelativeLayout principal -->
+            <LinearLayout
+                android:id="@+id/registrationPromptLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/notRegisteredTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aún no estás registrado?"
+                    android:alpha="0.7"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/registerHereTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Registrate aqui!"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="50dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
+
