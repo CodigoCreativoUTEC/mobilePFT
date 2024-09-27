@@ -169,7 +169,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_margin="12dp"
-                    android:background="@drawable/googleIcon"
+                    android:background="@drawable/googleicon"
                     android:clickable="true"
                     android:focusable="true"
                     android:contentDescription="Iniciar sesión con Google"/>

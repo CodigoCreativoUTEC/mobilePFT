@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
+    tools:context=".Registro"
     android:padding="16dp">
 
     <ScrollView
@@ -159,8 +159,9 @@
             <Spinner
                 android:id="@+id/spinnerUserType"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/user_types"/>
+                android:layout_height="wrap_content"/>
+
+            <!-- android:entries="@array/user_types" -->
 
             <!-- Botón de Registrar -->
             <com.google.android.material.button.MaterialButton
