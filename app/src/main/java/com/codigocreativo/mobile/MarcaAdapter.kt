@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.objetos.Marca
@@ -46,13 +47,21 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
                 .commit()
         }
 
-        // Acción del botón "Eliminar"
         holder.btnEliminar.setOnClickListener {
-            // Simulación de eliminación
-            marcasList.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, marcasList.size)
+            // Crear el diálogo de confirmación para eliminar
+            AlertDialog.Builder(activity)
+                .setTitle("Confirmar eliminación")
+                .setMessage("¿Está seguro que desea eliminar la marca ${marca.nombre}?")
+                .setPositiveButton("Aceptar") { _, _ ->
+                    // Simulación de eliminación
+                    marcasList.removeAt(position)
+                    notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, marcasList.size)
+                }
+                .setNegativeButton("Cancelar", null)  // No hacer nada si se cancela
+                .show()
         }
+
     }
 
     override fun getItemCount(): Int {
@@ -64,6 +73,8 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
         marcasList = newList
         notifyDataSetChanged()
     }
+
+
 }
 
 

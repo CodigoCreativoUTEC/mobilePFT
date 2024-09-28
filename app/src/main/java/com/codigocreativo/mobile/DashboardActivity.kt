@@ -49,6 +49,8 @@ class DashboardActivity : AppCompatActivity() {
                 }
                 R.id.nav_models -> {
                     Toast.makeText(this, "Modelos seleccionados", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ModelosActivity::class.java)
+                    startActivity(intent)
                 }
             }
             // Cerrar el drawer después de hacer clic

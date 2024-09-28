@@ -24,6 +24,9 @@
         <activity
             android:name=".MarcasActivity"
             android:exported="true"/>
+        <activity
+            android:name=".ModelosActivity"
+            android:exported="true"/>
 
         <activity
             android:name=".MainActivity"
