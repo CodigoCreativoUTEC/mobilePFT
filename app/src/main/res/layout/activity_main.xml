@@ -164,15 +164,12 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
-                <ImageView
-                    android:id="@+id/googleLoginImageView"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/googleicon"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="Iniciar sesión con Google"/>
+                <!-- activity_main.xml -->
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/googleSignInButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign in with Google" />
 
             </LinearLayout>
 

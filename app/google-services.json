@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "499083785687",
-    "project_id": "pft-android-fb922",
-    "storage_bucket": "pft-android-fb922.appspot.com"
+    "project_number": "427216453944",
+    "project_id": "mobilecodigocreativo",
+    "storage_bucket": "mobilecodigocreativo.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:499083785687:android:4fe612660e6c9b25be4792",
+        "mobilesdk_app_id": "1:427216453944:android:a3316c8b484f3cd91a41cd",
         "android_client_info": {
           "package_name": "com.codigocreativo.mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "427216453944-b3g27c4549eov2ikc1br6790qdjelg06.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyC39bfHzXqubI957r9Ln99DPpL_tnsMjlM"
+          "current_key": "AIzaSyD_bCCc5j2oHOSlQoMEIJjGSTxTCdyX2Kk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427216453944-b3g27c4549eov2ikc1br6790qdjelg06.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
