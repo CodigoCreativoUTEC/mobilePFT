@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -38,11 +39,13 @@ class DashboardActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_users -> {
                     Toast.makeText(this, "Usuarios seleccionados", Toast.LENGTH_SHORT).show()
-                    // Puedes agregar código para navegar a otras actividades o fragmentos
+
                 }
                 R.id.nav_brands -> {
                     Toast.makeText(this, "Marcas seleccionadas", Toast.LENGTH_SHORT).show()
                     // Navegar a otra actividad
+                    val intent = Intent(this, MarcasActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_models -> {
                     Toast.makeText(this, "Modelos seleccionados", Toast.LENGTH_SHORT).show()
