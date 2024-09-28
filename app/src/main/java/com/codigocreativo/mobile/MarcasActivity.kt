@@ -26,7 +26,7 @@ class MarcasActivity : AppCompatActivity() {
 
     private lateinit var adapter: MarcaAdapter
     private lateinit var recyclerView: RecyclerView
-    private var marcasList = mutableListOf<Marca>() // Lista dinámica de marcas cargadas desde el API
+    var marcasList = mutableListOf<Marca>() // Lista dinámica de marcas cargadas desde el API
     private var filteredList = mutableListOf<Marca>()
 
     override fun onCreate(savedInstanceState: Bundle?) {

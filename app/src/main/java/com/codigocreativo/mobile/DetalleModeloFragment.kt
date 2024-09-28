@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.codigocreativo.mobile.objetos.Estado
 
 class DetalleModeloFragment : Fragment() {
 

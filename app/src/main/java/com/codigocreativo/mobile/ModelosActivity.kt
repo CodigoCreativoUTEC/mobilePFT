@@ -12,6 +12,7 @@ import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.codigocreativo.mobile.objetos.Estado
 import java.util.Locale
 
 class ModelosActivity : AppCompatActivity() {
