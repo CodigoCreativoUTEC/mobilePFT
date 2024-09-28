@@ -10,8 +10,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 
 class DetalleMarcaFragment : Fragment() {
+
+    private lateinit var marcasList: List<Marca>  // La lista de marcas
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,11 +26,14 @@ class DetalleMarcaFragment : Fragment() {
         val nombreTextView: TextView = view.findViewById(R.id.nombreTextView)
         val estadoSpinner: Spinner = view.findViewById(R.id.estadoSpinner)
 
+        // Obtener la lista de marcas desde la actividad (o puedes pasarla desde el Bundle si es necesario)
+        marcasList = (activity as MarcasActivity).marcasList
+
         // Obtener el ID de la marca seleccionada
         val marcaId = arguments?.getInt("marca_id") ?: 0
         val marca = getMarcaById(marcaId)
 
-        // Setear los valores
+        // Setear los valores de la marca seleccionada
         idTextView.text = marca.id.toString()
         nombreTextView.text = marca.nombre
 
@@ -40,10 +46,19 @@ class DetalleMarcaFragment : Fragment() {
         // Botón Editar
         val btnEditar: Button = view.findViewById(R.id.btnEditar)
         btnEditar.setOnClickListener {
-            // Actualizar el estado de la marca (simulado)
-            marca.estado = estadoSpinner.selectedItem as Estado
-            Toast.makeText(context, "Estado actualizado", Toast.LENGTH_SHORT).show()
+            // Crear el diálogo de confirmación para editar
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirmar edición")
+                .setMessage("¿Está seguro que desea editar el estado de la marca ${marca.nombre}?")
+                .setPositiveButton("Aceptar") { _, _ ->
+                    // Actualizar el estado de la marca (simulado)
+                    marca.estado = estadoSpinner.selectedItem as Estado
+                    Toast.makeText(context, "Estado actualizado", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancelar", null)  // No hacer nada si se cancela
+                .show()
         }
+
 
         // Botón Volver
         val btnVolver: Button = view.findViewById(R.id.btnVolver)
@@ -55,9 +70,10 @@ class DetalleMarcaFragment : Fragment() {
         return view
     }
 
-    // Simulación de obtención de los datos de la marca
+    // Buscar la marca por ID en la lista de marcas
     private fun getMarcaById(id: Int): Marca {
-        return Marca(id, "Toyota", Estado.ACTIVO)
+        return marcasList.first { it.id == id }
     }
 }
+
 
