@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="user_types">
+        <item>Administrador</item>
+        <item>Usuario</item>
+        <item>Invitado</item>
+    </string-array>
+</resources>

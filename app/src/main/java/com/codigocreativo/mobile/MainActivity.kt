@@ -1,16 +1,22 @@
 package com.codigocreativo.mobile
 
 import LoginViewModel
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
+import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
         // Referencias a los elementos de la UI
@@ -55,7 +62,11 @@ class MainActivity : AppCompatActivity() {
                 loginViewModel.saveToken(this@MainActivity, token)
                 Log.d("MainActivity", "Login exitoso, token: $token")
                 Snackbar.make(findViewById(R.id.main), "Login exitoso", Snackbar.LENGTH_LONG).show()
+
+
                 // Aquí puedes redirigir al usuario a otra pantalla
+
+
             } else {
                 Log.e("MainActivity", "Error en el login")
                 Snackbar.make(findViewById(R.id.main), "Error en las credenciales", Snackbar.LENGTH_LONG).show()
