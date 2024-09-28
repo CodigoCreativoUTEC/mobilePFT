@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.codigocreativo.mobile.objetos.Marca
 
 class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activity: FragmentActivity) : RecyclerView.Adapter<MarcaAdapter.MarcaViewHolder>() {
 

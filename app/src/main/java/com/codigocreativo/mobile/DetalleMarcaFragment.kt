@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.codigocreativo.mobile.objetos.Estado
+import com.codigocreativo.mobile.objetos.Marca
 
 class DetalleMarcaFragment : Fragment() {
 

@@ -7,16 +7,13 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,7 +61,12 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(findViewById(R.id.main), "Login exitoso", Snackbar.LENGTH_LONG).show()
 
 
-                // Aquí puedes redirigir al usuario a otra pantalla
+                // Redirigir al usuario a DashboardActivity
+                val intent = Intent(this@MainActivity, DashboardActivity::class.java)
+                startActivity(intent)
+
+                // Opcional: Finalizar MainActivity para que no se pueda volver con el botón atrás
+                finish()
 
 
             } else {
