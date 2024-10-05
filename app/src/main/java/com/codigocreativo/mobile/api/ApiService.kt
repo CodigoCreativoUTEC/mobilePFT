@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.api
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -50,8 +51,11 @@ interface ApiService {
     @POST("usuarios/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<JwtResponse>
 }
+data class LoginRequest(
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String
+)
 
 // Clases para los requests/responses
 data class TokenRequest(val idToken: String)
-data class LoginRequest(val email: String, val password: String)
 data class JwtResponse(val token: String, val userNeedsAdditionalInfo: Boolean, val user : User)

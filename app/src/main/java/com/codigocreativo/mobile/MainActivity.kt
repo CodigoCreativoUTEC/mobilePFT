@@ -12,6 +12,7 @@ import com.codigocreativo.mobile.api.ApiService
 import com.codigocreativo.mobile.api.RetrofitClient
 import com.codigocreativo.mobile.api.LoginRequest
 import com.codigocreativo.mobile.api.TokenRequest
+import com.codigocreativo.mobile.objetos.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,6 +20,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,9 +44,12 @@ class MainActivity : AppCompatActivity() {
 
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
+            val hashedPassword = hashPassword(password)
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                sendLoginRequestToBackend(email, password)
+
+                Log.d("MainActivity", "Email: $email, Password: $hashedPassword")
+                sendLoginRequestToBackend(email, hashedPassword)
             } else {
                 Toast.makeText(this, "Por favor ingresa email y contraseña", Toast.LENGTH_SHORT).show()
             }
@@ -77,11 +82,7 @@ class MainActivity : AppCompatActivity() {
             val idToken = account.idToken
 
             if (idToken != null) {
-                Toast.makeText(this, "Inicio de sesión exitoso. Token: $idToken", Toast.LENGTH_LONG).show()
-                Log.d("MainActivity", "Inicio de sesión exitoso. Token: $idToken")
-
-                // Aquí puedes enviar el ID token a tu backend si es necesario.
-                sendGoogleIdTokenToBackend(idToken)
+                sendGoogleIdTokenToBackend(idToken) //Envio el token al backend
             }
         } catch (e: ApiException) {
             Toast.makeText(this, "Error en el inicio de sesión: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -98,6 +99,11 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val jwt = response.body()
                     if (jwt != null) {
+                        SessionManager.saveSessionData(this@MainActivity, jwt.token, jwt.user)
+                        //Login exitoso, guardo datos y envio al usuario al dashborad
+                        val intent = Intent(this@MainActivity, DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
                         Log.d("MainActivity", "JWT recibido: ${jwt.token}")
                     }
                 } else {
@@ -110,25 +116,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendLoginRequestToBackend(email: String, password: String) {
+        Log.d("MainActivity", "Enviando solicitud de login al backend")
+        Log.d("MainActivity", "Email: $email, Password: $password")
+
         val apiService = RetrofitClient.getLogin().create(ApiService::class.java)
 
         lifecycleScope.launch {
             try {
                 val response = apiService.login(LoginRequest(email, password))
                 if (response.isSuccessful) {
-                    val jwt = response.body()
-                    if (jwt != null) {
-                        Log.d("MainActivity", "JWT recibido: ${jwt.token}")
-                        // Aquí puedes almacenar el JWT o procesarlo según tus necesidades.
+                    val jwtResponse = response.body()
+                    if (jwtResponse != null) {
+                        // Guardar el JWT y el objeto Usuario
+                        SessionManager.saveSessionData(this@MainActivity, jwtResponse.token, jwtResponse.user)
+                        //Login exitoso, guardo datos y envio al usuario al dashborad
+                        val intent = Intent(this@MainActivity, DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                        Log.d("MainActivity", "JWT y Usuario guardados en sesión.")
                     } else {
                         Log.e("MainActivity", "No se recibió JWT en la respuesta.")
                     }
                 } else {
-                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()}")
+                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error al enviar la solicitud de login: ${e.message}", e)
             }
         }
     }
+
+    private fun hashPassword(password: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(password.toByteArray())
+        return hash.joinToString("") { String.format("%02x", it) }
+    }
+
 }
