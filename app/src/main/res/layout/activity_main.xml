@@ -1,56 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/main"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/hospital"
+tools:context=".MainActivity">
+
+<RelativeLayout
+    android:id="@+id/backgroundLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/my_primary"
+    android:alpha="0.7" />
 
-    <!-- Username -->
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Usuario"
-        android:padding="12dp"
-        android:layout_marginTop="50dp"
-        android:layout_alignParentTop="true"/>
+<LinearLayout
+    android:id="@+id/headerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="28dp">
 
-    <!-- Password -->
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:padding="12dp"
-        android:layout_below="@id/usernameEditText"
-        android:layout_marginTop="16dp"/>
-
-    <!-- Traditional Login Button -->
-    <Button
-        android:id="@+id/traditionalLoginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Sesión"
-        android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/white"/>
-
-    <!-- Divider -->
     <TextView
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="O"
-        android:gravity="center"
-        android:layout_below="@id/traditionalLoginButton"
-        android:layout_marginTop="16dp"/>
-
-    <!-- Google Sign-In Button -->
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleSignInButton"
+        android:id="@+id/hospitalTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:text="HOSPITAL"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="32sp"
+        android:textColor="@color/white" />
 
+</LinearLayout>
+
+<androidx.cardview.widget.CardView
+    android:id="@+id/loginCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    app:cardCornerRadius="28dp"
+    android:layout_marginBottom="-20dp">
+
+    <LinearLayout
+        android:id="@+id/formLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="28dp">
+
+        <TextView
+            android:id="@+id/welcomeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bienvenido!"
+            android:textColor="@color/my_primary"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/loginPromptTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inicia sesión con tu usuario y contraseña"
+            android:alpha="0.7" />
+
+        <View
+            android:id="@+id/spacingView1"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/usernameLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre de Usuario"
+            android:alpha="0.7"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre de Usuario"
+            android:padding="15dp"/>
+
+        <View
+            android:id="@+id/spacingView2"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/passwordLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contraseña"
+            android:alpha="0.7"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="Contraseña"
+            android:padding="15dp"/>
+
+        <RelativeLayout
+            android:id="@+id/optionsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/spacingView3"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Iniciar Sesión"
+            app:cornerRadius="32dp" />
+
+        <View
+            android:id="@+id/spacingView4"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp" />
+
+        <TextView
+            android:id="@+id/alternativeLoginTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="o Inicia Sesión con"
+            android:layout_gravity="center"
+            android:alpha="0.7" />
+
+        <LinearLayout
+            android:id="@+id/socialLoginLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- activity_main.xml -->
+            <!-- Google Sign-In Button -->
+            <com.google.android.gms.common.SignInButton
+                app:cornerRadius="32dp"
+                android:id="@+id/googleSignInButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/registrationPromptLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/notRegisteredTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aún no estás registrado?"
+                android:alpha="0.7"
+                android:layout_marginRight="10dp"/>
+
+            <Button
+                android:id="@+id/registerHereTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrate aqui!"
+                android:textStyle="bold"
+                android:layout_marginLeft="50dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="15dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
 
 </RelativeLayout>
+
