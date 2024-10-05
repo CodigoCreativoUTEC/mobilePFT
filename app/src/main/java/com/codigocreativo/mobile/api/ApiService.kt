@@ -4,12 +4,13 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-// Data classes for request and response
-data class LoginRequest(val usuario: String, val password: String)
+
 data class LoginResponse(
     val token: String,
     val user: User
 )
+
+data class GoogleLoginRequest(val idToken: String)
 
 data class User(
     val id: Int,
@@ -42,9 +43,15 @@ data class Telefono(
     val numero: String
 )
 
-
-// Retrofit interface
 interface ApiService {
+    @POST("usuarios/google-login")
+    suspend fun googleLogin(@Body token: TokenRequest): Response<JwtResponse>
+
     @POST("usuarios/login")
-    suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
+    suspend fun login(@Body loginRequest: LoginRequest): Response<JwtResponse>
 }
+
+// Clases para los requests/responses
+data class TokenRequest(val idToken: String)
+data class LoginRequest(val email: String, val password: String)
+data class JwtResponse(val token: String, val userNeedsAdditionalInfo: Boolean, val user : User)

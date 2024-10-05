@@ -1,84 +1,165 @@
 package com.codigocreativo.mobile
 
-import LoginViewModel
 import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import androidx.activity.viewModels
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
+import com.codigocreativo.mobile.api.ApiService
+import com.codigocreativo.mobile.api.RetrofitClient
+import com.codigocreativo.mobile.api.TokenRequest
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
-
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var usernameEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-
-    // Instancia de LoginViewModel
-    private val loginViewModel: LoginViewModel by viewModels()
+    private lateinit var credentialManager: CredentialManager
+    private val RC_SIGN_IN = 9001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // Referencias a los elementos de la UI
-        usernameEditText = findViewById(R.id.usernameEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        loginButton = findViewById(R.id.loginButton)
+        credentialManager = CredentialManager.create(this)
 
-        // Configurar el botón de login
-        loginButton.setOnClickListener {
-            val username = usernameEditText.text.toString()
-            val password = passwordEditText.text.toString()
-
-            if (username.isNotEmpty() && password.isNotEmpty()) {
-                // Convertir la contraseña a SHA-256 antes de enviarla
-                val hashedPassword = sha256ToHex(password)
-                performLogin(username, hashedPassword)
-            } else {
-                Snackbar.make(it, "Debe completar ambos campos", Snackbar.LENGTH_LONG).show()
-            }
-        }
+        // Iniciar el flujo de autenticación al cargar la actividad
+        requestSignIn()
     }
 
-    private fun performLogin(username: String, password: String) {
-        // Usar coroutines para la llamada de login
+    private fun requestSignIn() {
+        // Configura la solicitud de credenciales de Google
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(
+                GetGoogleIdOption.Builder()
+                    .setServerClientId(getString(R.string.server_client_id))
+                    .setFilterByAuthorizedAccounts(true)
+                    .setAutoSelectEnabled(true)
+                    .build()
+            )
+            .build()
+
+
         lifecycleScope.launch {
-            val token = loginViewModel.login(username, password)
-
-            if (token != null) {
-                // Guardar el token JWT en SharedPreferences
-                loginViewModel.saveToken(this@MainActivity, token)
-                Log.d("MainActivity", "Login exitoso, token: $token")
-                Snackbar.make(findViewById(R.id.main), "Login exitoso", Snackbar.LENGTH_LONG).show()
-
-
-                // Redirigir al usuario a DashboardActivity
-                val intent = Intent(this@MainActivity, DashboardActivity::class.java)
-                startActivity(intent)
-
-                // Opcional: Finalizar MainActivity para que no se pueda volver con el botón atrás
-                finish()
-
-
-            } else {
-                Log.e("MainActivity", "Error en el login")
-                Snackbar.make(findViewById(R.id.main), "Error en las credenciales", Snackbar.LENGTH_LONG).show()
+            try {
+                // Llamar al Credential Manager para obtener las credenciales
+                val credentialResponse = credentialManager.getCredential(this@MainActivity, request)
+                handleCredential(credentialResponse)
+            } catch (e: NoCredentialException) {
+                // No se encontraron credenciales
+                Toast.makeText(this@MainActivity, "No se encontraron credenciales, iniciar sesión manualmente.", Toast.LENGTH_SHORT).show()
+                startLegacyGoogleSignIn()
+            } catch (e: Exception) {
+                // Manejo de otros errores
+                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Función para convertir la contraseña en un hash SHA-256 y luego a hexadecimal
-    private fun sha256ToHex(input: String): String {
-        val digest = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }  // Convierte a hexadecimal
+    private fun handleCredential(credentialResponse: GetCredentialResponse) {
+        val credential = credentialResponse.credential
+        Log.d("MainActivity", "Credencial: ${credential.type}")
+
+        if (credential.type == "com.google.android.libraries.identity.googleid.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL") {
+            try {
+                val dataBundle = credential.data as Bundle
+                val idToken = dataBundle.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN")
+
+                if (idToken != null) {
+                    Toast.makeText(this, "Inicio de sesión exitoso. Token: $idToken", Toast.LENGTH_LONG).show()
+                    Log.d("MainActivity", "Inicio de sesión exitoso. Token: $idToken")
+
+                    // Ahora que tienes el idToken, envíalo al backend
+                    sendGoogleIdTokenToBackend(idToken)
+
+                    decodeJWT(idToken)
+                } else {
+                    Log.e("MainActivity", "El ID token no está presente en la credencial.")
+                }
+
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error al procesar la credencial: ${e.message}", e)
+            }
+        } else {
+            Log.e("MainActivity", "Tipo de credencial no esperado.")
+        }
+    }
+
+
+
+    private fun sendGoogleIdTokenToBackend(idToken: String) {
+        val apiService = RetrofitClient.getLogin().create(ApiService::class.java)
+
+        lifecycleScope.launch {
+            try {
+                // Usa la clase TokenRequest que ahora tiene la propiedad idToken
+                val response = apiService.googleLogin(TokenRequest(idToken))
+                if (response.isSuccessful) {
+                    val jwt = response.body()
+                    Log.d("MainActivity", "JWT recibido: $jwt")
+                    // Puedes almacenar el JWT o procesarlo según tus necesidades
+                } else {
+                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error al enviar el token: ${e.message}", e)
+            }
+        }
+    }
+
+
+
+    private fun startLegacyGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.server_client_id)) // Asegúrate de usar el Client ID correcto aquí también.
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            if (idToken != null) {
+                Toast.makeText(this, "Inicio de sesión exitoso. Token: $idToken", Toast.LENGTH_LONG).show()
+                decodeJWT(idToken)
+                Log.d("com.codigocreativo.mobile.MainActivity", "Inicio de sesión exitoso. Token: $idToken")
+            }
+        } catch (e: ApiException) {
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun decodeJWT(token: String) {
+        val parts = token.split(".")
+        if (parts.size == 3) {
+            val payload = String(Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_WRAP))
+            Log.d("MainActivity", "Payload: $payload")
+            Toast.makeText(this, "Payload: $payload", Toast.LENGTH_LONG).show()
+        } else {
+            Log.e("MainActivity", "JWT Token inválido.")
+        }
     }
 }

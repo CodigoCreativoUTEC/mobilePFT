@@ -45,26 +45,40 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.filament.android)
     implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.identity.credential)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Firebase Authentication
-    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(platform(libs.firebase.bom.v3340))
+    implementation(libs.firebase.auth.ktx)
+
+    implementation (libs.androidx.credentials)
+    implementation (libs.androidx.credentials.play.services.auth)
+    implementation (libs.googleid)
 
     // Google Play Services para autenticación con Google
-    implementation("com.google.android.gms:play-services-auth:20.1.0")
+    implementation(libs.play.services.auth)
 
     // Retrofit y GSON
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     // OkHttpClient para manejar peticiones HTTP
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation(libs.okhttp)
 
     // Coroutines para llamadas asíncronas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+
+    implementation (libs.jwtdecode)
+
+    implementation (libs.androidx.credentials.v100)
+
+    implementation (libs.androidx.credentials.v120beta03)
+    implementation (libs.androidx.credentials.play.services.auth.v120beta03)
+    implementation (libs.play.services.auth.v2070)
+
 }
 
 // Aquí debes agregar el plugin de Google Services al final

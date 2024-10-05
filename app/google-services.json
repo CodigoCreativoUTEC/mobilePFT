@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "427216453944",
-    "project_id": "mobilecodigocreativo",
-    "storage_bucket": "mobilecodigocreativo.appspot.com"
+    "project_number": "103181333646",
+    "project_id": "astute-fort-369104",
+    "storage_bucket": "astute-fort-369104.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:427216453944:android:a3316c8b484f3cd91a41cd",
+        "mobilesdk_app_id": "1:103181333646:android:2e532a2f8b74c0814b85df",
         "android_client_info": {
           "package_name": "com.codigocreativo.mobile"
         }
       },
       "oauth_client": [
         {
-          "client_id": "427216453944-b3g27c4549eov2ikc1br6790qdjelg06.apps.googleusercontent.com",
+          "client_id": "103181333646-vtjik35d7j9cis1q4in388me42klnhqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codigocreativo.mobile",
+            "certificate_hash": "0e558b31000540ee69185f483a23f4980249853e"
+          }
+        },
+        {
+          "client_id": "103181333646-gp6uip6g6k1rg6p52tsidphj3gt22qut.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD_bCCc5j2oHOSlQoMEIJjGSTxTCdyX2Kk"
+          "current_key": "AIzaSyDZk0Z68TckclRTOtE1IpxYWnVitpOd_IQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "427216453944-b3g27c4549eov2ikc1br6790qdjelg06.apps.googleusercontent.com",
+              "client_id": "103181333646-8ie2p4crf9h988l7agq7kia2j1qek0ov.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
