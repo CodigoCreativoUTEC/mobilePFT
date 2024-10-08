@@ -18,7 +18,7 @@ data class User(
     val cedula: String,
     val email: String,
     val contrasenia: String?,
-    val fechaNacimiento: List<Int>,
+    val fechaNacimiento: Int,
     val estado: String,
     val nombre: String,
     val apellido: String,
@@ -50,6 +50,10 @@ interface ApiService {
 
     @POST("usuarios/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<JwtResponse>
+
+    // Método para registrar un nuevo usuario
+    @POST("usuarios/crear")
+    suspend fun registrarUsuario(@Body usuario: User): Response<User>
 }
 data class LoginRequest(
     @SerializedName("email") val email: String,

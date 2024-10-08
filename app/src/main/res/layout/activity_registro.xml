@@ -81,7 +81,7 @@
                 android:textStyle="bold"
                 android:alpha="0.7"/>
 
-            <EditText
+            <DatePicker
                 android:id="@+id/etBirthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

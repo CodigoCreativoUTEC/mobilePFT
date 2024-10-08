@@ -36,6 +36,12 @@ class MainActivity : AppCompatActivity() {
             startGoogleSignIn()
         }
 
+        val registerButton: Button = findViewById(R.id.register)
+        registerButton.setOnClickListener {
+            val intent = Intent(this, Registro::class.java)
+            startActivity(intent)
+        }
+
         // Inicializa el botón para el login común
         val traditionalLoginButton: Button = findViewById(R.id.loginButton)
         traditionalLoginButton.setOnClickListener {
