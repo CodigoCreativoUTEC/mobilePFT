@@ -100,11 +100,11 @@ class MainActivity : AppCompatActivity() {
                     val jwt = response.body()
                     if (jwt != null) {
                         SessionManager.saveSessionData(this@MainActivity, jwt.token, jwt.user)
+                        Log.d("MainActivity", "JWT recibido: ${jwt.token}")
                         //Login exitoso, guardo datos y envio al usuario al dashborad
                         val intent = Intent(this@MainActivity, DashboardActivity::class.java)
                         startActivity(intent)
                         finish()
-                        Log.d("MainActivity", "JWT recibido: ${jwt.token}")
                     }
                 } else {
                     Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()}")
