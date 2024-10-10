@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.adapters
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.codigocreativo.mobile.DetalleModeloFragment
+import com.codigocreativo.mobile.objetos.Modelo
+import com.codigocreativo.mobile.R
 
 class ModeloAdapter(private var modelosList: MutableList<Modelo>, private val activity: FragmentActivity) : RecyclerView.Adapter<ModeloAdapter.ModeloViewHolder>() {
 

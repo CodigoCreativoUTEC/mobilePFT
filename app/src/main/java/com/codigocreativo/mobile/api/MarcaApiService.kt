@@ -9,7 +9,7 @@ import retrofit2.http.PUT
 
 // Retrofit interface para la API
 interface MarcaApiService {
-    @GET("marca/listarTodas")
+    @GET("marca/listar")
     suspend fun listarMarcas(@Header("Authorization") token: String): Response<List<Marca>>
 
     @PUT("marca/actualizar")

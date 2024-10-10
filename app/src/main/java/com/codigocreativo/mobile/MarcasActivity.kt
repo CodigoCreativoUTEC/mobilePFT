@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.codigocreativo.mobile.adapters.MarcaAdapter
 import com.codigocreativo.mobile.api.MarcaApiService
 import com.codigocreativo.mobile.api.RetrofitClient
 import com.codigocreativo.mobile.objetos.Estado

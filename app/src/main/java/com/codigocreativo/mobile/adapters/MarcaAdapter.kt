@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.adapters
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.codigocreativo.mobile.DetalleMarcaFragment
+import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.objetos.Marca
 
 class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activity: FragmentActivity) : RecyclerView.Adapter<MarcaAdapter.MarcaViewHolder>() {

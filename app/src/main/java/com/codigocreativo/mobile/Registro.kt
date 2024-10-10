@@ -19,6 +19,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.gson.annotations.SerializedName
+
 
 class Registro : AppCompatActivity() {
 
@@ -85,7 +87,7 @@ class Registro : AppCompatActivity() {
                 email = email,
                 contrasenia = contrasenia, // Encripta antes si es necesario
                 fechaNacimiento = fechaNacimiento,
-                estado = "ACTIVO", // Estado por defecto
+                estado = "SIN_VALIDAR", // Estado por defecto
                 nombre = nombre,
                 apellido = apellido,
                 nombreUsuario = nombreUsuario,
@@ -95,10 +97,13 @@ class Registro : AppCompatActivity() {
             )
 
             // Registrar usuario
+
             registrarUsuario(nuevoUsuario)
+            //Actualmente dando error al registrar TODO: Reparar tablas faltantes en la base de datos
+            /*E  Error en el registro: JDBC exception executing SQL [select u1_0.ID_USUARIO,u1_0.APELLIDO,u1_0.CEDULA,u1_0.CONTRASENIA,u1_0.EMAIL,u1_0.ESTADO,u1_0.FECHA_NACIMIENTO,ii1_0.ID_INSTITUCION,ii1_0.NOMBRE,ip1_0.ID_PERFIL,ip1_0.ESTADO,ip1_0.NOMBRE_PERFIL,fp1_0.ID_PERFIL,fp1_0.ID_FUNCIONALIDAD,u1_0.NOMBRE,u1_0.nombre_usuario from USUARIOS u1_0 left join INSTITUCIONES ii1_0 on ii1_0.ID_INSTITUCION=u1_0.ID_INSTITUCION left join PERFILES ip1_0 on ip1_0.ID_PERFIL=u1_0.ID_PERFIL left join FUNCIONALIDADES_PERFILES fp1_0 on ip1_0.ID_PERFIL=fp1_0.ID_PERFIL where u1_0.ID_USUARIO=?] [ORA-00942: table or view "PFT"."FUNCIONALIDADES_PERFILES" does not exist
+
+            https://docs.oracle.com/error-help/db/ora-00942/] [n/a]*/
         }
-
-
 
 
     }

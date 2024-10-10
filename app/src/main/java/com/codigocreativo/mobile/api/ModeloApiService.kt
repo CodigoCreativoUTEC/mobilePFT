@@ -9,7 +9,7 @@ import retrofit2.http.PUT
 
 // Retrofit interface para la API
 interface ModeloApiService {
-    @GET("modelo/listarTodas")
+    @GET("modelo/listar")
     suspend fun listarMarcas(@Header("Authorization") token: String): Response<List<Marca>>
 
     @PUT("modelo/actualizar")
