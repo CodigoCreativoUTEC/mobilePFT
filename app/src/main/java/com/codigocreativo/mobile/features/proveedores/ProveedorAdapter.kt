@@ -23,20 +23,21 @@ class ProveedorAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProveedorViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_modelo, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_proveedor, parent, false)
         return ProveedorViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ProveedorViewHolder, position: Int) {
-        val modelo = proveedorList[position]
-        holder.idTextView.text = modelo.idProveedor.toString()
-        holder.nombreTextView.text = modelo.nombre
-        holder.estadoTextView.text = modelo.estado.name
+
+        val proveedor = proveedorList[position]
+        holder.idTextView.text = proveedor.idProveedor.toString()
+        holder.nombreTextView.text = proveedor.nombre
+        holder.estadoTextView.text = proveedor.estado.name
 
         holder.btnDetalle.setOnClickListener {
             val fragment = DetalleProveedorFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("id", modelo.idProveedor)
+                    putInt("id", proveedor.idProveedor)
                 }
             }
             activity.supportFragmentManager.beginTransaction()
@@ -50,7 +51,7 @@ class ProveedorAdapter(
         return proveedorList.size
     }
 
-    // Método para actualizar la lista de modelos y notificar al adaptador de los cambios
+    // Método para actualizar la lista de proveedors y notificar al adaptador de los cambios
     fun updateList(newProveedorsList: List<Proveedor>) {
         proveedorList = newProveedorsList
         notifyDataSetChanged()

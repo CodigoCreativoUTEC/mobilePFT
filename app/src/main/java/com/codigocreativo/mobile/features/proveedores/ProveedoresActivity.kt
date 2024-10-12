@@ -44,7 +44,7 @@ class ProveedoresActivity : AppCompatActivity() {
         val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
         Log.d("ProveedoresActivity", "Token: $token")
         if (token != null) {
-            // Cargar los modelos desde el API
+            // Cargar los proveedores desde el API
             loadProveedores(token)
         } else {
             Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
@@ -64,12 +64,12 @@ class ProveedoresActivity : AppCompatActivity() {
                 apiCall = { apiService.listarProveedores("Bearer $token") }
             )
 
-            result.onSuccess { modelos ->
+            result.onSuccess { proveedores ->
                 proveedoresList.clear()
-                proveedoresList.addAll(modelos) // Agregar los modelos obtenidos
-                adapter.updateList(proveedoresList) // Actualizar el RecyclerView con los modelos
+                proveedoresList.addAll(proveedores) // Agregar los proveedores obtenidos
+                adapter.updateList(proveedoresList) // Actualizar el RecyclerView con los proveedores
             }.onFailure { error ->
-                Log.e("ProveedoresActivity", "Error al cargar los modelos: ${error.message}")
+                Log.e("ProveedoresActivity", "Error al cargar los proveedores: ${error.message}")
             }
         }
     }
@@ -112,15 +112,15 @@ class ProveedoresActivity : AppCompatActivity() {
 
 
 
-    // Método de filtro para modelos
+    // Método de filtro para proveedores
     private fun filterProveedores() {
         val nameFilter = findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
         val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado
 
-        // Filtrar la lista de modelos
-        filteredList = proveedoresList.filter { modelo ->
-            modelo.nombre.lowercase(Locale.getDefault()).contains(nameFilter) &&
-                    (statusFilter == Estado.ACTIVO || statusFilter == Estado.INACTIVO || modelo.estado == statusFilter)
+        // Filtrar la lista de proveedores
+        filteredList = proveedoresList.filter { proveedores ->
+            proveedores.nombre.lowercase(Locale.getDefault()).contains(nameFilter) &&
+                    (statusFilter == Estado.ACTIVO || statusFilter == Estado.INACTIVO || proveedores.estado == statusFilter)
         }.toMutableList()
 
         // Actualizar el RecyclerView con la lista filtrada

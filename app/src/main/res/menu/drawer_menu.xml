@@ -15,4 +15,8 @@
         android:id="@+id/nav_tipoEquipos"
         android:title="Tipo de equipos"
         android:icon="@android:drawable/ic_menu_manage" />
+    <item
+        android:id="@+id/nav_proveedores"
+        android:title="Proveedores"
+        android:icon="@android:drawable/ic_menu_manage" />
 </menu>

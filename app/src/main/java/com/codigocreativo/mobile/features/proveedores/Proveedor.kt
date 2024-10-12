@@ -5,12 +5,12 @@ import com.codigocreativo.mobile.utils.Estado
 import com.google.gson.annotations.SerializedName
 
 data class Proveedor(
-    @SerializedName("ID_PROVEEDOR")
+    @SerializedName("id")
     val idProveedor: Int,
-    @SerializedName("NOMBRE")
+    @SerializedName("nombre")
     val nombre: String,
-    @SerializedName("ESTADO")
+    @SerializedName("estado")
     var estado: Estado,
-    @SerializedName("ID_PAIS")
+    @SerializedName("pais")
     val pais: Pais
 )

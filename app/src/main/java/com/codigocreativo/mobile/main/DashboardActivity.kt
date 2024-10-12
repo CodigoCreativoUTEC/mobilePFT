@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
+import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
 
 class DashboardActivity : AppCompatActivity() {
@@ -61,6 +62,11 @@ class DashboardActivity : AppCompatActivity() {
                 R.id.nav_tipoEquipos -> {
                     Toast.makeText(this, "Tipo de equipos seleccionados", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, TipoEquipoActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_proveedores -> {
+                    Toast.makeText(this, "Proveedores seleccionados", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ProveedoresActivity::class.java)
                     startActivity(intent)
                 }
             }
