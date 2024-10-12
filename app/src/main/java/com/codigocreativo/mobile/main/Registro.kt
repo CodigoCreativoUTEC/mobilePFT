@@ -15,6 +15,7 @@ import com.codigocreativo.mobile.network.Institucion
 import com.codigocreativo.mobile.network.Perfil
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.User
+import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,7 +79,7 @@ class Registro : AppCompatActivity() {
             val apellido = etLastName.text.toString()
             val nombreUsuario = etUsername.text.toString()
             val fechaNacimiento = etfechaNacimiento.dayOfMonth // Puedes obtener la fecha desde un DatePicker
-            val perfil = Perfil(id = 1, nombrePerfil = "Administrador", estado = "ACTIVO") // Ejemplo, puedes usar un Spinner para obtener el perfil
+            val perfil = Perfil(id = 1, nombrePerfil = "Administrador", Estado.ACTIVO, funcionalidades = emptyList()) // Ejemplo, puedes usar un Spinner para obtener el perfil
 
             // Crear objeto Usuario
             val nuevoUsuario = User(
@@ -86,8 +87,8 @@ class Registro : AppCompatActivity() {
                 cedula = cedula,
                 email = email,
                 contrasenia = contrasenia, // Encripta antes si es necesario
-                fechaNacimiento = fechaNacimiento,
-                estado = "SIN_VALIDAR", // Estado por defecto
+                fechaNacimiento = listOf(fechaNacimiento),
+                estado = Estado.SIN_VALIDAR, // Estado por defecto
                 nombre = nombre,
                 apellido = apellido,
                 nombreUsuario = nombreUsuario,

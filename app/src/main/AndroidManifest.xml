@@ -28,6 +28,9 @@
             android:name=".features.modelo.ModelosActivity"
             android:exported="true"/>
         <activity
+            android:name=".features.tipoEquipo.TipoEquipoActivity"
+            android:exported="true"/>
+        <activity
             android:name=".features.proveedores.ProveedoresActivity"
             android:exported="true"/>
 
