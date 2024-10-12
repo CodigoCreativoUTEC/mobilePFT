@@ -11,4 +11,8 @@
         android:id="@+id/nav_models"
         android:title="Modelos"
         android:icon="@android:drawable/ic_menu_manage" />
+    <item
+        android:id="@+id/nav_tipoEquipos"
+        android:title="Tipo de equipos"
+        android:icon="@android:drawable/ic_menu_manage" />
 </menu>

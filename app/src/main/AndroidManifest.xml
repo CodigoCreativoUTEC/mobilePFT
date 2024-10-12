@@ -27,6 +27,9 @@
         <activity
             android:name=".features.modelo.ModelosActivity"
             android:exported="true"/>
+        <activity
+            android:name=".features.tipoEquipo.TipoEquipoActivity"
+            android:exported="true"/>
 
         <activity
             android:name=".main.MainActivity"
