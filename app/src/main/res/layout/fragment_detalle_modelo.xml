@@ -26,6 +26,15 @@
         android:textSize="24sp"
         android:gravity="center"/>
 
+    <TextView
+        android:id="@+id/nombreMarcaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Marca Asociada"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:gravity="center"/>
+
     <!-- Estado del modelo con Spinner -->
     <Spinner
         android:id="@+id/estadoSpinner"

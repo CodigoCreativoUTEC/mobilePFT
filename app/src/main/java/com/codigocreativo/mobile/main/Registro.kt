@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.main
 
 import android.os.Bundle
 import android.util.Log
@@ -9,17 +9,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.codigocreativo.mobile.api.ApiService
-import com.codigocreativo.mobile.api.Institucion
-import com.codigocreativo.mobile.api.Perfil
-import com.codigocreativo.mobile.api.RetrofitClient
-import com.codigocreativo.mobile.api.User
+import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.network.ApiService
+import com.codigocreativo.mobile.network.Institucion
+import com.codigocreativo.mobile.network.Perfil
+import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.network.User
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.google.gson.annotations.SerializedName
 
 
 class Registro : AppCompatActivity() {

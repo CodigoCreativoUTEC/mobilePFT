@@ -1,7 +1,7 @@
-package com.codigocreativo.mobile.objetos
+package com.codigocreativo.mobile.utils
 
 import android.content.Context
-import com.codigocreativo.mobile.api.User
+import com.codigocreativo.mobile.network.User
 import com.google.gson.Gson
 
 object SessionManager {

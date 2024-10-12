@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,9 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
+import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.marca.MarcasActivity
+import com.codigocreativo.mobile.features.modelo.ModelosActivity
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -29,7 +32,9 @@ class DashboardActivity : AppCompatActivity() {
 
         // Agregar el botón hamburguesa
         val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()

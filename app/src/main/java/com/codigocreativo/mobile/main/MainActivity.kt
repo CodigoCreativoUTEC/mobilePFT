@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,11 +8,12 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.codigocreativo.mobile.api.ApiService
-import com.codigocreativo.mobile.api.RetrofitClient
-import com.codigocreativo.mobile.api.LoginRequest
-import com.codigocreativo.mobile.api.TokenRequest
-import com.codigocreativo.mobile.objetos.SessionManager
+import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.network.ApiService
+import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.network.LoginRequest
+import com.codigocreativo.mobile.network.TokenRequest
+import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

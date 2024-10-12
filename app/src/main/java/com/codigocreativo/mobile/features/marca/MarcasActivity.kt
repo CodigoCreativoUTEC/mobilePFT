@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile
+package com.codigocreativo.mobile.features.marca
 
 import android.os.Bundle
 import android.text.Editable
@@ -13,14 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.codigocreativo.mobile.adapters.MarcaAdapter
-import com.codigocreativo.mobile.api.MarcaApiService
-import com.codigocreativo.mobile.api.RetrofitClient
-import com.codigocreativo.mobile.objetos.Estado
-import com.codigocreativo.mobile.objetos.Marca
+import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.network.DataRepository
+import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.util.Locale
 
 class MarcasActivity : AppCompatActivity() {
@@ -29,6 +27,7 @@ class MarcasActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     var marcasList = mutableListOf<Marca>() // Lista dinámica de marcas cargadas desde el API
     private var filteredList = mutableListOf<Marca>()
+    private val dataRepository = DataRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,25 +58,24 @@ class MarcasActivity : AppCompatActivity() {
         val apiService = retrofit.create(MarcaApiService::class.java)
 
         lifecycleScope.launch {
-            try {
-                val response = apiService.listarMarcas("Bearer $token") // Asegúrate de pasar el token
-                if (response.isSuccessful) {
-                    marcasList.clear()
-                    marcasList.addAll(response.body() ?: emptyList()) // Agregar las marcas obtenidas
-                    filteredList.clear()
-                    filteredList.addAll(marcasList)
-                    adapter.updateList(filteredList) // Actualizar el RecyclerView con las marcas
-                } else {
-                    Log.e("MarcasActivity", "Error en la respuesta: ${response.code()}")
-                }
-            } catch (e: HttpException) {
-                Log.e("MarcasActivity", "Excepción HTTP: ${e.message()}")
-            } catch (e: Exception) {
-                Log.e("MarcasActivity", "Error inesperado: ${e.message}")
+            val result = dataRepository.obtenerDatos(
+                token = token,
+                apiCall = { apiService.listarMarcas("Bearer $token") }
+            )
+
+            result.onSuccess { marcas ->
+                marcasList.clear()
+                marcasList.addAll(marcas) // Agregar las marcas obtenidas
+                filteredList.clear()
+                filteredList.addAll(marcasList)
+                adapter.updateList(filteredList) // Actualizar el RecyclerView con las marcas
+            }.onFailure { error ->
+                Log.e("MarcasActivity", "Error al cargar las marcas: ${error.message}")
             }
         }
     }
 
+    // Configurar filtros (sin cambios)
     private fun setupFilters() {
         val filterName: EditText = findViewById(R.id.filter_name)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
@@ -105,6 +103,7 @@ class MarcasActivity : AppCompatActivity() {
         }
     }
 
+    // Método de filtro (sin cambios)
     private fun filterMarcas() {
         val nameFilter = findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
         val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado

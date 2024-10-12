@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.api
+package com.codigocreativo.mobile.network
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response

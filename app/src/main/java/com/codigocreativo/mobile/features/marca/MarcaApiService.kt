@@ -1,6 +1,5 @@
-package com.codigocreativo.mobile.api
+package com.codigocreativo.mobile.features.marca
 
-import com.codigocreativo.mobile.objetos.Marca
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

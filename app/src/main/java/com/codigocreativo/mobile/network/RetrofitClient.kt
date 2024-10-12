@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.api
+package com.codigocreativo.mobile.network
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
