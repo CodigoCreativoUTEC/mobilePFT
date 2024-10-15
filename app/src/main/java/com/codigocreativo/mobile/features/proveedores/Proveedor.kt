@@ -8,9 +8,9 @@ data class Proveedor(
     @SerializedName("id")
     val idProveedor: Int,
     @SerializedName("nombre")
-    val nombre: String,
+    var nombre: String,
     @SerializedName("estado")
     var estado: Estado,
     @SerializedName("pais")
-    val pais: Pais
+    var pais: Pais
 )

@@ -117,4 +117,5 @@ class MarcasActivity : AppCompatActivity() {
         // Actualizar el RecyclerView con la lista filtrada
         adapter.updateList(filteredList)
     }
+
 }

@@ -29,4 +29,7 @@ class DataRepository {
             Result.failure(Exception("Error inesperado: ${e.message}"))
         }
     }
+
+
+
 }

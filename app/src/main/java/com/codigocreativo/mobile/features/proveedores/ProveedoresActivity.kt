@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.features.proveedores
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -52,7 +54,15 @@ class ProveedoresActivity : AppCompatActivity() {
 
         // Configurar filtros
         setupFilters()
+
+        // Action listener de Ingresar Proveedor
+        findViewById<Button>(R.id.btn_ingresar).setOnClickListener {
+           val bottomSheetFragment = IngresarProveedorFragment { proveedor ->
+        }
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        }
     }
+
 
     private fun loadProveedores(token: String, nombre: String? = null, estado: String? = null) {
         val retrofit = RetrofitClient.getClient(token)
@@ -126,4 +136,6 @@ class ProveedoresActivity : AppCompatActivity() {
         // Actualizar el RecyclerView con la lista filtrada
         adapter.updateList(filteredList)
     }
+
+
 }
