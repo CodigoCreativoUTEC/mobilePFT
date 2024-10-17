@@ -1,22 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_users"
-        android:title="Usuarios"
-        android:icon="@android:drawable/ic_menu_manage" />
+        android:id="@+id/nav_perfil"
+        android:title="Ver Perfil"
+        android:icon="@android:drawable/ic_menu" />
     <item
-        android:id="@+id/nav_brands"
-        android:title="Marcas"
-        android:icon="@android:drawable/ic_menu_manage" />
-    <item
-        android:id="@+id/nav_models"
-        android:title="Modelos"
-        android:icon="@android:drawable/ic_menu_manage" />
-    <item
-        android:id="@+id/nav_tipoEquipos"
-        android:title="Tipo de equipos"
-        android:icon="@android:drawable/ic_menu_manage" />
-    <item
-        android:id="@+id/nav_proveedores"
-        android:title="Proveedores"
-        android:icon="@android:drawable/ic_menu_manage" />
+        android:id="@+id/nav_logout"
+        android:title="Cerrar Sesion"
+        android:icon="@android:drawable/ic_menu" />
+
 </menu>

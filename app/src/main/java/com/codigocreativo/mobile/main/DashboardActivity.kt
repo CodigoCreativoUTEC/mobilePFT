@@ -8,7 +8,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.core.view.GravityCompat
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
@@ -19,68 +23,94 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private lateinit var marcasCard: CardView
+    private lateinit var usuarioCard: CardView
+    private lateinit var proveedorCard: CardView
+    private lateinit var equiposCard: CardView
+    private lateinit var tipoEquiposCard: CardView
+    private lateinit var modelosCard: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        // Configurar la Toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
-        // Configurar el DrawerLayout
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.navigation_view)
 
-        // Agregar el botón hamburguesa
+        // Inicializa cada CardView
+        marcasCard = findViewById(R.id.marcasCard)
+        usuarioCard = findViewById(R.id.usuarioCard)
+        proveedorCard = findViewById(R.id.proveedorCard)
+        equiposCard = findViewById(R.id.equiposCard)
+        tipoEquiposCard = findViewById(R.id.tipoequiposCard)
+        modelosCard = findViewById(R.id.modelosCard)
+
+        // setupDrawer()
+
+        // Configura los OnClickListener para cada CardView
+        marcasCard.setOnClickListener {
+            val intent = Intent(this, MarcasActivity::class.java)
+            startActivity(intent)
+        }
+
+        usuarioCard.setOnClickListener {
+            //  val intent = Intent(this, UsuariosActivity::class.java)
+            startActivity(intent)
+        }
+
+        proveedorCard.setOnClickListener {
+            val intent = Intent(this, ProveedoresActivity::class.java)
+            startActivity(intent)
+        }
+
+        equiposCard.setOnClickListener {
+            // val intent = Intent(this, EquiposActivity::class.java)
+            startActivity(intent)
+        }
+
+        tipoEquiposCard.setOnClickListener {
+            val intent = Intent(this, TipoEquipoActivity::class.java)
+            startActivity(intent)
+        }
+
+        modelosCard.setOnClickListener {
+            val intent = Intent(this, ModelosActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun setupDrawer() {
         val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
+            this,
+            drawerLayout,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Manejar las selecciones del menú
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_users -> {
-                    Toast.makeText(this, "Usuarios seleccionados", Toast.LENGTH_SHORT).show()
+                R.id.nav_perfil -> {
+                    // Manejar navegación a la actividad 1
+                }
 
+                R.id.nav_logout -> {
+                    // Manejar navegación a la actividad 2
                 }
-                R.id.nav_brands -> {
-                    Toast.makeText(this, "Marcas seleccionadas", Toast.LENGTH_SHORT).show()
-                    // Navegar a otra actividad
-                    val intent = Intent(this, MarcasActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_models -> {
-                    Toast.makeText(this, "Modelos seleccionados", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, ModelosActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_tipoEquipos -> {
-                    Toast.makeText(this, "Tipo de equipos seleccionados", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, TipoEquipoActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_proveedores -> {
-                    Toast.makeText(this, "Proveedores seleccionados", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, ProveedoresActivity::class.java)
-                    startActivity(intent)
-                }
+
             }
-            // Cerrar el drawer después de hacer clic
-            drawerLayout.closeDrawers()
+            drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            drawerLayout.openDrawer(navigationView)
+        val menuButton: ImageView = findViewById(R.id.imageMenu)
+        menuButton.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
         }
-        return super.onOptionsItemSelected(item)
     }
 }
+
+
 

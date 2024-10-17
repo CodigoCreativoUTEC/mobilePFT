@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,13 +23,27 @@
             android:id="@+id/mamedNamed"
             android:layout_width="0dp"
             android:layout_height="42dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_semibold"
             android:text="MA-MED"
             android:textColor="@color/my_primary"
             android:textSize="30sp"
+            android:layout_marginStart="55dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout-constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imageMenu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_menu"
+            app:tint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
 
         <TextView
             android:layout_width="0dp"
@@ -33,6 +51,7 @@
             android:id="@+id/mamedDesc"
             android:text="Medical Management"
             android:textSize="14sp"
+            android:layout_marginStart="50dp"
             android:textColor="@color/my_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mamedNamed"
@@ -42,10 +61,10 @@
             android:id="@+id/mamedimagen"
             android:layout_width="152dp"
             android:layout_height="81dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="30dp"
             android:src="@drawable/tu_logo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.835"
             app:layout_constraintStart_toEndOf="@+id/mamedNamed"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,31 +89,31 @@
                 app:cardElevation="20dp"
                 app:cardCornerRadius="20dp">
 
-              <RelativeLayout
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                  <TextView
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/usuarioName"
-                      android:text="Usuarios"
-                      android:textSize="20sp"
-                      android:textColor="@color/my_primary"
-                      android:fontFamily="@font/poppins_semibold"
-                      android:layout_marginTop="10dp"
-                      android:layout_centerHorizontal="true"
-                      android:layout_below="@+id/usuarioIcon" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/usuarioName"
+                        android:text="Usuarios"
+                        android:textSize="20sp"
+                        android:textColor="@color/my_primary"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/usuarioIcon" />
 
-                  <ImageView
-                      android:layout_width="70dp"
-                      android:layout_height="70dp"
-                      android:id="@+id/usuarioIcon"
-                      android:src="@drawable/usuario"
-                      android:layout_marginTop="15dp"
-                      android:layout_centerHorizontal="true" />
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:id="@+id/usuarioIcon"
+                        android:src="@drawable/usuario"
+                        android:layout_marginTop="15dp"
+                        android:layout_centerHorizontal="true" />
 
-              </RelativeLayout>
+                </RelativeLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -317,3 +336,12 @@
 
 </ScrollView>
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
