@@ -2,10 +2,10 @@
     <item
         android:id="@+id/nav_perfil"
         android:title="Ver Perfil"
-        android:icon="@android:drawable/ic_menu" />
+        android:icon="@drawable/ic_menu" />
     <item
         android:id="@+id/nav_logout"
         android:title="Cerrar Sesion"
-        android:icon="@android:drawable/ic_menu" />
+        android:icon="@drawable/ic_menu" />
 
 </menu>

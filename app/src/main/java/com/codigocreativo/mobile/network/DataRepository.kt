@@ -21,7 +21,7 @@ class DataRepository {
                     Result.failure(Exception("No se encontraron datos"))
                 }
             } else {
-                Result.failure(Exception("Error en la respuesta del servidor: ${response.code()}"))
+                Result.failure(Exception("Error en la respuesta del servidor: ${response.code()} ${response.message()}"))
             }
         } catch (e: HttpException) {
             Result.failure(Exception("Excepción HTTP: ${e.message()}"))
