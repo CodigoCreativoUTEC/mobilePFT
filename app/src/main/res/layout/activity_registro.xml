@@ -71,23 +71,26 @@
                 android:id="@+id/etCedula"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Cédula"/>
+                android:hint="Cédula"
+                android:inputType="number"/>
 
             <!-- Fecha de Nacimiento -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha de Nacimiento"
+                android:inputType="date"
                 android:textStyle="bold"
                 android:alpha="0.7"/>
 
-            <DatePicker
+            <EditText
                 android:id="@+id/etBirthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Fecha de Nacimiento"
                 android:focusable="false"
                 android:clickable="true"/>
+
 
             <!-- Teléfono de contacto -->
             <TextView
@@ -147,6 +150,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
+                android:inputType="textPassword"/>
+            <EditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Repita contraseña"
                 android:inputType="textPassword"/>
 
             <!-- Tipo de Usuario -->

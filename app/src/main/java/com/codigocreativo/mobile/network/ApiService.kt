@@ -15,7 +15,7 @@ interface ApiService {
 
     // Método para registrar un nuevo usuario
     @POST("usuarios/crear")
-    suspend fun registrarUsuario(@Body usuario: User): Response<User>
+    suspend fun registrarUsuario(@Body usuario: User): Response<Unit>
 }
 data class LoginRequest(
     @SerializedName("email") val email: String,
@@ -37,7 +37,7 @@ data class User(
     @SerializedName("contrasenia")
     val contrasenia: String,
     @SerializedName("fechaNacimiento")
-    val fechaNacimiento: List<Int>,
+    val fechaNacimiento: String,
     @SerializedName("estado")
     val estado: Estado,
     @SerializedName("nombre")

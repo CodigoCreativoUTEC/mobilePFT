@@ -145,7 +145,9 @@ class MainActivity : AppCompatActivity() {
                         Log.e("MainActivity", "No se recibió JWT en la respuesta.")
                     }
                 } else {
-                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()} - ${response.errorBody()?.string()}")
+                    Toast.makeText(this@MainActivity, "Error: Cuenta inactiva o Eliminada, aguarde.", Toast.LENGTH_SHORT).show()
+
+                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()} - ${response.errorBody().toString()}")
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error al enviar la solicitud de login: ${e.message}", e)
