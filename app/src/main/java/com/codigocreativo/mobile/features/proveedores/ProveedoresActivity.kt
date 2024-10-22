@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
@@ -60,6 +61,11 @@ class ProveedoresActivity : AppCompatActivity() {
            val bottomSheetFragment = IngresarProveedorFragment { proveedor ->
         }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        }
+        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener{
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
