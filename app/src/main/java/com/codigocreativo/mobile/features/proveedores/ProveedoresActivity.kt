@@ -62,6 +62,7 @@ class ProveedoresActivity : AppCompatActivity() {
         }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
+        // Action listener de Volver al Menú
         findViewById<Button>(R.id.btn_volver_menu).setOnClickListener{
             val intent = Intent(this, DashboardActivity::class.java)
             startActivity(intent)

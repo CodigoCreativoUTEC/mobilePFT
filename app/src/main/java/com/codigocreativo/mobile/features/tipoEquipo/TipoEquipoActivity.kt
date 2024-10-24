@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.features.tipoEquipo
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
@@ -51,6 +54,13 @@ class TipoEquipoActivity : AppCompatActivity() {
         }
         // Configurar filtros
         setupFilters()
+
+        // Action listener del boton Volver al Menu
+        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener{
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun loadTipoEquipos(token: String, nombre: String? = null, estado: String? = null) {
