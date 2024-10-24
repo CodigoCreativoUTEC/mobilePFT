@@ -51,12 +51,12 @@ class MainActivity : AppCompatActivity() {
 
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            val hashedPassword = hashPassword(password)
+
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
 
-                Log.d("MainActivity", "Email: $email, Password: $hashedPassword")
-                sendLoginRequestToBackend(email, hashedPassword)
+                Log.d("MainActivity", "Email: $email, Password: $password")
+                sendLoginRequestToBackend(email, password)
             } else {
                 Toast.makeText(this, "Por favor ingresa email y contraseña", Toast.LENGTH_SHORT).show()
             }
@@ -153,12 +153,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e("MainActivity", "Error al enviar la solicitud de login: ${e.message}", e)
             }
         }
-    }
-
-    private fun hashPassword(password: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hash = digest.digest(password.toByteArray())
-        return hash.joinToString("") { String.format("%02x", it) }
     }
 
 }
