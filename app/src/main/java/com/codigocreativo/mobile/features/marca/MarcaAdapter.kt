@@ -37,7 +37,7 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
             // Crear una instancia del fragmento y pasarle los datos de la marca
             val fragment = DetalleMarcaFragment()
             val bundle = Bundle()
-            bundle.putInt("marca_id", marca.id)
+            marca.id?.let { it1 -> bundle.putInt("marca_id", it1) }
             fragment.arguments = bundle
 
             // Reemplazar el contenido actual con el fragmento de detalles

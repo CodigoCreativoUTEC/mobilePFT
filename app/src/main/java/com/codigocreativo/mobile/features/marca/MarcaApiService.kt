@@ -22,7 +22,7 @@ interface MarcaApiService {
     @PUT("marca/editar/{id}")
     suspend fun editarMarca(
         @Header("Authorization") token: String,
-        @Path("id") id: Int,
+        @Path("id") id: Int?,
         @Body nuevaMarca: Marca
     ): Response<Marca>
 }

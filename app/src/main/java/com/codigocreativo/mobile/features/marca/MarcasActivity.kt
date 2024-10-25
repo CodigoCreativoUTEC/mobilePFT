@@ -104,16 +104,9 @@ class MarcasActivity : AppCompatActivity() {
             .show()
     }
 
+
     // Método para agregar una nueva marca
     private fun addMarca(nombre: String) {
-        // Crear una nueva marca con ID temporal (-1)
-        val nuevaMarca = Marca(id = -1, nombre = nombre, estado = Estado.ACTIVO)
-
-        // Añadir temporalmente la marca a las listas locales
-        marcasList.add(nuevaMarca)
-        filteredList.add(nuevaMarca)
-        adapter.updateList(filteredList)
-
         // Obtener el token
         val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
 
@@ -124,6 +117,9 @@ class MarcasActivity : AppCompatActivity() {
             // Llamar a la API dentro de una corrutina
             lifecycleScope.launch {
                 try {
+                    // Crear una nueva marca con los datos ingresados
+                    val nuevaMarca = Marca(id = null, nombre = nombre, estado = Estado.ACTIVO)
+
                     // Llamada a la API para crear la nueva marca
                     val response = apiService.crearMarca("Bearer $token", nuevaMarca)
 
@@ -131,30 +127,28 @@ class MarcasActivity : AppCompatActivity() {
                         // Obtener la marca creada con el ID real del backend
                         val marcaCreada = response.body()!!
 
-                        // Actualizar la marca en la lista local con el ID real
-                        val index = marcasList.indexOf(nuevaMarca)
-                        if (index != -1) {
-                            marcasList[index] = marcaCreada
-                            filteredList[filteredList.indexOf(nuevaMarca)] = marcaCreada
-                            adapter.updateList(filteredList)
-                        }
+                        // Añadir la marca creada a las listas locales
+                        marcasList.add(marcaCreada)
+                        filteredList.add(marcaCreada)
+                        adapter.updateList(filteredList)
 
-                        Snackbar.make(findViewById(R.id.main), "Marca agregada correctamente", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(findViewById(android.R.id.content), "Marca agregada correctamente", Snackbar.LENGTH_SHORT).show()
                     } else {
                         // Manejo de errores si la respuesta no es exitosa
                         Log.e("MarcasActivity", "Error en la respuesta de la API: ${response.errorBody()?.string()}")
-                        Snackbar.make(findViewById(R.id.main), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(findViewById(android.R.id.content), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
                     // Manejo de excepciones durante la llamada a la API
-                    Log.e("MarcasActivity", "Error al agregar la marca: ${e.message}")
-                    Snackbar.make(findViewById(R.id.main), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
+                    Log.e("MarcasActivity", "Error al agregar la marca: ${e.message} - ${e.cause}")
+                    Snackbar.make(findViewById(android.R.id.content), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
                 }
             }
         } else {
-            Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(findViewById(android.R.id.content), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
         }
     }
+
 
 
     // Método para mostrar el diálogo para editar una marca existente
