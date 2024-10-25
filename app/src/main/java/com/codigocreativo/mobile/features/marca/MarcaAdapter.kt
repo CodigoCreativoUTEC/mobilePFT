@@ -47,6 +47,7 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
                 .commit()
         }
 
+        // Acción del botón "Eliminar"
         holder.btnEliminar.setOnClickListener {
             // Crear el diálogo de confirmación para eliminar
             AlertDialog.Builder(activity)
@@ -58,10 +59,15 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
                     notifyItemRemoved(position)
                     notifyItemRangeChanged(position, marcasList.size)
                 }
-                .setNegativeButton("Cancelar", null)  // No hacer nada si se cancela
+                .setNegativeButton("Cancelar", null) // No hacer nada si se cancela
                 .show()
         }
 
+        // Hacer clic en el nombre para editar la marca
+        holder.nombreTextView.setOnClickListener {
+            // Llamar al método de edición desde la actividad
+            (activity as MarcasActivity).showEditMarcaDialog(marca)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -73,8 +79,5 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
         marcasList = newList
         notifyDataSetChanged()
     }
-
-
 }
-
 

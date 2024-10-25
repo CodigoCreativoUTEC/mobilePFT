@@ -1,5 +1,7 @@
 package com.codigocreativo.mobile.features.marca
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +10,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -29,9 +32,15 @@ class MarcasActivity : AppCompatActivity() {
     private var filteredList = mutableListOf<Marca>()
     private val dataRepository = DataRepository()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_marcas)
+
+        val btnAgregar = findViewById<ImageView>(R.id.btn_agregar)
+        btnAgregar.setOnClickListener{
+            showAddMarcaDialog()
+        }
 
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
@@ -74,6 +83,141 @@ class MarcasActivity : AppCompatActivity() {
             }
         }
     }
+
+    // Método para mostrar el diálogo para agregar una nueva marca
+    private fun showAddMarcaDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_edit_marca, null)
+        val nombreEditText: EditText = dialogView.findViewById(R.id.editTextNombre)
+
+        AlertDialog.Builder(this)
+            .setTitle("Agregar Marca")
+            .setView(dialogView)
+            .setPositiveButton("Agregar") { _, _ ->
+                val nombre = nombreEditText.text.toString().trim()
+                if (nombre.isNotEmpty()) {
+                    addMarca(nombre)
+                } else {
+                    Snackbar.make(findViewById(R.id.main), "El nombre no puede estar vacío", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    // Método para agregar una nueva marca
+    private fun addMarca(nombre: String) {
+        // Crear una nueva marca con ID temporal (-1)
+        val nuevaMarca = Marca(id = -1, nombre = nombre, estado = Estado.ACTIVO)
+
+        // Añadir temporalmente la marca a las listas locales
+        marcasList.add(nuevaMarca)
+        filteredList.add(nuevaMarca)
+        adapter.updateList(filteredList)
+
+        // Obtener el token
+        val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
+
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(MarcaApiService::class.java)
+
+            // Llamar a la API dentro de una corrutina
+            lifecycleScope.launch {
+                try {
+                    // Llamada a la API para crear la nueva marca
+                    val response = apiService.crearMarca("Bearer $token", nuevaMarca)
+
+                    if (response.isSuccessful && response.body() != null) {
+                        // Obtener la marca creada con el ID real del backend
+                        val marcaCreada = response.body()!!
+
+                        // Actualizar la marca en la lista local con el ID real
+                        val index = marcasList.indexOf(nuevaMarca)
+                        if (index != -1) {
+                            marcasList[index] = marcaCreada
+                            filteredList[filteredList.indexOf(nuevaMarca)] = marcaCreada
+                            adapter.updateList(filteredList)
+                        }
+
+                        Snackbar.make(findViewById(R.id.main), "Marca agregada correctamente", Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        // Manejo de errores si la respuesta no es exitosa
+                        Log.e("MarcasActivity", "Error en la respuesta de la API: ${response.errorBody()?.string()}")
+                        Snackbar.make(findViewById(R.id.main), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    // Manejo de excepciones durante la llamada a la API
+                    Log.e("MarcasActivity", "Error al agregar la marca: ${e.message}")
+                    Snackbar.make(findViewById(R.id.main), "Error al agregar la marca", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+
+    // Método para mostrar el diálogo para editar una marca existente
+    @SuppressLint("MissingInflatedId")
+    fun showEditMarcaDialog(marca: Marca) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_edit_marca, null)
+        val nombreEditText: EditText = dialogView.findViewById(R.id.editTextNombre)
+        nombreEditText.setText(marca.nombre)
+
+        AlertDialog.Builder(this)
+            .setTitle("Editar Marca")
+            .setView(dialogView)
+            .setPositiveButton("Guardar") { _, _ ->
+                val nuevoNombre = nombreEditText.text.toString().trim()
+                if (nuevoNombre.isNotEmpty()) {
+                    editMarca(marca, nuevoNombre)
+                } else {
+                    Snackbar.make(findViewById(R.id.main), "El nombre no puede estar vacío", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    // Método para editar una marca
+    private fun editMarca(marca: Marca, nuevoNombre: String) {
+        val index = marcasList.indexOf(marca)
+        if (index != -1) {
+            // Actualizar el nombre en las listas locales
+            marcasList[index].nombre = nuevoNombre
+            filteredList[index].nombre = nuevoNombre
+            adapter.updateList(filteredList)
+
+            // Aquí puedes hacer una petición a la API para actualizar la marca en la base de datos
+            val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
+
+            if (token != null) {
+                val retrofit = RetrofitClient.getClient(token)
+                val apiService = retrofit.create(MarcaApiService::class.java)
+
+                // Llamar a la API dentro de una corrutina
+                lifecycleScope.launch {
+                    try {
+                        // Llamada a la API para editar la marca
+                        val response = apiService.editarMarca("Bearer $token", marca.id, marca.copy(nombre = nuevoNombre))
+
+                        if (response.isSuccessful) {
+                            Snackbar.make(findViewById(R.id.main), "Marca editada correctamente", Snackbar.LENGTH_SHORT).show()
+                        } else {
+                            // Manejo de errores en caso de respuesta no exitosa
+                            Log.e("MarcasActivity", "Error en la respuesta de la API: ${response.errorBody()?.string()}")
+                        }
+                    } catch (e: Exception) {
+                        // Manejo de cualquier excepción durante la llamada a la API
+                        Log.e("MarcasActivity", "Error al editar la marca: ${e.message}")
+                    }
+                }
+            } else {
+                Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
     // Configurar filtros (sin cambios)
     private fun setupFilters() {
