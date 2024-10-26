@@ -1,6 +1,5 @@
 package com.codigocreativo.mobile.features.proveedores
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
 
 class ProveedorAdapter(
-    private var proveedorList: List<Proveedor>,
-    private val activity: FragmentActivity
+    var proveedorList: List<Proveedor>,
+    private val activity: FragmentActivity,
+    private val onDetalleClick: (Proveedor) -> Unit
 ) : RecyclerView.Adapter<ProveedorAdapter.ProveedorViewHolder>() {
 
     inner class ProveedorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,19 +28,13 @@ class ProveedorAdapter(
     }
 
     override fun onBindViewHolder(holder: ProveedorViewHolder, position: Int) {
-
         val proveedor = proveedorList[position]
         holder.idTextView.text = proveedor.idProveedor.toString()
         holder.nombreTextView.text = proveedor.nombre
         holder.estadoTextView.text = proveedor.estado.name
 
         holder.btnDetalle.setOnClickListener {
-            val fragment = DetalleProveedorFragment(proveedor) { updatedProveedor ->
-                // Handle the updated proveedor here (e.g., update the list and notify the adapter)
-            }
-
-            // Show the fragment as a bottom sheet
-            fragment.show(activity.supportFragmentManager, "DetalleProveedorFragment")
+            onDetalleClick(proveedor)
         }
     }
 
@@ -48,7 +42,6 @@ class ProveedorAdapter(
         return proveedorList.size
     }
 
-    // Método para actualizar la lista de proveedors y notificar al adaptador de los cambios
     fun updateList(newProveedorsList: List<Proveedor>) {
         proveedorList = newProveedorsList
         notifyDataSetChanged()

@@ -11,8 +11,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
@@ -29,11 +31,9 @@ class ProveedoresActivity : AppCompatActivity() {
 
     private lateinit var adapter: ProveedorAdapter
     private lateinit var recyclerView: RecyclerView
-    private var proveedoresList =
-        mutableListOf<Proveedor>() // Lista dinámica de proveedores cargados desde el API
+    private var proveedoresList = mutableListOf<Proveedor>() // Lista dinámica de proveedores cargados desde el API
     private var filteredList = mutableListOf<Proveedor>()
     private val dataRepository = DataRepository()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,9 @@ class ProveedoresActivity : AppCompatActivity() {
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ProveedorAdapter(filteredList, this)
+        adapter = ProveedorAdapter(filteredList, this) { proveedor ->
+            showDetalleProveedorFragment(proveedor)
+        }
         recyclerView.adapter = adapter
 
         // Obtener el token JWT almacenado
@@ -107,8 +109,72 @@ class ProveedoresActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-    }
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
 
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val proveedor = adapter.proveedorList[position]
+
+                // Show confirmation dialog
+                AlertDialog.Builder(this@ProveedoresActivity).apply {
+                    setTitle("Confirmar baja")
+                    setMessage("¿Estás seguro que deseas dar de baja al proveedor ${proveedor.nombre}?")
+                    setPositiveButton("Si") { _, _ ->
+                        val token = SessionManager.getToken(this@ProveedoresActivity)
+                        if (token != null) {
+                            val retrofit = RetrofitClient.getClient(token)
+                            val apiService = retrofit.create(ProveedoresApiService::class.java)
+
+                            lifecycleScope.launch {
+                                val result = dataRepository.guardarDatos(
+                                    token = token,
+                                    apiCall = { apiService.eliminarProveedor("Bearer $token",
+                                        proveedor.idProveedor!!
+                                    ) }
+                                )
+
+                                result.onSuccess {
+                                    Snackbar.make(
+                                        findViewById(android.R.id.content),
+                                        "Proveedor dado de baja correctamente",
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
+                                    loadProveedores(token)
+                                }.onFailure { error ->
+                                    Snackbar.make(
+                                        findViewById(android.R.id.content),
+                                        "Error al dar de baja al proveedor: ${error.message}",
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
+                                    Log.e("ProveedoresActivity", "Error al dar de baja al proveedor: ${error.message}")
+                                }
+                            }
+                        } else {
+                            Snackbar.make(
+                                findViewById(R.id.main),
+                                "Token no encontrado, por favor inicia sesión",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                        adapter.notifyItemChanged(position)
+                    }
+                    create()
+                    show()
+                }
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
 
     private fun loadProveedores(token: String, nombre: String? = null, estado: String? = null) {
         val retrofit = RetrofitClient.getClient(token)
@@ -128,6 +194,47 @@ class ProveedoresActivity : AppCompatActivity() {
                 Log.e("ProveedoresActivity", "Error al cargar los proveedores: ${error.message}")
             }
         }
+    }
+
+    private fun showDetalleProveedorFragment(proveedor: Proveedor) {
+        val fragment = DetalleProveedorFragment(proveedor) { updatedProveedor ->
+            val token = SessionManager.getToken(this)
+            if (token != null) {
+                val retrofit = RetrofitClient.getClient(token)
+                val apiService = retrofit.create(ProveedoresApiService::class.java)
+
+                lifecycleScope.launch {
+                    val result = dataRepository.guardarDatos(
+                        token = token,
+                        apiCall = { apiService.actualizar("Bearer $token", updatedProveedor) }
+                    )
+
+                    result.onSuccess {
+                        Snackbar.make(
+                            findViewById(android.R.id.content),
+                            "Proveedor actualizado correctamente",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        loadProveedores(token)
+                    }.onFailure { error ->
+                        Snackbar.make(
+                            findViewById(android.R.id.content),
+                            "Error al actualizar el proveedor: ${error.message}",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        Log.e("ProveedoresActivity", "Error al actualizar el proveedor: ${error.message}\nPayload: ${updatedProveedor}")
+                    }
+                }
+            } else {
+                Snackbar.make(
+                    findViewById(R.id.main),
+                    "Token no encontrado, por favor inicia sesión",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        fragment.show(supportFragmentManager, "DetalleProveedorFragment")
     }
 
     private fun setupFilters() {
@@ -173,7 +280,6 @@ class ProveedoresActivity : AppCompatActivity() {
         }
     }
 
-
     // Método de filtro para proveedores
     private fun filterProveedores() {
         val nameFilter =
@@ -189,6 +295,4 @@ class ProveedoresActivity : AppCompatActivity() {
         // Actualizar el RecyclerView con la lista filtrada
         adapter.updateList(filteredList)
     }
-
-
 }
