@@ -19,10 +19,9 @@ interface MarcaApiService {
     @POST("marca/crear")
     suspend fun crearMarca(@Header("Authorization") token: String, @Body nuevaMarca: Marca): Response<Marca>
 
-    @PUT("marca/editar/{id}")
+    @PUT("marca/modificar")
     suspend fun editarMarca(
         @Header("Authorization") token: String,
-        @Path("id") id: Int?,
         @Body nuevaMarca: Marca
     ): Response<Marca>
 }

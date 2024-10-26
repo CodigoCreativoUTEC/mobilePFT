@@ -21,6 +21,7 @@ import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -104,7 +105,8 @@ class MarcasActivity : AppCompatActivity() {
             .show()
     }
 
-
+//TODO: Existe error al agregar marca, debe agregarse al listado, pero muestra error vuelve al main
+// y al entrar en marcas la marca aparece en el listado
     // Método para agregar una nueva marca
     private fun addMarca(nombre: String) {
         // Obtener el token
@@ -132,7 +134,7 @@ class MarcasActivity : AppCompatActivity() {
                         filteredList.add(marcaCreada)
                         adapter.updateList(filteredList)
 
-                        Snackbar.make(findViewById(android.R.id.content), "Marca agregada correctamente", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(findViewById(R.id.main), "Marca agregada correctamente", Snackbar.LENGTH_SHORT).show()
                     } else {
                         // Manejo de errores si la respuesta no es exitosa
                         Log.e("MarcasActivity", "Error en la respuesta de la API: ${response.errorBody()?.string()}")
@@ -193,7 +195,7 @@ class MarcasActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     try {
                         // Llamada a la API para editar la marca
-                        val response = apiService.editarMarca("Bearer $token", marca.id, marca.copy(nombre = nuevoNombre))
+                        val response = apiService.editarMarca("Bearer $token", Marca(id = marca.id, nombre = nuevoNombre, estado = marca.estado))
 
                         if (response.isSuccessful) {
                             Snackbar.make(findViewById(R.id.main), "Marca editada correctamente", Snackbar.LENGTH_SHORT).show()
