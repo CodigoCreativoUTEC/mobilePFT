@@ -35,15 +35,12 @@ class ProveedorAdapter(
         holder.estadoTextView.text = proveedor.estado.name
 
         holder.btnDetalle.setOnClickListener {
-            val fragment = DetalleProveedorFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("id", proveedor.idProveedor)
-                }
+            val fragment = DetalleProveedorFragment(proveedor) { updatedProveedor ->
+                // Handle the updated proveedor here (e.g., update the list and notify the adapter)
             }
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+
+            // Show the fragment as a bottom sheet
+            fragment.show(activity.supportFragmentManager, "DetalleProveedorFragment")
         }
     }
 
@@ -57,5 +54,3 @@ class ProveedorAdapter(
         notifyDataSetChanged()
     }
 }
-
-

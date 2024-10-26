@@ -20,6 +20,7 @@ import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
+import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -28,7 +29,8 @@ class ProveedoresActivity : AppCompatActivity() {
 
     private lateinit var adapter: ProveedorAdapter
     private lateinit var recyclerView: RecyclerView
-    var proveedoresList = mutableListOf<Proveedor>() // Lista dinámica de proveedores cargados desde el API
+    private var proveedoresList =
+        mutableListOf<Proveedor>() // Lista dinámica de proveedores cargados desde el API
     private var filteredList = mutableListOf<Proveedor>()
     private val dataRepository = DataRepository()
 
@@ -44,13 +46,16 @@ class ProveedoresActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         // Obtener el token JWT almacenado
-        val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
-        Log.d("ProveedoresActivity", "Token: $token")
+        val token = SessionManager.getToken(this)
         if (token != null) {
             // Cargar los proveedores desde el API
             loadProveedores(token)
         } else {
-            Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(
+                findViewById(R.id.main),
+                "Token no encontrado, por favor inicia sesión",
+                Snackbar.LENGTH_LONG
+            ).show()
         }
 
         // Configurar filtros
@@ -58,12 +63,46 @@ class ProveedoresActivity : AppCompatActivity() {
 
         // Action listener de Ingresar Proveedor
         findViewById<Button>(R.id.btn_ingresar).setOnClickListener {
-           val bottomSheetFragment = IngresarProveedorFragment { proveedor ->
-        }
+            val bottomSheetFragment = IngresarProveedorFragment { proveedor ->
+                if (token != null) {
+                    val retrofit = RetrofitClient.getClient(token)
+                    val apiService = retrofit.create(ProveedoresApiService::class.java)
+
+                    lifecycleScope.launch {
+                        val result = dataRepository.guardarDatos(
+                            token = token,
+                            apiCall = {
+                                apiService.crearProveedor("Bearer $token", proveedor)
+                            })
+
+                        result.onSuccess {
+                            Snackbar.make(
+                                findViewById(android.R.id.content),
+                                "Proveedor ingresado correctamente",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            loadProveedores(token)
+                        }.onFailure { error ->
+                            Snackbar.make(
+                                findViewById(android.R.id.content),
+                                "Error al ingresar el proveedor: ${error.message}",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            Log.e("ProveedoresActivity", "Error al ingresar el proveedor: ${error.message}\nPayload: ${proveedor}")
+                        }
+                    }
+                } else {
+                    Snackbar.make(
+                        findViewById(R.id.main),
+                        "Token no encontrado, por favor inicia sesión",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
         // Action listener de Volver al Menú
-        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener{
+        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener {
             val intent = Intent(this, DashboardActivity::class.java)
             startActivity(intent)
             finish()
@@ -96,7 +135,8 @@ class ProveedoresActivity : AppCompatActivity() {
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
         // Configuración del spinner de estado
-        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
+        val statusAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterStatus.adapter = statusAdapter
 
@@ -115,11 +155,17 @@ class ProveedoresActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 applyFilters()
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
         filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 applyFilters()
             }
 
@@ -128,10 +174,10 @@ class ProveedoresActivity : AppCompatActivity() {
     }
 
 
-
     // Método de filtro para proveedores
     private fun filterProveedores() {
-        val nameFilter = findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
+        val nameFilter =
+            findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
         val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado
 
         // Filtrar la lista de proveedores

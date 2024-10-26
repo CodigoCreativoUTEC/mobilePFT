@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.features.proveedores
+package com.codigocreativo.mobile.features.paises
 
 import com.google.gson.annotations.SerializedName
 

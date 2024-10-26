@@ -30,6 +30,18 @@ class DataRepository {
         }
     }
 
+    suspend fun <T> guardarDatos(token: String, apiCall: suspend () -> Response<T>): Result<T> {
+        return try {
+            val response = apiCall()
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 
 }

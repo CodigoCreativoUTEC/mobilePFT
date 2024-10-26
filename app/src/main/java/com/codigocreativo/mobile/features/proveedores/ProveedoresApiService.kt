@@ -23,8 +23,8 @@ interface ProveedoresApiService {
     ): Response<List<Proveedor>>
 
     @PUT("proveedores/modificar")
-    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body modelo: Proveedor)
+    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body modelo: Proveedor):  Response<Unit>
 
     @POST("proveedores/crear")
-    suspend fun crearProveedor(@Header("Authorization") authHeader: String, @Body modelo: Proveedor)
+    suspend fun crearProveedor(@Header("Authorization") authHeader: String, @Body modelo: Proveedor) : Response<Unit>
 }
