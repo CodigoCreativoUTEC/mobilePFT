@@ -37,7 +37,8 @@ class IngresarModeloFragment(private val onConfirm: (Modelo) -> Unit) : BottomSh
 
 
             if (nuevoNombre.isNotBlank() && nuevoMarca != null) {
-                val modelo = Modelo(id = null, nombre = nuevoNombre, idMarca = nuevoMarca, estado = Estado.ACTIVO)
+
+                val modelo = Modelo(id = null, nombre = nuevoNombre, idMarca= nuevoMarca , estado = Estado.ACTIVO)
                 onConfirm(modelo)
                 dismiss()
             } else {
