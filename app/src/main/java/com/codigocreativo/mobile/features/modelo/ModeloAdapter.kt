@@ -11,10 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.proveedores.Proveedor
 
 class ModeloAdapter(
-    private var modelosList: List<Modelo>,
-    private val activity: FragmentActivity
+    var modeloList: List<Modelo>,
+    private val activity: FragmentActivity,
+    private val onDetalleClick: (Modelo) -> Unit
 ) : RecyclerView.Adapter<ModeloAdapter.ModeloViewHolder>() {
 
     inner class ModeloViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,31 +32,22 @@ class ModeloAdapter(
     }
 
     override fun onBindViewHolder(holder: ModeloViewHolder, position: Int) {
-        val modelo = modelosList[position]
+        val modelo = modeloList[position]
         holder.idTextView.text = modelo.id.toString()
         holder.nombreTextView.text = modelo.nombre
         holder.estadoTextView.text = modelo.estado.name
 
         holder.btnDetalle.setOnClickListener {
-            val fragment = DetalleModeloFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("id", modelo.id)
-                }
-            }
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+            onDetalleClick(modelo)
         }
     }
 
     override fun getItemCount(): Int {
-        return modelosList.size
+        return modeloList.size
     }
 
-    // Método para actualizar la lista de modelos y notificar al adaptador de los cambios
-    fun updateList(newModelosList: List<Modelo>) {
-        modelosList = newModelosList
+    fun updateList(newModeloList: List<Modelo>) {
+        modeloList = newModeloList
         notifyDataSetChanged()
     }
 }

@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Buscar por Nombre"
+            android:hint="Filtrar por Nombre"
             android:padding="8dp"/>
 
         <Button
@@ -28,20 +28,13 @@
     </LinearLayout>
 
     <!-- Filtro por Estado -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Filtrar por Estado:"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
-
     <Spinner
         android:id="@+id/filter_status"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
 
-    <!-- RecyclerView para la lista de marcas -->
+    <!-- RecyclerView para la lista de modelos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -55,16 +48,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"/>
 
-    <!-- Imagen para agregar Marcas -->
-    <ImageView
-        android:id="@+id/btn_agregar"
-        android:layout_width="51dp"
-        android:layout_height="159dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/agregar"
-        android:onClick="showAddMarcaDialog"
-        android:layout_gravity="right"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"/>
+    <Button
+        android:id="@+id/btn_ingresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingresar Marca"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"/>
 
+    <!-- Botón Volver al Menú -->
+    <Button
+        android:id="@+id/btn_volver_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volver al Menú"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"/>
 </LinearLayout>

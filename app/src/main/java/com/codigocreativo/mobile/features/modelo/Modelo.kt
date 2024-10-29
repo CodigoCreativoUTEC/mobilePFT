@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Modelo(
     @SerializedName("id")
-    val id: Int,
+    val id: Int?,
     @SerializedName("nombre")
     val nombre: String,
     @SerializedName("idMarca")
