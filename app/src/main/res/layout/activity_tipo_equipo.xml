@@ -48,6 +48,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"/>
 
+    <Button
+        android:id="@+id/btn_ingresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingresar Tipo de Equipo"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"/>
+
     <!-- Botón Volver al Menú -->
     <Button
         android:id="@+id/btn_volver_menu"

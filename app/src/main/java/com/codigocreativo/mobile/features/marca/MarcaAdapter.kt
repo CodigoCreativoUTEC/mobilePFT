@@ -26,7 +26,7 @@ class MarcaAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarcaViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_proveedor, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_marca, parent, false)
         return MarcaViewHolder(view)
     }
 
