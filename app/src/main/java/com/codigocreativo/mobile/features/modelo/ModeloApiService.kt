@@ -28,11 +28,11 @@ interface ModeloApiService {
     ): Response<List<Modelo>>
 
     @PUT("modelo/modificar")
-    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Modelo>
+    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>
 
     @POST("modelo/crear")
-    suspend fun crearModelo(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Modelo>
+    suspend fun crearModelo(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>
 
     @DELETE("modelo/inactivar")
-    suspend fun eliminarModelo(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Modelo>
+    suspend fun eliminarModelo(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>
 }
