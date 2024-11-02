@@ -2,12 +2,12 @@
 agp = "8.5.1"
 converterGson = "2.9.0"
 credentials = "1.0.0"
-credentialsPlayServicesAuth = "<latest version>"
+credentialsPlayServicesAuth = "1.2.0" # versión específica
 credentialsPlayServicesAuthVersion = "1.2.0-beta03"
 credentialsVersion = "1.2.0-beta03"
 firebaseBom = "33.3.0"
 firebaseBomVersion = "33.4.0"
-googleid = "<latest version>"
+googleid = "1.0.0" # versión específica
 googleServices = "4.4.2"
 jwtdecode = "2.0.0"
 kotlin = "1.9.0"
