@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/idTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/nombreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:layout_weight="2"/>
+
+    <TextView
+        android:id="@+id/estadoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Estado"
+        android:layout_weight="1"/>
+
+    <!-- Botón Detalle -->
+    <Button
+        android:id="@+id/btnDetalle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Detalle"/>
+
+    <!-- Botón Eliminar -->
+</LinearLayout>

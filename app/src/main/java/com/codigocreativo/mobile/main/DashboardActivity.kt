@@ -18,6 +18,7 @@ import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
 import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
+import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -55,7 +56,7 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         usuarioCard.setOnClickListener {
-            //  val intent = Intent(this, UsuariosActivity::class.java)
+            val intent = Intent(this, UsuariosActivity::class.java)
             startActivity(intent)
         }
 

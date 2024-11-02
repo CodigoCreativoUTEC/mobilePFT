@@ -33,6 +33,8 @@
         <activity
             android:name=".features.proveedores.ProveedoresActivity"
             android:exported="false"/>
+        <activity android:name=".features.usuarios.UsuariosActivity"
+            android:exported="false"/>
 
         <activity
             android:name=".main.MainActivity"
