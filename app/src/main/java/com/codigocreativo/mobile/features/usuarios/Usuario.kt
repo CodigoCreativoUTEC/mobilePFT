@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.features.usuarios
 
+import com.codigocreativo.mobile.features.institucion.Institucion
 import com.codigocreativo.mobile.features.perfiles.Perfil
 import com.codigocreativo.mobile.utils.Estado
 import com.google.gson.annotations.SerializedName
@@ -24,7 +25,7 @@ data class Usuario(
     @SerializedName("nombreUsuario")
     val nombreUsuario: String,
     @SerializedName("idInstitucion")
-    val idInstitucion: com.codigocreativo.mobile.utils.Institucion,
+    val idInstitucion: Institucion,
     @SerializedName("idPerfil")
     val idPerfil: Perfil,
     @SerializedName("usuariosDirecciones")

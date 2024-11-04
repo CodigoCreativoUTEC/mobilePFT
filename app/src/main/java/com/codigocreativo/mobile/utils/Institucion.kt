@@ -1,5 +1,5 @@
 package com.codigocreativo.mobile.utils
 
-enum class Institucion {
-    Institucion1, Institucion2, Institucion3
-}
+//enum class Institucion {
+//    Institucion1, Institucion2, Institucion3
+//}

@@ -10,8 +10,8 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.institucion.Institucion
 import com.codigocreativo.mobile.utils.Estado
-import com.codigocreativo.mobile.utils.Institucion
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -38,6 +38,11 @@ class DetalleUsuarioFragment(
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detalle_usuario, container, false)
+
+        val instituciones = listOf(
+            Institucion(1, "CodigoCreativo"),
+            Institucion(2, "Otra Institucion") // Agrega más según necesites
+        )
 
         // Initialize views
         idInput = view.findViewById(R.id.idInput)
@@ -71,10 +76,12 @@ class DetalleUsuarioFragment(
         estadoSpinner.setSelection(Estado.values().indexOf(usuario.estado))
 
         // Populate institucionSpinner with Institucion enum values
-        val institucionAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Institucion.values())
+        val institucionAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, instituciones.map { it.nombre })
         institucionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         institucionSpinner.adapter = institucionAdapter
-        institucionSpinner.setSelection(Institucion.values().indexOf(usuario.idInstitucion as Institucion))
+        val currentInstitucionIndex = instituciones.indexOfFirst { it.id == usuario.idInstitucion.id }
+        if (currentInstitucionIndex != -1) institucionSpinner.setSelection(currentInstitucionIndex)
+
 
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
@@ -108,7 +115,7 @@ class DetalleUsuarioFragment(
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,
                     idPerfil = nuevoPerfil,
-                    idInstitucion = Institucion.values()[institucionSpinner.selectedItemPosition],
+                    idInstitucion = com.codigocreativo.mobile.features.institucion.Institucion(1, "CodigoCreativo"),// TODO: HARDCODED institucion reparar
                     estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
 
