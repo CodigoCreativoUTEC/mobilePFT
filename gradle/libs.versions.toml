@@ -57,6 +57,7 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 identity-credential = { group = "com.android.identity", name = "identity-credential", version.ref = "identityCredential" }
+glide = { module = "com.github.bumptech.glide:glide", version = "4.14.2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

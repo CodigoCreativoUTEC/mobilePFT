@@ -22,6 +22,9 @@
             android:name=".main.DashboardActivity"
             android:exported="false"/>
         <activity
+            android:name=".features.equipos.EquiposActivity"
+            android:exported="false"/>
+        <activity
             android:name=".features.marca.MarcasActivity"
             android:exported="false"/>
         <activity
