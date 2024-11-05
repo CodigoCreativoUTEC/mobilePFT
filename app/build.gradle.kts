@@ -80,7 +80,9 @@ dependencies {
     implementation (libs.androidx.credentials.play.services.auth.v120beta03)
     implementation (libs.play.services.auth.v2070)
 
+    // Glide para cargar imágenes
+    implementation(libs.glide)
+
 }
 
-// Aquí debes agregar el plugin de Google Services al final
 apply(plugin = "com.google.gms.google-services")

@@ -2,6 +2,7 @@ package com.codigocreativo.mobile.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.equipos.EquiposActivity
 import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
 import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
@@ -55,6 +57,7 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
         usuarioCard.setOnClickListener {
             val intent = Intent(this, UsuariosActivity::class.java)
             startActivity(intent)
@@ -66,7 +69,7 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         equiposCard.setOnClickListener {
-            // val intent = Intent(this, EquiposActivity::class.java)
+            val intent = Intent(this, EquiposActivity::class.java)
             startActivity(intent)
         }
 
