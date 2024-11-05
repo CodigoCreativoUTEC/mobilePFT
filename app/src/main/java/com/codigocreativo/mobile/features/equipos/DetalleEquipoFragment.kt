@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.features.equipos
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.modelo.SelectorModeloFragment
 import com.codigocreativo.mobile.features.paises.SelectorPaisFragment
@@ -18,6 +20,7 @@ import com.codigocreativo.mobile.features.tipoEquipo.SelectorTipoEquipoFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDate
 
 class DetalleEquipoFragment(
     private val equipo: Equipo,
@@ -36,6 +39,7 @@ class DetalleEquipoFragment(
     private lateinit var idInput: TextView
     private lateinit var estadoSpinner: Spinner
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,8 +82,8 @@ class DetalleEquipoFragment(
             }
         }
         nroSerieInput.setText(equipo.nroSerie)
-        garantiaInput.setText(equipo.garantia)
-        fechaAdquisicionInput.setText(equipo.fechaAdquisicion)
+        garantiaInput.setText(equipo.garantia.toString())
+        fechaAdquisicionInput.setText(equipo.fechaAdquisicion.toString())
         idInput.text = equipo.id.toString()
         estadoSpinner.setSelection(Estado.entries.indexOf(equipo.estado))
 

@@ -1,4 +1,6 @@
-package com.codigocreativo.mobile.features.equipos
+package com.codigocreativo.mobile.features.ubicacion
+
+import com.codigocreativo.mobile.features.equipos.Institucion
 
 data class Ubicacion(
     val cama: Any,
