@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.features.tipoEquipo
+package com.codigocreativo.mobile.features.ubicacion
 
 import android.os.Bundle
 import android.util.Log
@@ -17,11 +17,11 @@ import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 
-class SelectorTipoEquipoFragment : Fragment() {
+class SelectorUbicacionFragment : Fragment() {
 
-    private lateinit var spinnerTipoEquipo: Spinner
+    private lateinit var spinnerUbicacion: Spinner
     private val dataRepository = DataRepository()
-    private var tiposEquipos: List<TipoEquipo> = emptyList()
+    private var ubicaciones: List<Ubicacion> = emptyList()
     private var pendingSelection: String? = null
 
     // LiveData to observe the loading state
@@ -32,63 +32,63 @@ class SelectorTipoEquipoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_selector_tipo_equipo, container, false)
-        spinnerTipoEquipo = view.findViewById(R.id.spinnerTipoEquipo)
-        cargarTipoEquipos()
+        val view = inflater.inflate(R.layout.fragment_selector_ubicacion, container, false)
+        spinnerUbicacion = view.findViewById(R.id.spinnerUbicacion)
+        cargarUbicaciones()
         return view
     }
 
-    private fun cargarTipoEquipos() {
+    private fun cargarUbicaciones() {
         val token = SessionManager.getToken(requireContext())
         if (token != null) {
             val retrofit = RetrofitClient.getClient(token)
-            val paisApiService = retrofit.create(TipoEquipoApiService::class.java)
+            val ubicacionApiService = retrofit.create(UbicacionesApiService::class.java)
 
             lifecycleScope.launch {
                 val result = dataRepository.obtenerDatos(token) {
-                    paisApiService.listarTipoEquipos("Bearer $token")
+                    ubicacionApiService.listar("Bearer $token")
                 }
 
-                result.onSuccess { tiposEquiposList ->
-                    tiposEquipos = tiposEquiposList
-                    val nombresTipoEquipoes = tiposEquipos.map { it.nombreTipo }
+                result.onSuccess { ubicacionesList ->
+                    ubicaciones = ubicacionesList
+                    val nombresUbicaciones = ubicaciones.map { it.nombre }
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_spinner_item,
-                        nombresTipoEquipoes
+                        nombresUbicaciones
                     )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinnerTipoEquipo.adapter = adapter
+                    spinnerUbicacion.adapter = adapter
 
                     // If there was a pending selection, set it now
                     pendingSelection?.let {
-                        setSelectedTipo(it)
+                        setSelectedUbicacion(it)
                         pendingSelection = null
                     }
 
                     // Update the loading state
                     _isDataLoaded.value = true
                 }.onFailure { exception ->
-                    Log.e("SelectorTipoEquipoFragment", "Error al cargar los países", exception)
+                    Log.e("SelectorUbicacionFragment", "Error al cargar los países", exception)
                 }
             }
         }
     }
 
-    fun getSelectedTipo(): TipoEquipo? {
-        val selectedCountryName = spinnerTipoEquipo.selectedItem.toString()
-        return tiposEquipos.find { it.nombreTipo == selectedCountryName }
+    fun getSelectedUbicacion(): Ubicacion? {
+        val selectedCountryName = spinnerUbicacion.selectedItem.toString()
+        return ubicaciones.find { it.nombre == selectedCountryName }
     }
 
-    fun setSelectedTipo(nombreTipoEquipo: String) {
-        if (tiposEquipos.isNotEmpty()) {
-            val index = tiposEquipos.indexOfFirst { it.nombreTipo == nombreTipoEquipo }
+    fun setSelectedUbicacion(nombreUbicacion: String) {
+        if (ubicaciones.isNotEmpty()) {
+            val index = ubicaciones.indexOfFirst { it.nombre == nombreUbicacion }
             if (index >= 0) {
-                spinnerTipoEquipo.setSelection(index)
+                spinnerUbicacion.setSelection(index)
             }
         } else {
-            // If paises is not yet initialized, store the selection for later
-            pendingSelection = nombreTipoEquipo
+            // If ubicaciones is not yet initialized, store the selection for later
+            pendingSelection = nombreUbicacion
         }
     }
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="left"
+    android:gravity="start"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -11,36 +11,230 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crear Proveedor"
+        android:text="Alta de Equipo"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:gravity="center"
+        android:gravity="left"
         android:paddingBottom="16dp" />
 
-    <!-- Nombre Field -->
-    <EditText
-        android:id="@+id/tfNombre"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre"
-        android:textSize="18sp"
-        android:paddingBottom="16dp" />
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/imagenTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Imagen"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <ImageView
+            android:id="@+id/imagenImageView"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_width="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:orientation="horizontal">
 
-    <!-- Spinner Label -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Seleccionar País"
-        android:textSize="18sp"
-        android:paddingBottom="8dp" />
+        <!-- Nombre del modelo -->
+        <TextView
+            android:id="@+id/nombreTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="Nombre"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-    <!-- Spinner Fragment -->
-    <fragment
-        android:id="@+id/fragmentPaisPicker"
-        android:name="com.codigocreativo.mobile.features.paises.SelectorPaisFragment"
+        <!-- EditText for ID -->
+        <EditText
+            android:id="@+id/nombreInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:textSize="20sp" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp" />
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/serieTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Núm. Serie"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <EditText
+            android:id="@+id/serieInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:gravity="left" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/garantiaTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Garantía"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <EditText
+            android:id="@+id/garantiaInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:clickable="true" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/tipoEquipoTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tipo"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <fragment
+            android:id="@+id/fragmentSelectorTipoEquipo"
+            android:name="com.codigocreativo.mobile.features.tipoEquipo.SelectorTipoEquipoFragment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/proveedorTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Proveedor"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <fragment
+            android:id="@+id/fragmentSelectorProveedor"
+            android:name="com.codigocreativo.mobile.features.proveedores.SelectorProveedorFragment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/paisTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pais"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <fragment
+            android:id="@+id/fragmentSelectorPais"
+            android:name="com.codigocreativo.mobile.features.paises.SelectorPaisFragment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/modeloTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Modelo"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <fragment
+            android:id="@+id/fragmentSelectorModelo"
+            android:name="com.codigocreativo.mobile.features.modelo.SelectorModeloFragment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/ubicacionTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ubicación"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <fragment
+            android:id="@+id/fragmentSelectorUbicacion"
+            android:name="com.codigocreativo.mobile.features.ubicacion.SelectorUbicacionFragment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/fechaAdquisicionTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Fecha Adq."
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="left"/>
+        <EditText
+            android:id="@+id/fechaAdquisicionInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:clickable="true" />
+    </LinearLayout>
 
     <!-- Confirm Button -->
     <Button
@@ -52,4 +246,5 @@
         android:textColor="#A08052"
         android:textSize="18sp"
         app:cornerRadius="16dp" />
+
 </LinearLayout>
