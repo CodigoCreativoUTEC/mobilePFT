@@ -187,6 +187,7 @@ class EquiposActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
+
     private fun loadEquipos(token: String, nombre: String? = null, estado: String? = null) {
         val retrofit = RetrofitClient.getClient(token)
         val apiService = retrofit.create(EquiposApiService::class.java)

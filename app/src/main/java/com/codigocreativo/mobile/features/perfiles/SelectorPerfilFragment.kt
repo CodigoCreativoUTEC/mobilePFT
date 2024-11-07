@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.features.usuarios
+package com.codigocreativo.mobile.features.perfiles
 
 import android.os.Bundle
 import android.util.Log
@@ -10,8 +10,6 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.perfiles.Perfil
-import com.codigocreativo.mobile.features.perfiles.PerfilesApiService
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.SessionManager

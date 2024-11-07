@@ -166,12 +166,11 @@
                 android:textStyle="bold"
                 android:alpha="0.7"/>
 
-            <Spinner
-                android:id="@+id/spinnerUserType"
+            <fragment
+                android:id="@+id/spinnerPerfil"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <!-- android:entries="@array/user_types" -->
+                android:layout_height="wrap_content"
+                android:name="com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment"/>
 
             <!-- Botón de Registrar -->
             <com.google.android.material.button.MaterialButton
@@ -180,12 +179,14 @@
                 android:layout_height="60dp"
                 android:text="Registrar"
                 app:cornerRadius="32dp"
-                android:layout_marginTop="24dp"/>
+                android:layout_marginTop="24dp"
+                android:layout_alignParentBottom="true"/>
 
         </LinearLayout>
     </ScrollView>
 
 </RelativeLayout>
+
 
 
 

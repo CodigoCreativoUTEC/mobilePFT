@@ -13,70 +13,71 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.network.ApiService
-import com.codigocreativo.mobile.network.Institucion
-import com.codigocreativo.mobile.network.Perfil
+import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
+import com.codigocreativo.mobile.features.usuarios.Usuario
+import com.codigocreativo.mobile.features.usuarios.UsuariosApiService
+import com.codigocreativo.mobile.features.institucion.Institucion
+import com.codigocreativo.mobile.features.perfiles.Perfil
+import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
-import com.codigocreativo.mobile.network.User
-import com.codigocreativo.mobile.network.UsuariosTelefono
+import com.codigocreativo.mobile.features.usuarios.Telefono
 import com.codigocreativo.mobile.utils.Estado
+import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Registro : AppCompatActivity() {
 
+    private val dataRepository = DataRepository()
+
+    private lateinit var perfilPickerFragment: SelectorPerfilFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registro)
 
-        // Función para registrar un usuario en el backend
-        fun registrarUsuario(usuario: User) {
-            // Inicializar el servicio de la API
-            val apiService = RetrofitClient.getClient(token = "").create(ApiService::class.java)
+        // Crear una instancia de SelectorPerfilFragment
+        perfilPickerFragment = SelectorPerfilFragment()
 
-            // Ejecutar la solicitud de registro en un hilo de fondo
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val response = apiService.registrarUsuario(usuario)
-                    withContext(Dispatchers.Main) {
-                        if (response.isSuccessful) {
-                            // Registro exitoso
-                            Log.d("Registro", "Usuario registrado correctamente: ${response.body()}")
-                            Toast.makeText(this@Registro, "Registro exitoso", Toast.LENGTH_LONG).show()
-                            // Redirigir al login
-                            val intent = Intent(this@Registro, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            // Error en el registro
-                            val errorMsg = response.errorBody()?.string() ?: "Error desconocido"
-                            Log.e("Error", "Error en el registro: $errorMsg")
-                            Toast.makeText(this@Registro, "Error en el registro: $errorMsg", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                } catch (e: HttpException) {
-                    val errorBody = e.response()?.errorBody()?.string() ?: "Error desconocido"
-                    withContext(Dispatchers.Main) {
-                        Log.e("Error", "Error en la solicitud: $errorBody")
-                        Toast.makeText(this@Registro, "Error en la solicitud: $errorBody", Toast.LENGTH_LONG).show()
-                    }
-                } catch (e: Exception) {
-                    // Manejo de excepciones en caso de fallo en la solicitud
-                    withContext(Dispatchers.Main) {
-                        Log.e("Error", "Excepción en el registro: ${e.message}")
-                        Toast.makeText(this@Registro, "Excepción en el registro: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+        // Reemplazar el contenedor con el fragmento de perfil
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentPerfilPicker, perfilPickerFragment)
+            .commit()
+
+        // Función para registrar un usuario en el backend
+        fun registrarUsuario(usuario: Usuario) {
+            val token = SessionManager.getToken(this)
+            if (token != null) {
+
+            val apiService = RetrofitClient.getClient(token = token).create(UsuariosApiService::class.java)
+                val dataRepository = DataRepository()
+
+            lifecycleScope.launch {
+
+                    val result = dataRepository.obtenerDatos(
+                        token = token,
+                        apiCall = { apiService.crearUsuario("Bearer $token",usuario) }
+                    )
+
+                    result.onSuccess { usuarios ->
+                        //mensaje de exito usuario creado con exito
+                        //
+
+                    }.onFailure { error ->
+
+        }
                 }
             }
         }
+
 
         // Obtener la referencia al layout principal y aplicar los márgenes de las barras del sistema
         val mainView = findViewById<RelativeLayout>(R.id.main)
@@ -97,6 +98,10 @@ class Registro : AppCompatActivity() {
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etBirthdate = findViewById<EditText>(R.id.etBirthdate)
         val etPhone = findViewById<EditText>(R.id.etPhone)
+
+
+
+
 
         // Configurar el DatePickerDialog para el campo de fecha de nacimiento
         etBirthdate.setOnClickListener {
@@ -145,6 +150,16 @@ class Registro : AppCompatActivity() {
             val fechaNacimiento = etBirthdate.text.toString().trim()
             val telefono = etPhone.text.toString().trim()
 
+            val perfilSeleccionado = perfilPickerFragment.getSelectedPerfil()
+
+            if (perfilSeleccionado == null) {
+                Log.e("Error", "Debe seleccionar un perfil")
+                Toast.makeText(this, "Debe seleccionar un perfil", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+
+
             // Validar el formato de la fecha de nacimiento
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val birthDate: Date? = try {
@@ -173,18 +188,16 @@ class Registro : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Crear un perfil predeterminado (en este caso, Administrador)
-            val perfil = Perfil(id = 1, nombrePerfil = "Administrador", Estado.ACTIVO, funcionalidades = emptyList())
 
             // Crear la lista de teléfonos
             val usuariosTelefonos = if (telefono.isNotEmpty()) {
-                listOf(UsuariosTelefono(id = 0, numero = telefono))
+                listOf(Telefono(id = 0, numero = telefono))
             } else {
                 emptyList()
             }
 
             // Crear el objeto Usuario con la información proporcionada
-            val nuevoUsuario = User(
+            val nuevoUsuario = Usuario(
                 id = 0, // El ID se genera automáticamente en el backend
                 cedula = cedula,
                 email = email,
@@ -195,7 +208,7 @@ class Registro : AppCompatActivity() {
                 apellido = apellido,
                 nombreUsuario = nombreUsuario,
                 idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"), // Institución predeterminada
-                idPerfil = perfil,
+                idPerfil = perfilSeleccionado,
                 usuariosTelefonos = usuariosTelefonos // Agregar el teléfono si se proporciona
             )
 

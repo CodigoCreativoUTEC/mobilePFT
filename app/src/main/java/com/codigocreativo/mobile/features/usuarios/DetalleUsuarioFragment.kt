@@ -11,6 +11,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.institucion.Institucion
+import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
@@ -54,7 +55,10 @@ class DetalleUsuarioFragment(
         cedulaInput = view.findViewById(R.id.cedulaInput)
         nombreUsuarioInput = view.findViewById(R.id.nombreUsuarioInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
-        perfilPickerFragment = childFragmentManager.findFragmentById(R.id.fragmentPerfilPicker) as SelectorPerfilFragment
+        perfilPickerFragment = SelectorPerfilFragment()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragmentPerfilPicker, perfilPickerFragment)
+            .commit()
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
         institucionSpinner = view.findViewById(R.id.institucionSpinner)
 
@@ -64,7 +68,7 @@ class DetalleUsuarioFragment(
         apellidoInput.setText(usuario.apellido)
         fechaNacimientoInput.setText(usuario.fechaNacimiento)
         emailInput.setText(usuario.email)
-        telefonoInput.setText(usuario.usuariosTelefonos.joinToString(", ") { it.numero })
+        telefonoInput.setText(usuario.usuariosTelefonos?.joinToString(", ") { it.numero } ?: "")
         cedulaInput.setText(usuario.cedula)
         nombreUsuarioInput.setText(usuario.nombreUsuario)
         perfilPickerFragment.setSelectedPerfil(usuario.idPerfil.toString())

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -15,14 +16,14 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:paddingBottom="16dp" />
+        android:paddingBottom="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- ID del usuario -->
         <TextView
@@ -36,7 +37,7 @@
             android:gravity="center"/>
 
         <!-- EditText for ID -->
-        <TextView
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/idInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -50,11 +51,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Cedula del usuario -->
         <TextView
-            android:id="@+id/idTextView"
+            android:id="@+id/cedulaTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,7 +65,7 @@
             android:gravity="center"/>
 
         <!-- EditText for ID -->
-        <TextView
+        <EditText
             android:id="@+id/cedulaInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,7 +79,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Nombre del usuario -->
         <TextView
@@ -106,7 +107,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Apellido del usuario -->
         <TextView
@@ -120,7 +121,7 @@
             android:gravity="center"/>
 
         <!-- EditText for ID -->
-        <TextView
+        <EditText
             android:id="@+id/apellidoInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -133,7 +134,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Fecha Nacimiento del usuario -->
         <TextView
@@ -147,7 +148,7 @@
             android:gravity="center"/>
 
         <!-- EditText for fecha de nacimiento -->
-        <TextView
+        <EditText
             android:id="@+id/fechaNacimientoInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -160,7 +161,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Email del usuario -->
         <TextView
@@ -174,7 +175,7 @@
             android:gravity="center"/>
 
         <!-- EditText for ID -->
-        <TextView
+        <EditText
             android:id="@+id/emailInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -187,7 +188,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Telefono del usuario -->
         <TextView
@@ -201,7 +202,7 @@
             android:gravity="center"/>
 
         <!-- EditText for ID -->
-        <TextView
+        <EditText
             android:id="@+id/telefonoInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -214,7 +215,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Nombre de usuario del usuario -->
         <TextView
@@ -228,7 +229,7 @@
             android:gravity="center"/>
 
         <!-- EditText for  nombreusuario-->
-        <TextView
+        <EditText
             android:id="@+id/nombreUsuarioInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -241,7 +242,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
         <!-- Institucion del usuario -->
         <TextView
@@ -259,18 +260,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="5dp" />
     </LinearLayout>
+    <!-- Perfil del usuario -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="5dp">
 
-        <!-- Perfil del usuario -->
         <TextView
-            android:id="@+id/perfilTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -279,7 +279,8 @@
             android:textSize="20sp"
             android:gravity="center"/>
 
-        <Spinner
+        <!-- Contenedor para SelectorPerfilFragment -->
+        <FrameLayout
             android:id="@+id/fragmentPerfilPicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -295,7 +296,7 @@
         android:gravity="center"
         android:layout_marginBottom="16dp">
 
-        <!-- Nombre del modelo -->
+        <!-- Estado del usuario -->
         <TextView
             android:id="@+id/estadoTextView"
             android:layout_width="0dp"
