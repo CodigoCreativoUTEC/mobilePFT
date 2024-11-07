@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.network.DataRepository
@@ -20,7 +22,11 @@ class SelectorPerfilFragment : Fragment() {
     private lateinit var spinnerPerfil: Spinner
     private val dataRepository = DataRepository()
     private var perfiles: List<Perfil> = emptyList()
-    private var pendingPerfilSelection: String? = null
+    private var pendingCountrySelection: String? = null
+
+    // LiveData to observe the loading state
+    private val _isDataLoaded = MutableLiveData<Boolean>()
+    val isDataLoaded: LiveData<Boolean> get() = _isDataLoaded
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +42,7 @@ class SelectorPerfilFragment : Fragment() {
         val token = SessionManager.getToken(requireContext())
         if (token != null) {
             val retrofit = RetrofitClient.getClient(token)
-            val perfilApiService = retrofit.create(PerfilesApiService::class.java)
+            val perfilApiService = retrofit.create(PerfilApiService::class.java)
 
             lifecycleScope.launch {
                 val result = dataRepository.obtenerDatos(token) {
@@ -50,21 +56,28 @@ class SelectorPerfilFragment : Fragment() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerPerfil.adapter = adapter
 
-                    // If there was a pending perfil selection, set it now
-                    pendingPerfilSelection?.let {
+                    // If there was a pending country selection, set it now
+                    pendingCountrySelection?.let {
                         setSelectedPerfil(it)
-                        pendingPerfilSelection = null
+                        pendingCountrySelection = null
                     }
+
+                    // Update the loading state
+                    _isDataLoaded.value = true
                 }.onFailure { exception ->
-                    Log.e("SelectorPerfilFragment", "Error al cargar los perfiles", exception)
+                    Log.e("SelectorPerfilFragment", "Error al cargar los países", exception)
                 }
             }
         }
     }
 
     fun getSelectedPerfil(): Perfil? {
-        val selectedPerfilName = spinnerPerfil.selectedItem.toString()
-        return perfiles.find { it.nombrePerfil == selectedPerfilName }
+        if (!::spinnerPerfil.isInitialized || spinnerPerfil.adapter == null) {
+            Log.e("SelectorPerfilFragment", "spinnerPerfil is not initialized or adapter is not set")
+            return null
+        }
+        val selectedCountryName = spinnerPerfil.selectedItem.toString()
+        return perfiles.find { it.nombrePerfil == selectedCountryName }
     }
 
     fun setSelectedPerfil(nombrePerfil: String) {
@@ -74,8 +87,7 @@ class SelectorPerfilFragment : Fragment() {
                 spinnerPerfil.setSelection(index)
             }
         } else {
-            // If perfiles is not yet initialized, store the selection for later
-            pendingPerfilSelection = nombrePerfil
+            pendingCountrySelection = nombrePerfil
         }
     }
 }

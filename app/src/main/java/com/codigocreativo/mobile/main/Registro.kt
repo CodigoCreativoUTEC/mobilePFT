@@ -1,7 +1,6 @@
 package com.codigocreativo.mobile.main
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
@@ -26,11 +26,7 @@ import com.codigocreativo.mobile.features.usuarios.Telefono
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,6 +35,7 @@ class Registro : AppCompatActivity() {
     private val dataRepository = DataRepository()
 
     private lateinit var perfilPickerFragment: SelectorPerfilFragment
+    private var perfilSeleccionado: Perfil? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,37 +44,15 @@ class Registro : AppCompatActivity() {
         // Crear una instancia de SelectorPerfilFragment
         perfilPickerFragment = SelectorPerfilFragment()
 
-        // Reemplazar el contenedor con el fragmento de perfil
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentPerfilPicker, perfilPickerFragment)
-            .commit()
 
-        // Función para registrar un usuario en el backend
-        fun registrarUsuario(usuario: Usuario) {
-            val token = SessionManager.getToken(this)
-            if (token != null) {
 
-            val apiService = RetrofitClient.getClient(token = token).create(UsuariosApiService::class.java)
-                val dataRepository = DataRepository()
-
-            lifecycleScope.launch {
-
-                    val result = dataRepository.obtenerDatos(
-                        token = token,
-                        apiCall = { apiService.crearUsuario("Bearer $token",usuario) }
-                    )
-
-                    result.onSuccess { usuarios ->
-                        //mensaje de exito usuario creado con exito
-                        //
-
-                    }.onFailure { error ->
-
-        }
-                }
+        // Observe the loading state of the fragment
+        perfilPickerFragment.isDataLoaded.observe(this, Observer { isLoaded ->
+            if (isLoaded) {
+                // Now you can safely access getSelectedPerfil
+                perfilSeleccionado = perfilPickerFragment.getSelectedPerfil()
             }
-        }
-
+        })
 
         // Obtener la referencia al layout principal y aplicar los márgenes de las barras del sistema
         val mainView = findViewById<RelativeLayout>(R.id.main)
@@ -98,10 +73,6 @@ class Registro : AppCompatActivity() {
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etBirthdate = findViewById<EditText>(R.id.etBirthdate)
         val etPhone = findViewById<EditText>(R.id.etPhone)
-
-
-
-
 
         // Configurar el DatePickerDialog para el campo de fecha de nacimiento
         etBirthdate.setOnClickListener {
@@ -132,6 +103,7 @@ class Registro : AppCompatActivity() {
                 val apellido = etLastName.text.toString().lowercase(Locale.getDefault())
                 etUsername.setText("$nombre.$apellido")
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
         etFirstName.addTextChangedListener(textWatcher)
@@ -150,15 +122,11 @@ class Registro : AppCompatActivity() {
             val fechaNacimiento = etBirthdate.text.toString().trim()
             val telefono = etPhone.text.toString().trim()
 
-            val perfilSeleccionado = perfilPickerFragment.getSelectedPerfil()
-
             if (perfilSeleccionado == null) {
                 Log.e("Error", "Debe seleccionar un perfil")
                 Toast.makeText(this, "Debe seleccionar un perfil", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
-
 
             // Validar el formato de la fecha de nacimiento
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -188,7 +156,6 @@ class Registro : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
             // Crear la lista de teléfonos
             val usuariosTelefonos = if (telefono.isNotEmpty()) {
                 listOf(Telefono(id = 0, numero = telefono))
@@ -207,13 +174,38 @@ class Registro : AppCompatActivity() {
                 nombre = nombre,
                 apellido = apellido,
                 nombreUsuario = nombreUsuario,
-                idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"), // Institución predeterminada
-                idPerfil = perfilSeleccionado,
+                idInstitucion = Institucion(
+                    id = 1,
+                    nombre = "CodigoCreativo"
+                ), // Institución predeterminada
+                idPerfil = perfilSeleccionado!!,
                 usuariosTelefonos = usuariosTelefonos // Agregar el teléfono si se proporciona
             )
 
             // Llamar a la función para registrar al usuario
             registrarUsuario(nuevoUsuario)
+        }
+    }
+
+    // Función para registrar un usuario en el backend
+    private fun registrarUsuario(usuario: Usuario) {
+        val token = SessionManager.getToken(this)
+        if (token != null) {
+            val apiService = RetrofitClient.getClient(token = token).create(UsuariosApiService::class.java)
+            val dataRepository = DataRepository()
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(
+                    token = token,
+                    apiCall = { apiService.crearUsuario("Bearer $token", usuario) }
+                )
+
+                result.onSuccess { response ->
+                    Log.i("Response", response.toString())
+                }.onFailure { error ->
+                    Log.e("Error", error.message.toString())
+                }
+            }
         }
     }
 }
