@@ -1,11 +1,11 @@
+<!-- res/menu/drawer_menu.xml -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_perfil"
+        android:id="@+id/nav_view_profile"
         android:title="Ver Perfil"
-        android:icon="@drawable/ic_menu" />
+        android:icon="@drawable/ic_view_profile" />
     <item
         android:id="@+id/nav_logout"
-        android:title="Cerrar Sesion"
-        android:icon="@drawable/ic_menu" />
-
+        android:title="Cerrar Sesión"
+        android:icon="@drawable/ic_logout" />
 </menu>
