@@ -16,17 +16,22 @@ import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
+import android.widget.AdapterView
+
 
 class SelectorPerfilFragment : Fragment() {
 
     private lateinit var spinnerPerfil: Spinner
     private val dataRepository = DataRepository()
     private var perfiles: List<Perfil> = emptyList()
-    private var pendingCountrySelection: String? = null
+    private var pendingPerfilSelection: String? = null
 
-    // LiveData to observe the loading state
+    // LiveData to observe the loading state and selected profile
     private val _isDataLoaded = MutableLiveData<Boolean>()
     val isDataLoaded: LiveData<Boolean> get() = _isDataLoaded
+
+    private val _selectedPerfil = MutableLiveData<Perfil?>()
+    val selectedPerfil: LiveData<Perfil?> get() = _selectedPerfil
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +40,7 @@ class SelectorPerfilFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_selector_perfil, container, false)
         spinnerPerfil = view.findViewById(R.id.spinnerPerfil)
         cargarPerfiles()
+        setupSpinnerListener() // Configurar el listener para el spinner
         return view
     }
 
@@ -44,7 +50,7 @@ class SelectorPerfilFragment : Fragment() {
             val retrofit = RetrofitClient.getClient(token)
             val perfilApiService = retrofit.create(PerfilApiService::class.java)
 
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 val result = dataRepository.obtenerDatos(token) {
                     perfilApiService.listarPerfiles("Bearer $token")
                 }
@@ -56,16 +62,16 @@ class SelectorPerfilFragment : Fragment() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerPerfil.adapter = adapter
 
-                    // If there was a pending country selection, set it now
-                    pendingCountrySelection?.let {
+                    // Set pending selection if there was one
+                    pendingPerfilSelection?.let {
                         setSelectedPerfil(it)
-                        pendingCountrySelection = null
+                        pendingPerfilSelection = null
                     }
 
                     // Update the loading state
                     _isDataLoaded.value = true
                 }.onFailure { exception ->
-                    Log.e("SelectorPerfilFragment", "Error al cargar los países", exception)
+                    Log.e("SelectorPerfilFragment", "Error al cargar los perfiles", exception)
                 }
             }
         }
@@ -76,8 +82,8 @@ class SelectorPerfilFragment : Fragment() {
             Log.e("SelectorPerfilFragment", "spinnerPerfil is not initialized or adapter is not set")
             return null
         }
-        val selectedCountryName = spinnerPerfil.selectedItem.toString()
-        return perfiles.find { it.nombrePerfil == selectedCountryName }
+        val selectedPerfilName = spinnerPerfil.selectedItem.toString()
+        return perfiles.find { it.nombrePerfil == selectedPerfilName }
     }
 
     fun setSelectedPerfil(nombrePerfil: String) {
@@ -87,7 +93,20 @@ class SelectorPerfilFragment : Fragment() {
                 spinnerPerfil.setSelection(index)
             }
         } else {
-            pendingCountrySelection = nombrePerfil
+            pendingPerfilSelection = nombrePerfil
+        }
+    }
+
+    // Listener to update selected profile when user selects an item
+    private fun setupSpinnerListener() {
+        spinnerPerfil.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                _selectedPerfil.value = perfiles.getOrNull(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                _selectedPerfil.value = null
+            }
         }
     }
 }
