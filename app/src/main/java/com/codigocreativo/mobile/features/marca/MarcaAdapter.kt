@@ -22,7 +22,6 @@ class MarcaAdapter(
         val idTextView: TextView = itemView.findViewById(R.id.idTextView)
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarcaViewHolder {
@@ -36,7 +35,8 @@ class MarcaAdapter(
         holder.nombreTextView.text = marca.nombre
         holder.estadoTextView.text = marca.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        // Manejar el clic en el elemento completo
+        holder.itemView.setOnClickListener {
             onDetalleClick(marca)
         }
     }

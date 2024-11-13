@@ -8,11 +8,15 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 // Retrofit interface para la API
 interface MarcaApiService {
     @GET("marca/listar")
     suspend fun listarMarcas(@Header("Authorization") token: String): Response<List<Marca>>
+
+    @GET("marca/listar")
+    suspend fun listarMarcasFiltradas(@Header("Authorization") token: String, @Query("nombre") nombre: String?, @Query("estado") estado: String?): Response<List<Marca>>
 
     @POST("marca/crear")
     suspend fun crearMarca(@Header("Authorization") token: String, @Body nuevaMarca: Marca): Response<Unit>

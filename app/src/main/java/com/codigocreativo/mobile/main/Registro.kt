@@ -73,10 +73,10 @@ class Registro : AppCompatActivity() {
         configureUsernameGeneration(etFirstName, etLastName, etUsername)
 
         btnRegister.setOnClickListener {
-          //  if (perfilSeleccionado == null) {
+            //  if (perfilSeleccionado == null) {
             //    showToast("Debe seleccionar un perfil")
             //    return@setOnClickListener
-      //      }
+            //      }
 
             val birthDate = validateAndGetDate(etBirthdate.text.toString())
             if (birthDate == null) {

@@ -1,17 +1,12 @@
 package com.codigocreativo.mobile.features.marca
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -20,16 +15,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.proveedores.DetalleProveedorFragment
-import com.codigocreativo.mobile.features.proveedores.IngresarProveedorFragment
-import com.codigocreativo.mobile.features.proveedores.Proveedor
-import com.codigocreativo.mobile.features.proveedores.ProveedorAdapter
-import com.codigocreativo.mobile.features.proveedores.ProveedoresApiService
-import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
+import androidx.appcompat.widget.SearchView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -38,10 +28,11 @@ class MarcasActivity : AppCompatActivity() {
 
     private lateinit var adapter: MarcaAdapter
     private lateinit var recyclerView: RecyclerView
-    private var marcasList = mutableListOf<Marca>() // Lista dinámica de marca cargados desde el API
+    private var marcasList = mutableListOf<Marca>() // Lista dinámica de marcas cargados desde el API
     private var filteredList = mutableListOf<Marca>()
     private val dataRepository = DataRepository()
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_marcas)
@@ -49,7 +40,7 @@ class MarcasActivity : AppCompatActivity() {
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = MarcaAdapter(filteredList, this) {marca ->
+        adapter = MarcaAdapter(filteredList, this) { marca ->
             showDetalleMarcaFragment(marca)
         }
         recyclerView.adapter = adapter
@@ -71,7 +62,7 @@ class MarcasActivity : AppCompatActivity() {
         setupFilters()
 
         // Action listener de Ingresar Marca
-        findViewById<Button>(R.id.btn_ingresar).setOnClickListener {
+        findViewById<ImageView>(R.id.image_add).setOnClickListener {
             val bottomSheetFragment = IngresarMarcaFragment { marca ->
                 if (token != null) {
                     val retrofit = RetrofitClient.getClient(token)
@@ -110,12 +101,7 @@ class MarcasActivity : AppCompatActivity() {
             }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
-        // Action listener de Volver al Menú
-        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -190,14 +176,19 @@ class MarcasActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = dataRepository.obtenerDatos(
                 token = token,
-                apiCall = { apiService.listarMarcas("Bearer $token") }
+                apiCall = { apiService.listarMarcasFiltradas("Bearer $token", nombre, estado) }
             )
 
             result.onSuccess { marcas ->
                 marcasList.clear()
-                marcasList.addAll(marcas) // Agregar las marcas obtenidos
+                marcasList.addAll(marcas) // Agregar las marcas obtenidas
                 adapter.updateList(marcasList) // Actualizar el RecyclerView con las marcas
             }.onFailure { error ->
+                Snackbar.make(
+                    findViewById(R.id.recyclerView),
+                    "Error al cargar las marcas: ${error.message}",
+                    Snackbar.LENGTH_LONG
+                ).show()
                 Log.e("MarcasActivity", "Error al cargar las marcas: ${error.message}")
             }
         }
@@ -245,61 +236,76 @@ class MarcasActivity : AppCompatActivity() {
     }
 
     private fun setupFilters() {
-        val filterName: EditText = findViewById(R.id.filter_name)
+        val searchView: SearchView = findViewById(R.id.search_view)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
         // Configuración del spinner de estado
-        val statusAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterStatus.adapter = statusAdapter
 
-        // Listener para aplicar filtros
-        val applyFilters = {
-            val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
-            val nombre = filterName.text.toString().takeIf { it.isNotEmpty() }
-            val estado = (filterStatus.selectedItem as Estado).name
-            if (token != null) {
-                loadMarcas(token = token, nombre = nombre, estado = estado)
-            }
-        }
-
-        filterName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                applyFilters()
+        // Listener para aplicar filtros cuando cambia el texto de búsqueda
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Opcional: Puedes manejar la acción de búsqueda aquí si lo deseas
+                return false
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onQueryTextChange(newText: String?): Boolean {
+                applyFilters() // Aplica los filtros cada vez que cambia el texto
+                return true
+            }
         })
 
+        // Listener para aplicar filtros cuando se selecciona un estado diferente en el Spinner
         filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>,
+                parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                applyFilters()
+                applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Listener para el evento de cierre del SearchView (opcional)
+        searchView.setOnCloseListener {
+            applyFilters() // Aplica los filtros cuando se cierra el SearchView
+            false
         }
     }
 
-    // Método de filtro para marcas
-    private fun filterMarcas() {
-        val nameFilter =
-            findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
-        val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado
+    // Función para aplicar los filtros (actualizada)
+    private fun applyFilters() {
+        val searchView: SearchView = findViewById(R.id.search_view)
+        val filterStatus: Spinner = findViewById(R.id.filter_status)
+
+        val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
+        val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
+
+        filterMarcas(nombre, estado) // Aplica los filtros localmente
+    }
+
+    // Función para filtrar la lista de marcas (actualizada)
+    private fun filterMarcas(nombre: String?, estado: Estado) {
+        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
+        val statusFilter = estado
 
         // Filtrar la lista de marcas
-        filteredList = marcasList.filter { marcas ->
-            marcas.nombre.lowercase(Locale.getDefault()).contains(nameFilter) &&
-                    (statusFilter == Estado.ACTIVO || statusFilter == Estado.INACTIVO || marcas.estado == statusFilter)
+        filteredList = marcasList.filter { marca ->
+            val matchesName = marca.nombre.lowercase(Locale.getDefault()).contains(nameFilter)
+            val matchesStatus = marca.estado == statusFilter
+
+            matchesName && matchesStatus
         }.toMutableList()
 
         // Actualizar el RecyclerView con la lista filtrada
-        adapter.updateList(filteredList)
+        adapter.updateList(filteredList) // Asegúrate de que este método esté correctamente implementado
     }
 }
+
+
+

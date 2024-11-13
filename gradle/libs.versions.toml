@@ -26,6 +26,7 @@ okhttp = "4.9.1"
 playServicesAuth = "21.2.0"
 identityCredential = "20231002"
 playServicesAuthVersion = "20.7.0"
+roomKtx = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 identity-credential = { group = "com.android.identity", name = "identity-credential", version.ref = "identityCredential" }
 glide = { module = "com.github.bumptech.glide:glide", version = "4.14.2" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
