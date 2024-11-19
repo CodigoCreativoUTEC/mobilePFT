@@ -20,6 +20,7 @@ interface TipoEquipoApiService {
         @Query("estado") estado: String? = null
     ): Response<List<TipoEquipo>>
 
+
     @POST("tipoEquipos/crear")
     suspend fun crearTipoEquipo(@Header("Authorization") token: String, @Body nuevoTipoEquipo: TipoEquipo): Response<Unit>
 

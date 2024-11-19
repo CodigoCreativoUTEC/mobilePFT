@@ -20,6 +20,9 @@ interface ModeloApiService {
         @Query("estado") estado: String? = null
     ): Response<List<Modelo>>
 
+    @GET("modelo/listar")
+    suspend fun listarModelosFiltrados(@Header("Authorization") token: String, @Query("nombre") nombre: String?, @Query("estado") estado: String?): Response<List<Modelo>>
+
     @GET("modelo/buscar")
     suspend fun buscarModelo(
         @Header("Authorization") token: String,
@@ -28,7 +31,7 @@ interface ModeloApiService {
     ): Response<List<Modelo>>
 
     @PUT("modelo/modificar")
-    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>
+    suspend fun editarModelo (@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>
 
     @POST("modelo/crear")
     suspend fun crearModelo(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>

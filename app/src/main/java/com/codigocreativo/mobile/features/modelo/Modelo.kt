@@ -10,7 +10,7 @@ data class Modelo(
     @SerializedName("nombre")
     val nombre: String,
     @SerializedName("idMarca")
-    val idMarca: Marca,
+    val idMarca: Marca?,
     @SerializedName("estado")
     var estado: Estado
 )

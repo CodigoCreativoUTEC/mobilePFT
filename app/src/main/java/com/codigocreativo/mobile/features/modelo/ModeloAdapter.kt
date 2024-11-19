@@ -11,19 +11,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.marca.Marca
 import com.codigocreativo.mobile.features.proveedores.Proveedor
 
 class ModeloAdapter(
-    var modeloList: List<Modelo>,
+    var modelosList: List<Modelo>,
     private val activity: FragmentActivity,
     private val onDetalleClick: (Modelo) -> Unit
 ) : RecyclerView.Adapter<ModeloAdapter.ModeloViewHolder>() {
 
     inner class ModeloViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
+
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModeloViewHolder {
@@ -32,24 +32,25 @@ class ModeloAdapter(
     }
 
     override fun onBindViewHolder(holder: ModeloViewHolder, position: Int) {
-        val modelo = modeloList[position]
-        holder.idTextView.text = modelo.id.toString()
+        val modelo = modelosList[position]
         holder.nombreTextView.text = modelo.nombre
         holder.estadoTextView.text = modelo.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        // Manejar el clic en el elemento completo
+        holder.itemView.setOnClickListener {
             onDetalleClick(modelo)
         }
     }
 
     override fun getItemCount(): Int {
-        return modeloList.size
+        return modelosList.size
     }
 
     fun updateList(newModeloList: List<Modelo>) {
-        modeloList = newModeloList
+        modelosList = newModeloList
         notifyDataSetChanged()
     }
 }
+
 
 

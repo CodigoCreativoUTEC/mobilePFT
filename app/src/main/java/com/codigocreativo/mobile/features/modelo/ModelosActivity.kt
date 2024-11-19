@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.features.modelo
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,14 +11,21 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.marca.DetalleMarcaFragment
+import com.codigocreativo.mobile.features.marca.IngresarMarcaFragment
+import com.codigocreativo.mobile.features.marca.Marca
+import com.codigocreativo.mobile.features.marca.MarcaAdapter
+import com.codigocreativo.mobile.features.marca.MarcaApiService
 import com.codigocreativo.mobile.features.proveedores.DetalleProveedorFragment
 import com.codigocreativo.mobile.features.proveedores.IngresarProveedorFragment
 import com.codigocreativo.mobile.features.proveedores.Proveedor
@@ -36,10 +44,11 @@ class ModelosActivity : AppCompatActivity() {
 
     private lateinit var adapter: ModeloAdapter
     private lateinit var recyclerView: RecyclerView
-    private var modeloList = mutableListOf<Modelo>() // Lista dinámica de modelos cargados desde el API
+    private var modelosList = mutableListOf<Modelo>() // Lista dinámica de marcas cargados desde el API
     private var filteredList = mutableListOf<Modelo>()
     private val dataRepository = DataRepository()
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modelos)
@@ -69,7 +78,7 @@ class ModelosActivity : AppCompatActivity() {
         setupFilters()
 
         // Action listener de Ingresar Modelo
-        findViewById<Button>(R.id.btn_ingresar).setOnClickListener {
+        findViewById<ImageView>(R.id.image_add).setOnClickListener {
             val bottomSheetFragment = IngresarModeloFragment { modelo ->
                 if (token != null) {
                     val retrofit = RetrofitClient.getClient(token)
@@ -85,7 +94,7 @@ class ModelosActivity : AppCompatActivity() {
                         result.onSuccess {
                             Snackbar.make(
                                 findViewById(android.R.id.content),
-                                "Modelo ingresado correctamente",
+                                "Modelo ingresada correctamente",
                                 Snackbar.LENGTH_LONG
                             ).show()
                             loadModelos(token)
@@ -95,7 +104,7 @@ class ModelosActivity : AppCompatActivity() {
                                 "Error al ingresar el modelo: ${error.message}",
                                 Snackbar.LENGTH_LONG
                             ).show()
-                            Log.e("ModelosActivity", "Error al ingresar el modelo: ${error.message}\nPayload: ${modelo}")
+                            Log.e("ModeloActivity", "Error al ingresar el modelo: ${error.message}\nPayload: ${modelo}")
                         }
                     }
                 } else {
@@ -108,12 +117,7 @@ class ModelosActivity : AppCompatActivity() {
             }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
-        // Action listener de Volver al Menú
-        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -125,12 +129,12 @@ class ModelosActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val modelo = adapter.modeloList[position]
+                val modelo = adapter.modelosList[position]
 
                 // Show confirmation dialog
-                AlertDialog.Builder(this@ModelosActivity).apply {
+                androidx.appcompat.app.AlertDialog.Builder(this@ModelosActivity).apply {
                     setTitle("Confirmar baja")
-                    setMessage("¿Estás seguro que deseas dar de baja al modelo ${modelo.nombre}?")
+                    setMessage("¿Estás seguro que deseas dar de baja el modelo ${modelo.nombre}?")
                     setPositiveButton("Si") { _, _ ->
                         val token = SessionManager.getToken(this@ModelosActivity)
                         if (token != null) {
@@ -155,10 +159,10 @@ class ModelosActivity : AppCompatActivity() {
                                 }.onFailure { error ->
                                     Snackbar.make(
                                         findViewById(android.R.id.content),
-                                        "Error al dar de baja al modelo: ${error.message}",
+                                        "Error al dar de baja el modelo: ${error.message}",
                                         Snackbar.LENGTH_LONG
                                     ).show()
-                                    Log.e("ModelosActivity", "Error al dar de baja al modelo: ${error.message}")
+                                    Log.e("ModelosActivity", "Error al dar de baja el modelo: ${error.message}")
                                 }
                             }
                         } else {
@@ -188,14 +192,19 @@ class ModelosActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = dataRepository.obtenerDatos(
                 token = token,
-                apiCall = { apiService.listarModelos("Bearer $token") }
+                apiCall = { apiService.listarModelosFiltrados("Bearer $token", nombre, estado) }
             )
 
             result.onSuccess { modelos ->
-                modeloList.clear()
-                modeloList.addAll(modelos) // Agregar los modelos obtenidos
-                adapter.updateList(modeloList) // Actualizar el RecyclerView con los modelos
+                modelosList.clear()
+                modelosList.addAll(modelos) // Agregar los modelos obtenidas
+                adapter.updateList(modelosList) // Actualizar el RecyclerView con los modelos
             }.onFailure { error ->
+                Snackbar.make(
+                    findViewById(R.id.recyclerView),
+                    "Error al cargar los modelos: ${error.message}",
+                    Snackbar.LENGTH_LONG
+                ).show()
                 Log.e("ModelosActivity", "Error al cargar los modelos: ${error.message}")
             }
         }
@@ -211,20 +220,20 @@ class ModelosActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val result = dataRepository.guardarDatos(
                         token = token,
-                        apiCall = { apiService.actualizar("Bearer $token", updatedModelo) }
+                        apiCall = { apiService.editarModelo("Bearer $token", updatedModelo) }
                     )
 
                     result.onSuccess {
                         Snackbar.make(
                             findViewById(android.R.id.content),
-                            "Modelo actualizado correctamente",
+                            "Modelo actualizada correctamente",
                             Snackbar.LENGTH_LONG
                         ).show()
                         loadModelos(token)
                     }.onFailure { error ->
                         Snackbar.make(
                             findViewById(android.R.id.content),
-                            "Error al actualizar el modelo: ${error.message}",
+                            "Error al actualizar la marca: ${error.message}",
                             Snackbar.LENGTH_LONG
                         ).show()
                         Log.e("ModelosActivity", "Error al actualizar el modelo: ${error.message}\nPayload: ${updatedModelo}")
@@ -243,58 +252,70 @@ class ModelosActivity : AppCompatActivity() {
     }
 
     private fun setupFilters() {
-        val filterName: EditText = findViewById(R.id.filter_name)
+        val searchView: SearchView = findViewById(R.id.search_view)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
         // Configuración del spinner de estado
-        val statusAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterStatus.adapter = statusAdapter
 
-        // Listener para aplicar filtros
-        val applyFilters = {
-            val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
-            val nombre = filterName.text.toString().takeIf { it.isNotEmpty() }
-            val estado = (filterStatus.selectedItem as Estado).name
-            if (token != null) {
-                loadModelos(token = token, nombre = nombre, estado = estado)
-            }
-        }
-
-        filterName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                applyFilters()
+        // Listener para aplicar filtros cuando cambia el texto de búsqueda
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Opcional: Puedes manejar la acción de búsqueda aquí si lo deseas
+                return false
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onQueryTextChange(newText: String?): Boolean {
+                applyFilters() // Aplica los filtros cada vez que cambia el texto
+                return true
+            }
         })
 
+        // Listener para aplicar filtros cuando se selecciona un estado diferente en el Spinner
         filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>,
+                parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                applyFilters()
+                applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Listener para el evento de cierre del SearchView (opcional)
+        searchView.setOnCloseListener {
+            applyFilters() // Aplica los filtros cuando se cierra el SearchView
+            false
         }
     }
 
-    // Método de filtro para modelos
-    private fun filterModelos() {
-        val nameFilter =
-            findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
-        val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado
+    // Función para aplicar los filtros (actualizada)
+    private fun applyFilters() {
+        val searchView: SearchView = findViewById(R.id.search_view)
+        val filterStatus: Spinner = findViewById(R.id.filter_status)
 
-        // Filtrar la lista de modelos
-        filteredList = modeloList.filter { modelos ->
-            modelos.nombre.lowercase(Locale.getDefault()).contains(nameFilter) &&
-                    (modelos.estado == statusFilter)
+        val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
+        val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
+
+        filterMarcas(nombre, estado) // Aplica los filtros localmente
+    }
+
+    // Función para filtrar la lista de marcas (actualizada)
+    private fun filterMarcas(nombre: String?, estado: Estado) {
+        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
+        val statusFilter = estado
+
+        // Filtrar la lista de marcas
+        filteredList = modelosList.filter { modelo ->
+            val matchesName = modelo.nombre.lowercase(Locale.getDefault()).contains(nameFilter)
+            val matchesStatus = modelo.estado == statusFilter
+
+            matchesName && matchesStatus
         }.toMutableList()
 
         // Actualizar el RecyclerView con la lista filtrada

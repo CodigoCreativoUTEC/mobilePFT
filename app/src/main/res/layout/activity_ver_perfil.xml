@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Foto de perfil -->
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/foto_perfil"
+            android:contentDescription="Foto de perfil"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@android:color/darker_gray"
+            android:padding="8dp"
+            android:elevation="4dp"
+            android:layout_gravity="center" />
+
+        <!-- Nombre de usuario -->
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Nombre de Usuario"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:fontFamily="@font/poppins_semibold"/>
+
+        <!-- Campo para el Nombre -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"/>
+        <EditText
+            android:id="@+id/edit_nombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese su nombre"
+            android:inputType="textPersonName"/>
+
+        <!-- Campo para el Apellido -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Apellido"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"/>
+        <EditText
+            android:id="@+id/edit_apellido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese su apellido"
+            android:inputType="textPersonName"/>
+
+        <!-- Campo para la Cédula -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cédula"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"/>
+        <EditText
+            android:id="@+id/edit_cedula"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese su cédula"
+            android:inputType="text"/>
+
+        <!-- Campo para el Email -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"/>
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese su email"
+            android:inputType="textEmailAddress"/>
+
+        <!-- Campo para el Teléfono -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Teléfono"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"/>
+        <EditText
+            android:id="@+id/edit_telefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese su teléfono"
+            android:inputType="phone"/>
+
+        <!-- Botón de Guardar -->
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/my_primary"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
+</ScrollView>

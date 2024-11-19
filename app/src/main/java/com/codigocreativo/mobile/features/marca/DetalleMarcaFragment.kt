@@ -26,7 +26,6 @@ class DetalleMarcaFragment(
 
     private lateinit var nombreInput: EditText
     private lateinit var btnConfirmar: Button
-    private lateinit var idInput: TextView
     private lateinit var estadoSpinner: Spinner
 
     override fun onCreateView(
@@ -37,11 +36,11 @@ class DetalleMarcaFragment(
 
         nombreInput = view.findViewById(R.id.nombreInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
-        idInput = view.findViewById(R.id.idInput)
+
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
         // Populate fields with data from the marca object
-        idInput.text = marca.id.toString()
+
         nombreInput.setText(marca.nombre)
 
 

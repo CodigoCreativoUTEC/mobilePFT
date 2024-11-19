@@ -19,7 +19,7 @@ class MarcaAdapter(
 ) : RecyclerView.Adapter<MarcaAdapter.MarcaViewHolder>() {
 
     inner class MarcaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
+
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
     }
@@ -31,7 +31,6 @@ class MarcaAdapter(
 
     override fun onBindViewHolder(holder: MarcaViewHolder, position: Int) {
         val marca = marcaList[position]
-        holder.idTextView.text = marca.id.toString()
         holder.nombreTextView.text = marca.nombre
         holder.estadoTextView.text = marca.estado.name
 

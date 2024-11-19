@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.marca.SelectorMarcaFragment
-import com.codigocreativo.mobile.features.paises.SelectorPaisFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
@@ -42,7 +41,7 @@ class DetalleModeloFragment(
         // Populate fields with data from the modelo object
         idInput.text = modelo.id.toString()
         nombreInput.setText(modelo.nombre)
-        marcaPickerFragment.setSelectedMarca(modelo.idMarca.nombre)
+        modelo.idMarca?.let { marcaPickerFragment.setSelectedMarca(it.nombre) }
 
 
         // Populate estadoSpinner with Estado enum values

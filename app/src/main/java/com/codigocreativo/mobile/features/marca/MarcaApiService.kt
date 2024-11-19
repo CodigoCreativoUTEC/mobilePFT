@@ -24,6 +24,6 @@ interface MarcaApiService {
     @PUT("marca/modificar")
     suspend fun editarMarca(@Header("Authorization") token: String, @Body nuevaMarca: Marca): Response<Unit>
 
-    @DELETE("marca/inactivar/{id}")
+    @DELETE("marca/inactivar/id/{id}")
     suspend fun eliminarMarca(@Header("Authorization") token: String, @Path("id") id: Int) : Response<Unit>
 }

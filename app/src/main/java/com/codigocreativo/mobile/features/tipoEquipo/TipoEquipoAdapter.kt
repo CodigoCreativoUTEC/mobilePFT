@@ -18,10 +18,10 @@ class TipoEquipoAdapter(
 ) : RecyclerView.Adapter<TipoEquipoAdapter.TipoEquipoViewHolder>() {
 
     inner class TipoEquipoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
+
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TipoEquipoViewHolder {
@@ -31,11 +31,11 @@ class TipoEquipoAdapter(
 
     override fun onBindViewHolder(holder: TipoEquipoViewHolder, position: Int) {
         val tipoEquipo = tipoEquipoList[position]
-        holder.idTextView.text = tipoEquipo.id.toString()
+
         holder.nombreTextView.text = tipoEquipo.nombreTipo
         holder.estadoTextView.text = tipoEquipo.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        holder.itemView.setOnClickListener {
             onDetalleClick(tipoEquipo)
         }
     }
