@@ -73,10 +73,11 @@ class Registro : AppCompatActivity() {
         configureUsernameGeneration(etFirstName, etLastName, etUsername)
 
         btnRegister.setOnClickListener {
-            //  if (perfilSeleccionado == null) {
-            //    showToast("Debe seleccionar un perfil")
-            //    return@setOnClickListener
-            //      }
+            // Verificar si el perfil está seleccionado
+            if (perfilSeleccionado == null) {
+                showToast("Debe seleccionar un perfil")
+                return@setOnClickListener
+            }
 
             val birthDate = validateAndGetDate(etBirthdate.text.toString())
             if (birthDate == null) {
@@ -160,15 +161,19 @@ class Registro : AppCompatActivity() {
 
     private fun registrarUsuario(usuario: Usuario) {
         val token = SessionManager.getToken(this)
+        Log.d("Registro", "Token: $token")  // Log para verificar token
+
         if (token != null) {
             val apiService = RetrofitClient.getClient(token).create(UsuariosApiService::class.java)
             lifecycleScope.launch {
                 val result = dataRepository.obtenerDatos(token, { apiService.crearUsuario("Bearer $token", usuario) })
+                Log.d("Registro", "Resultado de API: $result")  // Log para verificar resultado de API
+
                 result.onSuccess {
                     Snackbar.make(findViewById(android.R.id.content), "Usuario registrado correctamente", Snackbar.LENGTH_LONG).show()
                     finish() // Opcionalmente, finalizar actividad o redirigir
                 }.onFailure { error ->
-                    Log.e("Registro", "Error al registrar usuario: ${error.message}")
+                    Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
                     Snackbar.make(findViewById(android.R.id.content), "Error al registrar usuario: ${error.message}", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -181,3 +186,5 @@ class Registro : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
+
+

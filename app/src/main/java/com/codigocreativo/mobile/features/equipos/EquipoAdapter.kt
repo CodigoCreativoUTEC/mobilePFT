@@ -22,7 +22,7 @@ class EquipoAdapter(
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EquipoViewHolder {
@@ -41,7 +41,7 @@ class EquipoAdapter(
         holder.nombreTextView.text = equipo.nombre
         holder.estadoTextView.text = equipo.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        holder.itemView.setOnClickListener {
             onDetalleClick(equipo)
         }
     }

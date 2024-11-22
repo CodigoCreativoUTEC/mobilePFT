@@ -17,10 +17,10 @@ class UsuariosAdapter(
 ) : RecyclerView.Adapter<UsuariosAdapter.UsuariosViewHolder>() {
 
     inner class UsuariosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
+
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsuariosViewHolder {
@@ -30,11 +30,11 @@ class UsuariosAdapter(
 
     override fun onBindViewHolder(holder: UsuariosViewHolder, position: Int) {
         val usuario = usuarioList[position]
-        holder.idTextView.text = usuario.id.toString()
+
         holder.nombreTextView.text = usuario.nombre
         holder.estadoTextView.text = usuario.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        holder.itemView.setOnClickListener {
             onDetalleClick(usuario)
         }
     }

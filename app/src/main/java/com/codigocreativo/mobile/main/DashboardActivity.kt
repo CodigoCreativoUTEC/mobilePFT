@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import com.codigocreativo.mobile.R
@@ -15,6 +16,7 @@ import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
 import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
+import com.codigocreativo.mobile.features.usuarios.PerfilUsuarioFragment
 import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 
 
@@ -50,6 +52,33 @@ class DashboardActivity : AppCompatActivity() {
         setupDrawer()
 
         // Configura los OnClickListener para cada CardView
+        setupCardListeners()
+    }
+
+    private fun setupDrawer() {
+        // Configura el listener para las opciones del menú
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_view_profile -> {
+                    openProfileScreen() // Abrir perfil
+                    true
+                }
+                R.id.nav_logout -> {
+                    logout() // Cerrar sesión
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Configura el botón de menú para abrir el drawer
+        val menuButton: ImageView = findViewById(R.id.imageMenu)
+        menuButton.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    private fun setupCardListeners() {
         marcasCard.setOnClickListener {
             val intent = Intent(this, MarcasActivity::class.java)
             startActivity(intent)
@@ -81,53 +110,24 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupDrawer() {
-        // Sincroniza el botón del drawer con la ActionBar (opcional)
-        val toggle = ActionBarDrawerToggle(
-            this,
-            drawerLayout,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        // Configura el listener para las opciones del menú
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_view_profile -> {
-                    // Lógica para ver perfil
-                    openProfileScreen()
-                }
-                R.id.nav_logout -> {
-                    // Lógica para cerrar sesión
-                    logout()
-                }
-            }
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
-
-        // Configura el botón de menú para abrir el drawer
-        val menuButton: ImageView = findViewById(R.id.imageMenu)
-        menuButton.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-    }
-
     private fun openProfileScreen() {
-        // Implementa la lógica para abrir la pantalla de perfil
-      //  val intent = Intent(this, ProfileActivity::class.java)
-      //  startActivity(intent)
+        // Abre el fragmento del perfil del usuario
+        val fragment = PerfilUsuarioFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_content, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun logout() {
-        // Implementa la lógica para cerrar sesión
+        // Limpia la sesión del usuario
         val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
-        // Ejemplo: ir a la pantalla de login o limpiar datos de sesión
+
+        // Navega a la pantalla de login
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 }
+

@@ -1,30 +1,32 @@
 package com.codigocreativo.mobile.features.equipos
 
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.main.DashboardActivity
+import com.codigocreativo.mobile.features.equipos.bajaEquipo.BajaEquipoRequest
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class EquiposActivity : AppCompatActivity() {
@@ -66,7 +68,7 @@ class EquiposActivity : AppCompatActivity() {
         setupFilters()
 
         // Action listener de Ingresar Equipo
-        findViewById<Button>(R.id.btn_ingresar).setOnClickListener {
+        findViewById<ImageView>(R.id.image_add).setOnClickListener {
             val bottomSheetFragment = IngresarEquipoFragment { equipo ->
                 if (token != null) {
                     val retrofit = RetrofitClient.getClient(token)
@@ -108,12 +110,7 @@ class EquiposActivity : AppCompatActivity() {
             }
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
-        // Action listener de Volver al Menú
-        findViewById<Button>(R.id.btn_volver_menu).setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+
         val itemTouchHelper =
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
                 override fun onMove(
@@ -128,11 +125,47 @@ class EquiposActivity : AppCompatActivity() {
                     val position = viewHolder.adapterPosition
                     val equipo = adapter.equipoList[position]
 
-                    // Show confirmation dialog
+                    // Show confirmation dialog for reason and comments
+                    val inflater = LayoutInflater.from(this@EquiposActivity)
+                    val dialogView = inflater.inflate(R.layout.dialog_baja_equipo, null)
+
+                    val etRazonBaja = dialogView.findViewById<EditText>(R.id.etRazonBaja)
+                    val etFechaBaja = dialogView.findViewById<EditText>(R.id.etFechaBaja)
+                    val etComentarios = dialogView.findViewById<EditText>(R.id.etComentarios)
+
+                    // Function to show a toast message
+                    fun showToast(message: String) {
+                        Toast.makeText(this@EquiposActivity, message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    // Set default fecha baja to current date
+                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                    etFechaBaja.setText(currentDate)
+
+                    // Create the alert dialog
                     AlertDialog.Builder(this@EquiposActivity).apply {
-                        setTitle("Confirmar baja")
-                        setMessage("¿Estás seguro que deseas dar de baja al equipo ${equipo.nombre}?")
-                        setPositiveButton("Si") { _, _ ->
+                        setTitle("Confirmar baja de equipo")
+                        setMessage("Por favor, ingresa los detalles para confirmar la baja del equipo ${equipo.nombre}")
+                        setView(dialogView)
+                        setPositiveButton("Confirmar") { _, _ ->
+                            val razonBaja = etRazonBaja.text.toString()
+                            val fechaBaja = etFechaBaja.text.toString()
+                            val comentarios = etComentarios.text.toString()
+
+                            // Validate that razón de baja is not empty
+                            if (razonBaja.isEmpty()) {
+                                showToast("La razón de la baja es obligatoria")
+                                return@setPositiveButton
+                            }
+
+                            // Prepare the request object
+                            val bajaEquipoRequest = BajaEquipoRequest(
+                                razonBaja = razonBaja,
+                                fechaBaja = fechaBaja,
+                                comentarios = comentarios
+                            )
+
+                            // Realizar la baja lógica del equipo
                             if (token != null) {
                                 val retrofit = RetrofitClient.getClient(token)
                                 val apiService = retrofit.create(EquiposApiService::class.java)
@@ -143,7 +176,8 @@ class EquiposActivity : AppCompatActivity() {
                                         apiCall = {
                                             apiService.eliminar(
                                                 "Bearer $token",
-                                                equipo.id!!
+                                                equipo.id!!,
+                                                bajaEquipoRequest  // Pass the object as the body
                                             )
                                         }
                                     )
@@ -175,7 +209,7 @@ class EquiposActivity : AppCompatActivity() {
                                 ).show()
                             }
                         }
-                        setNegativeButton("No") { dialog, _ ->
+                        setNegativeButton("Cancelar") { dialog, _ ->
                             dialog.dismiss()
                             adapter.notifyItemChanged(position)
                         }
@@ -253,58 +287,70 @@ class EquiposActivity : AppCompatActivity() {
     }
 
     private fun setupFilters() {
-        val filterName: EditText = findViewById(R.id.filter_name)
+        val searchView: SearchView = findViewById(R.id.search_view)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
         // Configuración del spinner de estado
-        val statusAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterStatus.adapter = statusAdapter
 
-        // Listener para aplicar filtros
-        val applyFilters = {
-            val token = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
-            val nombre = filterName.text.toString().takeIf { it.isNotEmpty() }
-            val estado = (filterStatus.selectedItem as Estado).name
-            if (token != null) {
-                loadEquipos(token = token, nombre = nombre, estado = estado)
-            }
-        }
-
-        filterName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                applyFilters()
+        // Listener para aplicar filtros cuando cambia el texto de búsqueda
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Opcional: Puedes manejar la acción de búsqueda aquí si lo deseas
+                return false
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onQueryTextChange(newText: String?): Boolean {
+                applyFilters() // Aplica los filtros cada vez que cambia el texto
+                return true
+            }
         })
 
+        // Listener para aplicar filtros cuando se selecciona un estado diferente en el Spinner
         filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>,
+                parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                applyFilters()
+                applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Listener para el evento de cierre del SearchView (opcional)
+        searchView.setOnCloseListener {
+            applyFilters() // Aplica los filtros cuando se cierra el SearchView
+            false
         }
     }
 
-    // Método de filtro para equipos
-    private fun filterEquipos() {
-        val nameFilter =
-            findViewById<EditText>(R.id.filter_name).text.toString().lowercase(Locale.getDefault())
-        val statusFilter = findViewById<Spinner>(R.id.filter_status).selectedItem as Estado
+    // Función para aplicar los filtros (actualizada)
+    private fun applyFilters() {
+        val searchView: SearchView = findViewById(R.id.search_view)
+        val filterStatus: Spinner = findViewById(R.id.filter_status)
 
-        // Filtrar la lista de equipos
-        filteredList = equiposList.filter { equipos ->
-            equipos.nombre.lowercase(Locale.getDefault()).contains(nameFilter) &&
-                    (statusFilter == Estado.ACTIVO || statusFilter == Estado.INACTIVO || equipos.estado == statusFilter)
+        val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
+        val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
+
+        filterEquipos(nombre, estado) // Aplica los filtros localmente
+    }
+
+    // Función para filtrar la lista de equipos (actualizada)
+    private fun filterEquipos(nombre: String?, estado: Estado) {
+        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
+        val statusFilter = estado
+
+        // Filtrar la lista de marcas
+        filteredList = equiposList.filter { modelo ->
+            val matchesName = modelo.nombre.lowercase(Locale.getDefault()).contains(nameFilter)
+            val matchesStatus = modelo.estado == statusFilter
+
+            matchesName && matchesStatus
         }.toMutableList()
 
         // Actualizar el RecyclerView con la lista filtrada

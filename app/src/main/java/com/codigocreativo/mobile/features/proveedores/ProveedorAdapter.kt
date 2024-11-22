@@ -16,10 +16,10 @@ class ProveedorAdapter(
 ) : RecyclerView.Adapter<ProveedorAdapter.ProveedorViewHolder>() {
 
     inner class ProveedorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
+
         val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
         val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProveedorViewHolder {
@@ -29,11 +29,11 @@ class ProveedorAdapter(
 
     override fun onBindViewHolder(holder: ProveedorViewHolder, position: Int) {
         val proveedor = proveedorList[position]
-        holder.idTextView.text = proveedor.idProveedor.toString()
+
         holder.nombreTextView.text = proveedor.nombre
         holder.estadoTextView.text = proveedor.estado.name
 
-        holder.btnDetalle.setOnClickListener {
+        holder.itemView.setOnClickListener {
             onDetalleClick(proveedor)
         }
     }

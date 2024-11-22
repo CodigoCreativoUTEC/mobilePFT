@@ -8,6 +8,16 @@
     android:layout_height="match_parent"
     tools:context=".main.MainActivity">
 
+    <!-- Contenedor de Fragmentos -->
+    <FrameLayout
+        android:id="@+id/main_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <!-- Contenido principal en un ScrollView -->
     <ScrollView
         android:layout_width="match_parent"
@@ -336,12 +346,14 @@
 
     </ScrollView>
 
-    <!-- NavigationView para el menú lateral -->
+    <!-- Menú lateral (NavigationView) -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:background="@color/white"
         app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/nav_header" />
 

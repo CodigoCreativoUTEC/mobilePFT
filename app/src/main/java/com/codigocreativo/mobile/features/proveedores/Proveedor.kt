@@ -12,5 +12,5 @@ data class Proveedor(
     @SerializedName("estado")
     var estado: Estado,
     @SerializedName("pais")
-    var pais: Pais
+    var pais: Pais?
 )

@@ -10,7 +10,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.paises.Pais
 import com.codigocreativo.mobile.features.paises.SelectorPaisFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -42,7 +41,7 @@ class DetalleProveedorFragment(
         // Populate fields with data from the proveedor object
         idInput.text = proveedor.idProveedor.toString()
         nombreInput.setText(proveedor.nombre)
-        paisPickerFragment.setSelectedCountry(proveedor.pais.nombre)
+        proveedor.pais?.let { paisPickerFragment.setSelectedCountry(it.nombre) }
 
         // Populate estadoSpinner with Estado enum values
         val estadoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Estado.values())
