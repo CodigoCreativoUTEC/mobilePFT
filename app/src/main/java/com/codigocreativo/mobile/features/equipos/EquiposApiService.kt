@@ -3,7 +3,6 @@ package com.codigocreativo.mobile.features.equipos
 import com.codigocreativo.mobile.features.equipos.bajaEquipo.BajaEquipoRequest
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -30,10 +29,9 @@ interface EquiposApiService {
     @POST("equipos/crear")
     suspend fun crear(@Header("Authorization") authHeader: String, @Body equipo: Equipo) : Response<Unit>
 
-    @DELETE("equipos/inactivar")
+    @PUT("equipos/inactivar")
     suspend fun eliminar(
         @Header("Authorization") authHeader: String,
-        @Query("id") id: Int,
-        @Body bajaEquipoRequest: BajaEquipoRequest // Se pasa el objeto con los detalles
+        @Body bajaEquipoRequest: BajaEquipoRequest? // Se pasa el objeto con los detalles
     ): Response<Unit>
 }

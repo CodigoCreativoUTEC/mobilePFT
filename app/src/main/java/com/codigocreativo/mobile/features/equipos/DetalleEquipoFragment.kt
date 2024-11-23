@@ -25,6 +25,7 @@ class DetalleEquipoFragment(
     private val equipo: Equipo,
     private val onEdit: (Equipo) -> Unit
 ) : BottomSheetDialogFragment() {
+
     private lateinit var nombreInput: EditText
     private lateinit var btnConfirmar: Button
     private lateinit var modeloPickerFragment: SelectorModeloFragment
@@ -45,6 +46,7 @@ class DetalleEquipoFragment(
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detalle_equipo, container, false)
 
+        // Inicializar las vistas
         nombreInput = view.findViewById(R.id.nombreInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
         modeloPickerFragment = childFragmentManager.findFragmentById(R.id.fragmentSelectorModelo) as SelectorModeloFragment
@@ -58,41 +60,57 @@ class DetalleEquipoFragment(
         idInput = view.findViewById(R.id.idInput)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
-        // Populate fields with data from the equipo object
-        nombreInput.setText(equipo.nombre)
+        // Populate fields with data from the equipo object, handle nulls
+        nombreInput.setText(equipo.nombre ?: "No disponible")
+        nroSerieInput.setText(equipo.nroSerie ?: "No disponible")
+        garantiaInput.setText(equipo.garantia ?: "Sin garantía")
+        fechaAdquisicionInput.setText(equipo.fechaAdquisicion ?: "No disponible")
+        idInput.text = equipo.id?.toString() ?: "No disponible"
+
+        // Configurar los Fragments de selección (esperar a que los datos estén cargados)
         modeloPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                modeloPickerFragment.setSelectedModelo(equipo.idModelo!!.nombre )
+                equipo.idModelo?.nombre?.let {
+                    modeloPickerFragment.setSelectedModelo(it)
+                }
             }
         }
+
         paisPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                equipo.idPais?.let { paisPickerFragment.setSelectedCountry(it.nombre) }
+                equipo.idPais?.nombre?.let {
+                    paisPickerFragment.setSelectedCountry(it)
+                }
             }
         }
+
         tipoEquipoPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                equipo.idTipo?.let { tipoEquipoPickerFragment.setSelectedTipo(it.nombreTipo) }
+                equipo.idTipo?.nombreTipo?.let {
+                    tipoEquipoPickerFragment.setSelectedTipo(it)
+                }
             }
         }
+
         proveedorPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                equipo.idProveedor?.let { proveedorPickerFragment.setSelectedProveedor(it.nombre) }
+                equipo.idProveedor?.nombre?.let {
+                    proveedorPickerFragment.setSelectedProveedor(it)
+                }
             }
         }
-        nroSerieInput.setText(equipo.nroSerie)
-        garantiaInput.setText(equipo.garantia.toString())
-        fechaAdquisicionInput.setText(equipo.fechaAdquisicion.toString())
-        idInput.text = equipo.id.toString()
-        estadoSpinner.setSelection(Estado.entries.indexOf(equipo.estado))
 
         // Populate estadoSpinner with Estado enum values
-        val estadoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item,
+        val estadoAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
             Estado.entries.toTypedArray()
         )
         estadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         estadoSpinner.adapter = estadoAdapter
-        estadoSpinner.setSelection(Estado.entries.indexOf(equipo.estado))
+        equipo.estado?.let {
+            estadoSpinner.setSelection(Estado.entries.indexOf(it))
+        }
 
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
@@ -106,6 +124,7 @@ class DetalleEquipoFragment(
             val nuevaFechaAdquisicion = fechaAdquisicionInput.text.toString()
             val nuevoEstado = Estado.entries[estadoSpinner.selectedItemPosition]
 
+            // Validar los campos obligatorios antes de editar el equipo
             if (nuevoNombre.isNotEmpty() && nuevoModelo != null && nuevoPais != null && nuevoTipoEquipo != null && nuevoProveedor != null) {
                 val nuevoEquipo = Equipo(
                     equiposUbicaciones = emptyList(),

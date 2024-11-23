@@ -157,13 +157,20 @@ class EquiposActivity : AppCompatActivity() {
                                 showToast("La razón de la baja es obligatoria")
                                 return@setPositiveButton
                             }
+                            //obtener el objeto usauario que esta logueado
+                            val usuario = SessionManager.getLoggedUser(this@EquiposActivity)
 
                             // Prepare the request object
-                            val bajaEquipoRequest = BajaEquipoRequest(
-                                razonBaja = razonBaja,
-                                fechaBaja = fechaBaja,
-                                comentarios = comentarios
-                            )
+                            val bajaEquipoRequest = usuario?.let {
+                                BajaEquipoRequest(
+                                    razon = razonBaja,
+                                    fecha = fechaBaja,
+                                    idUsuario = it,
+                                    idEquipo = equipo,
+                                    estado = Estado.ACTIVO,
+                                    comentarios = comentarios
+                                )
+                            }
 
                             // Realizar la baja lógica del equipo
                             if (token != null) {
@@ -176,7 +183,6 @@ class EquiposActivity : AppCompatActivity() {
                                         apiCall = {
                                             apiService.eliminar(
                                                 "Bearer $token",
-                                                equipo.id!!,
                                                 bajaEquipoRequest  // Pass the object as the body
                                             )
                                         }
