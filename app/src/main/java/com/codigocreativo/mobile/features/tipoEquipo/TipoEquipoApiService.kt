@@ -27,6 +27,6 @@ interface TipoEquipoApiService {
     @PUT("tipoEquipos/modificar")
     suspend fun editarTipoEquipo(@Header("Authorization") token: String, @Body nuevoTipoEquipo: TipoEquipo): Response<Unit>
 
-    @DELETE("tipoEquipos/inactivar/{id}")
-    suspend fun eliminarTipoEquipo(@Header("Authorization") token: String, @Path("id") id: Int) : Response<Unit>
+    @DELETE("tipoEquipos/inactivar")
+    suspend fun eliminarTipoEquipo(@Header("Authorization") token: String, @Query("id") id: Int) : Response<Unit>
 }
