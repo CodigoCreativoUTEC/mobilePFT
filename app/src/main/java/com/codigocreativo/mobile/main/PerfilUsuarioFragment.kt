@@ -1,4 +1,4 @@
-package com.codigocreativo.mobile.features.usuarios
+package com.codigocreativo.mobile.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,15 +24,7 @@ class PerfilUsuarioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvUserName = view.findViewById(R.id.tv_user_name)
-        tvUserEmail = view.findViewById(R.id.tv_user_email)
 
-        // Cargar datos del usuario logueado
-        val usuario = SessionManager.getUser(requireContext())
-        if (usuario != null) {
-            tvUserName.text = "Nombre: ${usuario.nombre}"
-            tvUserEmail.text = "Correo: ${usuario.email}"
-        }
     }
 
     companion object {

@@ -2,12 +2,10 @@ package com.codigocreativo.mobile.main
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import com.codigocreativo.mobile.R
@@ -16,7 +14,6 @@ import com.codigocreativo.mobile.features.marca.MarcasActivity
 import com.codigocreativo.mobile.features.modelo.ModelosActivity
 import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
-import com.codigocreativo.mobile.features.usuarios.PerfilUsuarioFragment
 import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 
 
@@ -112,11 +109,13 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun openProfileScreen() {
         // Abre el fragmento del perfil del usuario
-        val fragment = PerfilUsuarioFragment.newInstance()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_content, fragment)
-            .addToBackStack(null)
-            .commit()
+//        val fragment = PerfilUsuarioFragment.newInstance()
+//        supportFragmentManager.beginTransaction()
+//            .replace(R.id.main_content, fragment)
+//            .addToBackStack(null)
+//            .commit()
+        val intent = Intent(this, DetallePerfilUsuarioActivity::class.java)
+        startActivity(intent)
     }
 
     private fun logout() {

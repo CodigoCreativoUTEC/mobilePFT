@@ -1,6 +1,5 @@
 package com.codigocreativo.mobile.features.usuarios
 
-import com.codigocreativo.mobile.features.proveedores.Proveedor
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -27,8 +26,14 @@ interface UsuariosApiService {
     suspend fun actualizar(@Header("Authorization") authHeader: String, @Body usuario: Usuario): Response<Unit>
 
     @POST("usuarios/crear")
-    suspend fun crearUsuario(@Body usuario: Usuario) : Response<Unit>
+    suspend fun crearUsuario(@Body usuario: Usuario): Response<Unit>
 
     @DELETE("usuarios/inactivar")
-    suspend fun eliminarUsuario(@Header("Authorization") authHeader: String, @Query("id") id: Int) : Response<Unit>
+    suspend fun eliminarUsuario(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>
+
+    @GET("usuarios/obtenerUserEmail")
+    suspend fun buscarUsuarioPorEmail(
+        @Header("Authorization") authHeader: String,
+        @Query("email") email: String
+    ): Response<Usuario>
 }
