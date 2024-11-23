@@ -166,11 +166,11 @@
                 android:textStyle="bold"
                 android:alpha="0.7"/>
 
-            <fragment
-                android:id="@+id/spinnerPerfil"
+            <FrameLayout
+                android:id="@+id/perfilContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment"/>
+                android:layout_marginBottom="16dp"/>
 
             <!-- Botón de Registrar -->
             <com.google.android.material.button.MaterialButton

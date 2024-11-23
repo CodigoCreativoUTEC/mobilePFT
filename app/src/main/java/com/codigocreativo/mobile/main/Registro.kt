@@ -41,13 +41,20 @@ class Registro : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registro)
 
-        // Inicializar SelectorPerfilFragment
+        // Inicializar SelectorPerfilFragment y añadirlo dinámicamente al contenedor
         perfilPickerFragment = SelectorPerfilFragment()
-        perfilPickerFragment.isDataLoaded.observe(this, Observer { isLoaded ->
-            if (isLoaded) {
-                perfilSeleccionado = perfilPickerFragment.getSelectedPerfil()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.perfilContainer, perfilPickerFragment)
+            .commit()
+
+        perfilPickerFragment.selectedPerfil.observe(this, Observer { perfil ->
+            perfilSeleccionado = perfil
+            if (perfilSeleccionado == null) {
+                showToast("Debe seleccionar un perfil.")
             }
         })
+
+
 
         val mainView = findViewById<RelativeLayout>(R.id.main)
         ViewCompat.setOnApplyWindowInsetsListener(mainView) { v, insets ->
@@ -160,13 +167,13 @@ class Registro : AppCompatActivity() {
     }
 
     private fun registrarUsuario(usuario: Usuario) {
-        val token = SessionManager.getToken(this)
-        Log.d("Registro", "Token: $token")  // Log para verificar token
 
-        if (token != null) {
-            val apiService = RetrofitClient.getClient(token).create(UsuariosApiService::class.java)
+        if (usuario != null) {
+            val apiService = RetrofitClient.getClientSinToken().create(UsuariosApiService::class.java)
             lifecycleScope.launch {
-                val result = dataRepository.obtenerDatos(token, { apiService.crearUsuario("Bearer $token", usuario) })
+                val result = dataRepository.obtenerDatosSinToken() {
+                    apiService.crearUsuario(usuario)
+                }
                 Log.d("Registro", "Resultado de API: $result")  // Log para verificar resultado de API
 
                 result.onSuccess {
@@ -178,7 +185,7 @@ class Registro : AppCompatActivity() {
                 }
             }
         } else {
-            showToast("Token no encontrado, por favor inicia sesión")
+            showToast("El usuario es nulo")
         }
     }
 
