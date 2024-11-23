@@ -30,5 +30,5 @@ interface ProveedoresApiService {
     suspend fun crearProveedor(@Header("Authorization") authHeader: String, @Body proveedor: Proveedor) : Response<Unit>
 
     @DELETE("proveedores/inactivar")
-    suspend fun eliminarProveedor(@Header("Authorization") authHeader: String, @Body id: Int) : Response<Unit>
+    suspend fun eliminarProveedor(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>
 }
