@@ -26,16 +26,26 @@ object RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
     fun getClientSinToken(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
     fun getLogin(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/") // Cambia por tu URL del backend
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    fun getImgBBClient(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.imgbb.com/") // URL base de imgbb
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 }
+

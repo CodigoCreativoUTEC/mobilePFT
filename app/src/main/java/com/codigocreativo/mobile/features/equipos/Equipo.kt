@@ -7,7 +7,6 @@ import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipo
 import com.codigocreativo.mobile.features.ubicacion.Ubicacion
 import com.codigocreativo.mobile.utils.Estado
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
 
 data class Equipo(
 
@@ -24,15 +23,15 @@ data class Equipo(
     @SerializedName("idInterno")
     val idInterno: String,
     @SerializedName("idModelo")
-    val idModelo: Modelo,
+    val idModelo: Modelo?,
     @SerializedName("idPais")
-    val idPais: Pais,
+    val idPais: Pais?,
     @SerializedName("idProveedor")
-    val idProveedor: Proveedor,
+    val idProveedor: Proveedor?,
     @SerializedName("idTipo")
-    val idTipo: TipoEquipo,
+    val idTipo: TipoEquipo?,
     @SerializedName("idUbicacion")
-    val ubicacion: Ubicacion,
+    val ubicacion: Ubicacion?,
     @SerializedName("imagen")
     val imagen: String,
     @SerializedName("nombre")

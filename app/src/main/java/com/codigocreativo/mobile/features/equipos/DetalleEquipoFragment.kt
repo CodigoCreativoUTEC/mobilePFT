@@ -20,7 +20,6 @@ import com.codigocreativo.mobile.features.tipoEquipo.SelectorTipoEquipoFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
-import java.time.LocalDate
 
 class DetalleEquipoFragment(
     private val equipo: Equipo,
@@ -63,22 +62,22 @@ class DetalleEquipoFragment(
         nombreInput.setText(equipo.nombre)
         modeloPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                modeloPickerFragment.setSelectedModelo(equipo.idModelo.nombre)
+                modeloPickerFragment.setSelectedModelo(equipo.idModelo!!.nombre )
             }
         }
         paisPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                paisPickerFragment.setSelectedCountry(equipo.idPais.nombre)
+                equipo.idPais?.let { paisPickerFragment.setSelectedCountry(it.nombre) }
             }
         }
         tipoEquipoPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                tipoEquipoPickerFragment.setSelectedTipo(equipo.idTipo.nombreTipo)
+                equipo.idTipo?.let { tipoEquipoPickerFragment.setSelectedTipo(it.nombreTipo) }
             }
         }
         proveedorPickerFragment.isDataLoaded.observe(this) { isLoaded ->
             if (isLoaded) {
-                proveedorPickerFragment.setSelectedProveedor(equipo.idProveedor.nombre)
+                equipo.idProveedor?.let { proveedorPickerFragment.setSelectedProveedor(it.nombre) }
             }
         }
         nroSerieInput.setText(equipo.nroSerie)
