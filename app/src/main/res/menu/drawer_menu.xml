@@ -1,11 +1,77 @@
 <!-- res/menu/drawer_menu.xml -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/nav_view_profile"
-        android:title="Ver Perfil"
-        android:icon="@drawable/ic_view_profile" />
-    <item
-        android:id="@+id/nav_logout"
-        android:title="Cerrar Sesión"
-        android:icon="@drawable/ic_logout" />
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Sección: Gestión de Usuarios -->
+    <group android:id="@+id/group_users">
+        <item
+            android:id="@+id/nav_users"
+            android:title="Usuarios"
+            android:icon="@drawable/usuario"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <!-- Sección: Gestión de Equipos -->
+    <group android:id="@+id/group_equipment">
+        <item
+            android:id="@+id/nav_equipos"
+            android:title="Equipos"
+            android:icon="@drawable/equipos"
+            app:showAsAction="ifRoom" />
+        
+        <item
+            android:id="@+id/nav_tipo_equipo"
+            android:title="Tipos de Equipo"
+            android:icon="@drawable/tipoequipo"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <!-- Sección: Gestión de Marcas y Modelos -->
+    <group android:id="@+id/group_brands">
+        <item
+            android:id="@+id/nav_marcas"
+            android:title="Marcas"
+            android:icon="@drawable/marca"
+            app:showAsAction="ifRoom" />
+        
+        <item
+            android:id="@+id/nav_modelos"
+            android:title="Modelos"
+            android:icon="@drawable/modelos"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <!-- Sección: Gestión de Proveedores -->
+    <group android:id="@+id/group_providers">
+        <item
+            android:id="@+id/nav_proveedores"
+            android:title="Proveedores"
+            android:icon="@drawable/proveedor"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <!-- Separador -->
+    <group android:id="@+id/group_separator">
+        <item android:title="" />
+    </group>
+
+    <!-- Sección: Perfil y Configuración -->
+    <group android:id="@+id/group_profile">
+        <item
+            android:id="@+id/nav_view_profile"
+            android:title="Mi Perfil"
+            android:icon="@drawable/icperfil"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <!-- Sección: Sesión -->
+    <group android:id="@+id/group_session">
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Cerrar Sesión"
+            android:icon="@drawable/icerrarsesion"
+            app:showAsAction="ifRoom" />
+    </group>
+
 </menu>

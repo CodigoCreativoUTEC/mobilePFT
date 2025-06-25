@@ -14,5 +14,14 @@
     <color name="colorTrendingStart">#0f00b0</color>
     <color name="colorTrendingEnd">#3d5ec9</color>
     <color name="colorDivider">#D6D6D6</color>
+    <color name="background_light">#F6F7FB</color>
+
+    <!-- Colores para Navigation Drawer -->
+    <color name="navigation_item_text">#5E35B1</color>
+    <color name="navigation_item_icon">#5E35B1</color>
+    <color name="navigation_item_selected">#E8E2F3</color>
+    <color name="navigation_item_selected_text">#5E35B1</color>
+    <color name="navigation_header_gradient_start">#5E35B1</color>
+    <color name="navigation_header_gradient_end">#673AB7</color>
 
 </resources>

@@ -7,7 +7,12 @@
     <Spinner
         android:id="@+id/spinnerPerfil"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:spinnerMode="dialog" />
+        android:layout_height="48dp"
+        android:background="@drawable/circle_bg"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:spinnerMode="dropdown"
+        android:popupBackground="@android:color/white"
+        android:popupElevation="8dp" />
+
 </LinearLayout>

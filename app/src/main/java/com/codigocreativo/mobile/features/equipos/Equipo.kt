@@ -37,5 +37,7 @@ data class Equipo(
     @SerializedName("nombre")
     val nombre: String,
     @SerializedName("nroSerie")
-    val nroSerie: String
+    val nroSerie: String,
+    @SerializedName("descripcion")
+    val descripcion: String? = null
 )

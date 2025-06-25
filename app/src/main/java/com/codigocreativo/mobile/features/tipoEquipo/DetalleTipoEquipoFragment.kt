@@ -5,24 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.marca.Marca
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 
 class DetalleTipoEquipoFragment(
     private val tipoEquipo: TipoEquipo,
     private val onEdit: (TipoEquipo) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var nombreInput: EditText
-    private lateinit var btnConfirmar: Button
-    private lateinit var idInput: TextView
+    private lateinit var nombreInput: TextInputEditText
+    private lateinit var btnConfirmar: MaterialButton
+    private lateinit var idInput: TextInputEditText
     private lateinit var estadoSpinner: Spinner
 
     override fun onCreateView(
@@ -36,10 +35,9 @@ class DetalleTipoEquipoFragment(
         idInput = view.findViewById(R.id.idInput)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
-        // Populate fields with data from the marca object
-        idInput.text = tipoEquipo.id.toString()
+        // Populate fields with data from the tipoEquipo object
+        idInput.setText(tipoEquipo.id?.toString() ?: "")
         nombreInput.setText(tipoEquipo.nombreTipo)
-
 
         // Populate estadoSpinner with Estado enum values
         val estadoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Estado.values())
@@ -51,7 +49,6 @@ class DetalleTipoEquipoFragment(
         btnConfirmar.setOnClickListener {
             val nuevoNombre = nombreInput.text.toString()
 
-
             if (nuevoNombre.isNotBlank()) {
                 val updatedTipoEquipo = TipoEquipo(
                     id = tipoEquipo.id,
@@ -61,7 +58,7 @@ class DetalleTipoEquipoFragment(
                 onEdit(updatedTipoEquipo)
                 dismiss()
             } else {
-                Snackbar.make(view, "Llene todos los campos para editar el tipo de equipo", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, "El nombre es obligatorio", Snackbar.LENGTH_LONG).show()
             }
         }
 

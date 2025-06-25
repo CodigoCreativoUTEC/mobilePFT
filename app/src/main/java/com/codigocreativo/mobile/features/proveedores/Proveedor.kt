@@ -12,5 +12,11 @@ data class Proveedor(
     @SerializedName("estado")
     var estado: Estado,
     @SerializedName("pais")
-    var pais: Pais?
+    var pais: Pais?,
+    @SerializedName("telefono")
+    var telefono: String? = null,
+    @SerializedName("email")
+    var email: String? = null,
+    @SerializedName("direccion")
+    var direccion: String? = null
 )

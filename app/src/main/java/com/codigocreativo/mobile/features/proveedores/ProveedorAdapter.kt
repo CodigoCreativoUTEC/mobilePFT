@@ -17,8 +17,8 @@ class ProveedorAdapter(
 
     inner class ProveedorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
-        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
+        val nombreTextView: TextView = itemView.findViewById(R.id.nombreProveedorTextView)
+        val estadoTextView: TextView = itemView.findViewById(R.id.estadoProveedorTextView)
 
     }
 

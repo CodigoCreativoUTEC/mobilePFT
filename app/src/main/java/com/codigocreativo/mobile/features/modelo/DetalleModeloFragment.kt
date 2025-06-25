@@ -4,26 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.marca.SelectorMarcaFragment
 import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 
 class DetalleModeloFragment(
     private val modelo: Modelo,
     private val onEdit: (Modelo) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var nombreInput: EditText
-    private lateinit var btnConfirmar: Button
-    private lateinit var marcaPickerFragment: SelectorMarcaFragment
-    private lateinit var idInput: TextView
+    private lateinit var nombreInput: TextInputEditText
+    private lateinit var btnConfirmar: MaterialButton
+    private lateinit var idInput: TextInputEditText
     private lateinit var estadoSpinner: Spinner
 
     override fun onCreateView(
@@ -34,15 +31,12 @@ class DetalleModeloFragment(
 
         nombreInput = view.findViewById(R.id.nombreInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
-        marcaPickerFragment = childFragmentManager.findFragmentById(R.id.fragmentMarcaPicker) as SelectorMarcaFragment
         idInput = view.findViewById(R.id.idInput)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
         // Populate fields with data from the modelo object
-        idInput.text = modelo.id.toString()
+        idInput.setText(modelo.id?.toString() ?: "")
         nombreInput.setText(modelo.nombre)
-        modelo.idMarca?.let { marcaPickerFragment.setSelectedMarca(it.nombre) }
-
 
         // Populate estadoSpinner with Estado enum values
         val estadoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Estado.values())
@@ -53,24 +47,18 @@ class DetalleModeloFragment(
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
             val nuevoNombre = nombreInput.text.toString()
-            val nuevoMarca = marcaPickerFragment.getSelectedMarca()
 
-
-            if (nuevoNombre.isNotBlank() && nuevoMarca != null) {
-                val updatedModelo = nuevoMarca?.let { it1 ->
-                    Modelo(
-                        id = modelo.id,
-                        nombre = nuevoNombre,
-                        idMarca = nuevoMarca,
-                        estado = Estado.values()[estadoSpinner.selectedItemPosition]
-                    )
-                }
-                if (updatedModelo != null) {
-                    onEdit(updatedModelo)
-                }
+            if (nuevoNombre.isNotBlank()) {
+                val updatedModelo = Modelo(
+                    id = modelo.id,
+                    nombre = nuevoNombre,
+                    idMarca = modelo.idMarca, // Mantener la marca actual
+                    estado = Estado.values()[estadoSpinner.selectedItemPosition]
+                )
+                onEdit(updatedModelo)
                 dismiss()
             } else {
-                Snackbar.make(view, "Llene todos los campos para editar el modelo", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, "El nombre es obligatorio", Snackbar.LENGTH_LONG).show()
             }
         }
 

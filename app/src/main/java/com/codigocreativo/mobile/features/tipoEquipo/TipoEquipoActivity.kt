@@ -182,6 +182,10 @@ class TipoEquipoActivity : AppCompatActivity() {
             }
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        val searchView: SearchView = findViewById(R.id.search_view)
+        val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        closeButton.setImageResource(R.drawable.ic_close)
     }
 
     private fun loadTipoEquipos(token: String, nombre: String? = null, estado: String? = null) {

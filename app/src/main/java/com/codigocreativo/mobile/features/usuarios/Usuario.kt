@@ -28,6 +28,6 @@ data class Usuario(
     val idInstitucion: Institucion,
     @SerializedName("idPerfil")
     val idPerfil: Perfil,
-    @SerializedName("usuariosDirecciones")
+    @SerializedName("usuariosTelefonos")
     val usuariosTelefonos: List<Telefono>
-    )
+)

@@ -21,7 +21,7 @@ object RetrofitClient {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
+            .baseUrl("http://codigocreativo.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
             .client(client) // Usa el cliente con el token
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -29,14 +29,14 @@ object RetrofitClient {
 
     fun getClientSinToken(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
+            .baseUrl("http://codigocreativo.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
     fun getLogin(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/") // Cambia por tu URL del backend
+            .baseUrl("http://codigocreativo.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/") // Cambia por tu URL del backend
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

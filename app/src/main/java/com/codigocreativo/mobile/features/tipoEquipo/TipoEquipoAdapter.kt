@@ -19,8 +19,8 @@ class TipoEquipoAdapter(
 
     inner class TipoEquipoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
-        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
+        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTipoEquipoTextView)
+        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTipoEquipoTextView)
 
     }
 

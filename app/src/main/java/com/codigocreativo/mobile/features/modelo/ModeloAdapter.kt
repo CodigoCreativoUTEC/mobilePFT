@@ -22,8 +22,8 @@ class ModeloAdapter(
 
     inner class ModeloViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
-        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
+        val nombreTextView: TextView = itemView.findViewById(R.id.nombreModeloTextView)
+        val estadoTextView: TextView = itemView.findViewById(R.id.estadoModeloTextView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModeloViewHolder {

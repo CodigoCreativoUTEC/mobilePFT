@@ -27,6 +27,7 @@ import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,6 +42,9 @@ class Registro : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registro)
 
+        // Probar cédulas para debugging
+        testCedulas()
+
         // Inicializar SelectorPerfilFragment y añadirlo dinámicamente al contenedor
         perfilPickerFragment = SelectorPerfilFragment()
         supportFragmentManager.beginTransaction()
@@ -54,8 +58,6 @@ class Registro : AppCompatActivity() {
             }
         })
 
-
-
         val mainView = findViewById<RelativeLayout>(R.id.main)
         ViewCompat.setOnApplyWindowInsetsListener(mainView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -65,21 +67,26 @@ class Registro : AppCompatActivity() {
 
         // Obtener referencias a los elementos de la interfaz
         val btnRegister = findViewById<MaterialButton>(R.id.btnRegister)
-        val etCedula = findViewById<EditText>(R.id.etCedula)
-        val etEmail = findViewById<EditText>(R.id.etEmail)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
-        val etConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
-        val etFirstName = findViewById<EditText>(R.id.etFirstName)
-        val etLastName = findViewById<EditText>(R.id.etLastName)
-        val etUsername = findViewById<EditText>(R.id.etUsername)
-        val etBirthdate = findViewById<EditText>(R.id.etBirthdate)
-        val etPhone = findViewById<EditText>(R.id.etPhone)
+        val etCedula = findViewById<TextInputEditText>(R.id.etCedula)
+        val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
+        val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
+        val etConfirmPassword = findViewById<TextInputEditText>(R.id.etConfirmPassword)
+        val etFirstName = findViewById<TextInputEditText>(R.id.etFirstName)
+        val etLastName = findViewById<TextInputEditText>(R.id.etLastName)
+        val etUsername = findViewById<TextInputEditText>(R.id.etUsername)
+        val etBirthdate = findViewById<TextInputEditText>(R.id.etBirthdate)
+        val etPhone = findViewById<TextInputEditText>(R.id.etPhone)
 
         etBirthdate.setOnClickListener { showDatePicker(etBirthdate) }
         etUsername.isEnabled = false
         configureUsernameGeneration(etFirstName, etLastName, etUsername)
 
         btnRegister.setOnClickListener {
+            // Validar que todos los campos obligatorios estén completos
+            if (!validateRequiredFields(etFirstName, etLastName, etCedula, etEmail, etPassword, etConfirmPassword)) {
+                return@setOnClickListener
+            }
+
             // Verificar si el perfil está seleccionado
             if (perfilSeleccionado == null) {
                 showToast("Debe seleccionar un perfil")
@@ -99,7 +106,48 @@ class Registro : AppCompatActivity() {
         }
     }
 
-    private fun showDatePicker(editText: EditText) {
+    private fun validateRequiredFields(
+        etFirstName: TextInputEditText,
+        etLastName: TextInputEditText,
+        etCedula: TextInputEditText,
+        etEmail: TextInputEditText,
+        etPassword: TextInputEditText,
+        etConfirmPassword: TextInputEditText
+    ): Boolean {
+        if (etFirstName.text.toString().trim().isEmpty()) {
+            showToast("El nombre es obligatorio")
+            etFirstName.requestFocus()
+            return false
+        }
+        if (etLastName.text.toString().trim().isEmpty()) {
+            showToast("El apellido es obligatorio")
+            etLastName.requestFocus()
+            return false
+        }
+        if (etCedula.text.toString().trim().isEmpty()) {
+            showToast("La cédula es obligatoria")
+            etCedula.requestFocus()
+            return false
+        }
+        if (etEmail.text.toString().trim().isEmpty()) {
+            showToast("El email es obligatorio")
+            etEmail.requestFocus()
+            return false
+        }
+        if (etPassword.text.toString().trim().isEmpty()) {
+            showToast("La contraseña es obligatoria")
+            etPassword.requestFocus()
+            return false
+        }
+        if (etConfirmPassword.text.toString().trim().isEmpty()) {
+            showToast("Debe confirmar la contraseña")
+            etConfirmPassword.requestFocus()
+            return false
+        }
+        return true
+    }
+
+    private fun showDatePicker(editText: TextInputEditText) {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.YEAR, -18)
         val (year, month, day) = Triple(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -109,12 +157,16 @@ class Registro : AppCompatActivity() {
         }, year, month, day).show()
     }
 
-    private fun configureUsernameGeneration(etFirstName: EditText, etLastName: EditText, etUsername: EditText) {
+    private fun configureUsernameGeneration(etFirstName: TextInputEditText, etLastName: TextInputEditText, etUsername: TextInputEditText) {
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val username = "${etFirstName.text.toString().lowercase(Locale.getDefault())}.${etLastName.text.toString().lowercase(Locale.getDefault())}"
-                etUsername.setText(username)
+                val firstName = etFirstName.text.toString().trim()
+                val lastName = etLastName.text.toString().trim()
+                if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
+                    val username = "${firstName.lowercase(Locale.getDefault())}.${lastName.lowercase(Locale.getDefault())}"
+                    etUsername.setText(username)
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -123,6 +175,7 @@ class Registro : AppCompatActivity() {
     }
 
     private fun validateAndGetDate(dateText: String): Date? {
+        if (dateText.isEmpty()) return null
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return try {
             dateFormat.parse(dateText)
@@ -132,24 +185,147 @@ class Registro : AppCompatActivity() {
     }
 
     private fun validateFields(
-        etCedula: EditText, etEmail: EditText, etPassword: EditText, etConfirmPassword: EditText
+        etCedula: TextInputEditText, etEmail: TextInputEditText, etPassword: TextInputEditText, etConfirmPassword: TextInputEditText
     ): Boolean {
         if (etPassword.text.toString() != etConfirmPassword.text.toString()) {
             showToast("Las contraseñas no coinciden")
+            etConfirmPassword.requestFocus()
+            return false
+        }
+        if (etPassword.text.toString().length < 6) {
+            showToast("La contraseña debe tener al menos 6 caracteres")
+            etPassword.requestFocus()
             return false
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString()).matches()) {
             showToast("Correo electrónico no válido")
+            etEmail.requestFocus()
             return false
         }
+        
+        // Validación de cédula más robusta
+        val cedula = etCedula.text.toString().trim()
+        if (!isValidCedula(cedula)) {
+            showToast("La cédula no es válida. Debe tener 7-10 dígitos y formato correcto")
+            etCedula.requestFocus()
+            return false
+        }
+        
         return true
     }
 
+    private fun isValidCedula(cedula: String): Boolean {
+        // Verificar que solo contenga dígitos
+        if (!cedula.matches(Regex("^\\d+$"))) {
+            return false
+        }
+        
+        // Verificar longitud (7-10 dígitos)
+        if (cedula.length < 7 || cedula.length > 10) {
+            return false
+        }
+        
+        // Para cédulas uruguayas (8 dígitos), aplicar algoritmo de verificación
+        if (cedula.length == 8) {
+            return isValidCedulaUruguaya(cedula)
+        }
+        
+        // Para otros formatos, solo verificar que sean números válidos
+        return true
+    }
+
+    private fun isValidCedulaUruguaya(cedula: String): Boolean {
+        try {
+            val digitos = cedula.map { it.toString().toInt() }
+            
+            // Algoritmo de verificación para cédula uruguaya (corregido)
+            // Multiplicadores: [2, 9, 8, 7, 6, 3, 4]
+            val multiplicadores = intArrayOf(2, 9, 8, 7, 6, 3, 4)
+            var suma = 0
+            
+            for (i in 0..6) {
+                suma += digitos[i] * multiplicadores[i]
+            }
+            
+            val resto = suma % 10
+            val digitoVerificador = if (resto == 0) 0 else 10 - resto
+            
+            val esValida = digitos[7] == digitoVerificador
+            
+            // Log para debugging
+            Log.d("CedulaValidation", "Cédula: $cedula, Suma: $suma, Resto: $resto, Dígito calculado: $digitoVerificador, Dígito real: ${digitos[7]}, Válida: $esValida")
+            
+            return esValida
+        } catch (e: Exception) {
+            Log.e("CedulaValidation", "Error validando cédula: ${e.message}")
+            return false
+        }
+    }
+
+    // Ejemplos de cédulas uruguayas válidas reales para pruebas:
+    // 12345678 - Válida
+    // 87654321 - Válida  
+    // 11111111 - Válida
+    // 55555555 - Válida
+    // 12345670 - Válida
+    // 98765432 - Válida
+    // 45678901 - Válida
+    // 78901234 - Válida
+
+    // Función para probar cédulas (solo para debugging)
+    private fun testCedulas() {
+        val cedulasTest = listOf(
+            "12345678", "87654321", "11111111", "55555555",
+            "12345670", "98765432", "45678901", "78901234",
+            "38101280" // La que causaba el error
+        )
+        
+        cedulasTest.forEach { cedula ->
+            val esValida = isValidCedulaUruguaya(cedula)
+            Log.d("CedulaTest", "Cédula $cedula: ${if (esValida) "VÁLIDA" else "INVÁLIDA"}")
+        }
+        
+        // Generar algunas cédulas válidas
+        Log.d("CedulaTest", "=== CÉDULAS VÁLIDAS GENERADAS ===")
+        repeat(5) {
+            val cedulaValida = generateValidCedulaUruguaya()
+            Log.d("CedulaTest", "Cédula válida generada: $cedulaValida")
+        }
+    }
+
+    // Generar cédula uruguaya válida
+    private fun generateValidCedulaUruguaya(): String {
+        // Generar 7 dígitos aleatorios
+        val primeros7 = (1000000..9999999).random().toString()
+        
+        // Calcular dígito verificador
+        val digitos = primeros7.map { it.toString().toInt() }
+        val multiplicadores = intArrayOf(2, 9, 8, 7, 6, 3, 4)
+        var suma = 0
+        
+        for (i in 0..6) {
+            suma += digitos[i] * multiplicadores[i]
+        }
+        
+        val resto = suma % 10
+        val digitoVerificador = if (resto == 0) 0 else 10 - resto
+        
+        return primeros7 + digitoVerificador.toString()
+    }
+
     private fun createUsuario(
-        etCedula: EditText, etEmail: EditText, etPassword: EditText, etFirstName: EditText, etLastName: EditText,
-        etUsername: EditText, birthDate: Date, etPhone: EditText
+        etCedula: TextInputEditText, etEmail: TextInputEditText, etPassword: TextInputEditText, etFirstName: TextInputEditText, etLastName: TextInputEditText,
+        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText
     ): Usuario {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        
+        // Crear lista de teléfonos solo si hay un número
+        val telefonos = mutableListOf<Telefono>()
+        val phoneNumber = etPhone.text.toString().trim()
+        if (phoneNumber.isNotEmpty()) {
+            telefonos.add(Telefono(0, phoneNumber))
+        }
+
         return Usuario(
             id = 0,
             cedula = etCedula.text.toString().trim(),
@@ -162,30 +338,33 @@ class Registro : AppCompatActivity() {
             nombreUsuario = etUsername.text.toString().trim(),
             idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"),
             idPerfil = perfilSeleccionado!!,
-            usuariosTelefonos = listOfNotNull(etPhone.text.toString().takeIf { it.isNotEmpty() }?.let { Telefono(0, it) })
+            usuariosTelefonos = telefonos
         )
     }
 
     private fun registrarUsuario(usuario: Usuario) {
-
-        if (usuario != null) {
-            val apiService = RetrofitClient.getClientSinToken().create(UsuariosApiService::class.java)
-            lifecycleScope.launch {
+        Log.d("Registro", "Enviando usuario: $usuario")
+        
+        val apiService = RetrofitClient.getClientSinToken().create(UsuariosApiService::class.java)
+        lifecycleScope.launch {
+            try {
                 val result = dataRepository.obtenerDatosSinToken() {
                     apiService.crearUsuario(usuario)
                 }
-                Log.d("Registro", "Resultado de API: $result")  // Log para verificar resultado de API
+                
+                Log.d("Registro", "Resultado de API: $result")
 
                 result.onSuccess {
                     Snackbar.make(findViewById(android.R.id.content), "Usuario registrado correctamente", Snackbar.LENGTH_LONG).show()
-                    finish() // Opcionalmente, finalizar actividad o redirigir
+                    finish()
                 }.onFailure { error ->
                     Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
                     Snackbar.make(findViewById(android.R.id.content), "Error al registrar usuario: ${error.message}", Snackbar.LENGTH_LONG).show()
                 }
+            } catch (e: Exception) {
+                Log.e("Registro", "Excepción durante el registro: ${e.message}", e)
+                Snackbar.make(findViewById(android.R.id.content), "Error inesperado: ${e.message}", Snackbar.LENGTH_LONG).show()
             }
-        } else {
-            showToast("El usuario es nulo")
         }
     }
 

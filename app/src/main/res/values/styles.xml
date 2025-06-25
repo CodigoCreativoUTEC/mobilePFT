@@ -1,8 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name= "AppTheme" parent ="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/my_primary</item>
+        <item name="colorPrimaryDark">@color/my_primary</item>
+        <item name="colorAccent">@color/my_primary</item>
+        <item name="colorSurface">@android:color/white</item>
+        <item name="colorOnSurface">@color/my_primary</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="android:statusBarColor">@color/my_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/background_light</item>
+    </style>
+
+    <!-- Estilo para botones principales -->
+    <style name="PrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="backgroundTint">@color/my_primary</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Estilo para botones de texto -->
+    <style name="TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:textColor">@color/my_primary</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <!-- Estilo para campos de texto -->
+    <style name="OutlinedTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/my_primary</item>
+        <item name="hintTextColor">@color/my_primary</item>
+        <item name="startIconTint">@color/my_primary</item>
+        <item name="endIconTint">@color/my_primary</item>
+    </style>
+
+    <!-- Estilo para cards -->
+    <style name="ModernCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">12dp</item>
+        <item name="cardBackgroundColor">@android:color/white</item>
+        <item name="contentPadding">32dp</item>
+    </style>
+
+    <!-- Estilo para NavigationView -->
+    <style name="NavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
+        <item name="itemTextAppearance">@style/NavigationItemTextAppearance</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+    <!-- Estilo para texto de items del navigation -->
+    <style name="NavigationItemTextAppearance" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/my_primary</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <!-- Estilo para grupos del navigation -->
+    <style name="NavigationGroupStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="groupDividerEnabled">true</item>
+        <item name="android:divider">@color/colorDivider</item>
+        <item name="android:dividerHeight">1dp</item>
     </style>
 </resources>
