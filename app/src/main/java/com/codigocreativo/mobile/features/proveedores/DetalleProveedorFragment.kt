@@ -20,9 +20,6 @@ class DetalleProveedorFragment(
 ) : BottomSheetDialogFragment() {
 
     private lateinit var nombreInput: TextInputEditText
-    private lateinit var telefonoInput: TextInputEditText
-    private lateinit var emailInput: TextInputEditText
-    private lateinit var direccionInput: TextInputEditText
     private lateinit var btnConfirmar: MaterialButton
     private lateinit var paisPickerFragment: SelectorPaisFragment
     private lateinit var estadoSpinner: Spinner
@@ -35,20 +32,12 @@ class DetalleProveedorFragment(
 
         // Inicializar vistas
         nombreInput = view.findViewById(R.id.nombreInput)
-        telefonoInput = view.findViewById(R.id.telefonoInput)
-        emailInput = view.findViewById(R.id.emailInput)
-        direccionInput = view.findViewById(R.id.direccionInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
         paisPickerFragment = childFragmentManager.findFragmentById(R.id.fragmentPaisPicker) as SelectorPaisFragment
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
         // Populate fields with data from the proveedor object
         nombreInput.setText(proveedor.nombre)
-        
-        // Setear campos adicionales si existen en el modelo Proveedor
-        proveedor.telefono?.let { telefonoInput.setText(it) }
-        proveedor.email?.let { emailInput.setText(it) }
-        proveedor.direccion?.let { direccionInput.setText(it) }
 
         // Configurar el selector de país
         proveedor.pais?.let { paisPickerFragment.setSelectedCountry(it.nombre) }
@@ -62,9 +51,6 @@ class DetalleProveedorFragment(
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
             val nuevoNombre = nombreInput.text.toString()
-            val nuevoTelefono = telefonoInput.text.toString()
-            val nuevoEmail = emailInput.text.toString()
-            val nuevaDireccion = direccionInput.text.toString()
             val nuevoPais = paisPickerFragment.getSelectedCountry()
 
             if (nuevoNombre.isNotBlank() && nuevoPais != null) {
@@ -72,13 +58,18 @@ class DetalleProveedorFragment(
                     idProveedor = proveedor.idProveedor,
                     nombre = nuevoNombre,
                     pais = nuevoPais,
-                    estado = Estado.values()[estadoSpinner.selectedItemPosition],
-                    telefono = nuevoTelefono.takeIf { it.isNotBlank() },
-                    email = nuevoEmail.takeIf { it.isNotBlank() },
-                    direccion = nuevaDireccion.takeIf { it.isNotBlank() }
+                    estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
-                onEdit(updatedProveedor)
-                dismiss()
+                // Mostrar diálogo de confirmación
+                android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Confirmar cambios")
+                    .setMessage("¿Desea guardar los cambios en el proveedor?")
+                    .setPositiveButton("Confirmar") { _, _ ->
+                        onEdit(updatedProveedor)
+                        dismiss()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             } else {
                 Snackbar.make(view, "El nombre y país son obligatorios", Snackbar.LENGTH_LONG).show()
             }

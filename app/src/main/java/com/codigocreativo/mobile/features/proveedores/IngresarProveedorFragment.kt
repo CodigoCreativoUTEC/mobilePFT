@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.paises.Pais
 import com.codigocreativo.mobile.features.paises.SelectorPaisFragment
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
@@ -42,9 +43,8 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
             val nuevoPais = paisPickerFragment.getSelectedCountry()
 
             if (nuevoNombre.isNotBlank() && nuevoPais != null) {
-                val proveedor = Proveedor(idProveedor = null, nombre = nuevoNombre, pais = nuevoPais, estado = Estado.ACTIVO)
-                onConfirm(proveedor)
-                dismiss()
+                // Verificar si el proveedor ya existe antes de crear
+                checkIfProveedorExists(nuevoNombre, view)
             } else {
                 Snackbar.make(view, "Llene todos los campos para agregar un proveedor", Snackbar.LENGTH_LONG).show()
             }
@@ -54,6 +54,7 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
     }
     // Función para verificar si el proveedor existe en la base de datos
     private fun checkIfProveedorExists(nombre: String, view: View) {
+        val nuevoPais = paisPickerFragment.getSelectedCountry()
         val token = SessionManager.getToken(requireContext())
         if (token != null) {
             val retrofit = RetrofitClient.getClient(token)
@@ -76,7 +77,7 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
                             Snackbar.make(view, "El proveedor '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación
-                            showConfirmationDialog(nombre, view)
+                            showConfirmationDialog(nombre, nuevoPais, view)
                         }
                     }.onFailure { error ->
                         Snackbar.make(view, "Error al verificar el proveedor: ${error.message}", Snackbar.LENGTH_LONG).show()
@@ -94,13 +95,13 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
     }
 
     // Función para mostrar el diálogo de confirmación
-    private fun showConfirmationDialog(nombre: String, view: View) {
+    private fun showConfirmationDialog(nombre: String, pais: Pais?, view: View) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Confirmación")
-            .setMessage("¿Desea confirmar el ingreso del proveedor '$nombre'?")
+        builder.setTitle("Confirmar Creación")
+            .setMessage("¿Está seguro que desea crear el proveedor '$nombre' del país '${pais?.nombre ?: "No especificado"}'?")
             .setPositiveButton("Confirmar") { _, _ ->
                 // Crear el nuevo proveedor y proceder
-                val proveedor = Proveedor(idProveedor = null, nombre = nombre, pais = null, estado = Estado.ACTIVO)
+                val proveedor = Proveedor(idProveedor = null, nombre = nombre, pais = pais, estado = Estado.ACTIVO)
                 onConfirm(proveedor)  // Llamamos a la función de confirmación
                 dismiss()  // Cerramos el BottomSheet
             }

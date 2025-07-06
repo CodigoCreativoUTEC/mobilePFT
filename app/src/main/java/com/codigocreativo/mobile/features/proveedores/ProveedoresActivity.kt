@@ -8,10 +8,10 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -184,13 +184,19 @@ class ProveedoresActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = dataRepository.obtenerDatos(
                 token = token,
-                apiCall = { apiService.listarProveedores("Bearer $token") }
+                apiCall = { apiService.buscarProveedores("Bearer $token", nombre, estado) }
             )
 
             result.onSuccess { proveedores ->
+                Log.d("ProveedoresActivity", "Datos recibidos del servidor: ${proveedores.size} proveedores")
+                proveedores.forEach { proveedor ->
+                    Log.d("ProveedoresActivity", "Proveedor del servidor: ${proveedor.nombre}, Estado: ${proveedor.estado}")
+                }
+                
                 proveedoresList.clear()
                 proveedoresList.addAll(proveedores) // Agregar los proveedores obtenidos
-                adapter.updateList(proveedoresList) // Actualizar el RecyclerView con los proveedores
+                // Actualizar directamente el adapter con los datos filtrados del servidor
+                adapter.updateList(proveedoresList)
             }.onFailure { error ->
                 Log.e("ProveedoresActivity", "Error al cargar los proveedores: ${error.message}")
             }
@@ -240,12 +246,21 @@ class ProveedoresActivity : AppCompatActivity() {
 
     private fun setupFilters() {
         val searchView: SearchView = findViewById(R.id.search_view)
-        val filterStatus: Spinner = findViewById(R.id.filter_status)
+        val filterStatus: AutoCompleteTextView = findViewById(R.id.filter_status)
 
-        // Configuración del spinner de estado
-        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, Estado.values())
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        filterStatus.adapter = statusAdapter
+        // Configuración del AutoCompleteTextView de estado con opción "Todos"
+        val estadosConTodos = listOf("Todos") + Estado.values().map { it.name }
+        val statusAdapter = ArrayAdapter(this, R.layout.item_dropdown_minimal, estadosConTodos)
+        filterStatus.setAdapter(statusAdapter)
+        filterStatus.setText("Todos", false) // Establecer valor por defecto
+        
+        // Configurar para mostrar el dropdown al hacer clic
+        filterStatus.setOnClickListener {
+            filterStatus.showDropDown()
+        }
+        
+        // Configurar el ancho del dropdown
+        filterStatus.dropDownWidth = (resources.displayMetrics.widthPixels * 0.5).toInt()
 
         // Listener para aplicar filtros cuando cambia el texto de búsqueda
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -260,18 +275,9 @@ class ProveedoresActivity : AppCompatActivity() {
             }
         })
 
-        // Listener para aplicar filtros cuando se selecciona un estado diferente en el Spinner
-        filterStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                applyFilters() // Aplica los filtros cada vez que se cambia el estado
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        // Listener para aplicar filtros cuando se selecciona un estado diferente en el AutoCompleteTextView
+        filterStatus.setOnItemClickListener { _, _, position, _ ->
+            applyFilters() // Aplica los filtros cada vez que se cambia el estado
         }
 
         // Listener para el evento de cierre del SearchView (opcional)
@@ -284,28 +290,41 @@ class ProveedoresActivity : AppCompatActivity() {
     // Función para aplicar los filtros (actualizada)
     private fun applyFilters() {
         val searchView: SearchView = findViewById(R.id.search_view)
-        val filterStatus: Spinner = findViewById(R.id.filter_status)
+        val filterStatus: AutoCompleteTextView = findViewById(R.id.filter_status)
 
         val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
-        val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
+        val estadoSeleccionado = filterStatus.text.toString()
+        val estado = if (estadoSeleccionado == "Todos") null else Estado.valueOf(estadoSeleccionado)
 
-        filterProveedores(nombre, estado) // Aplica los filtros localmente
+        Log.d("ProveedoresActivity", "Aplicando filtros - Nombre: '$nombre', Estado seleccionado: '$estadoSeleccionado', Estado: $estado")
+
+        // Obtener el token y cargar proveedores con filtros
+        val token = SessionManager.getToken(this)
+        if (token != null) {
+            loadProveedores(token, nombre, estado?.name)
+        }
     }
 
     // Función para filtrar la lista de proveedores(actualizada)
-    private fun filterProveedores(nombre: String?, estado: Estado) {
+    private fun filterProveedores(nombre: String?, estado: Estado?) {
         val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
-        val statusFilter = estado
 
-        // Filtrar la lista de marcas
+        // Filtrar la lista de proveedores
         filteredList = proveedoresList.filter { proveedor ->
             val matchesName = proveedor.nombre.lowercase(Locale.getDefault()).contains(nameFilter)
-            val matchesStatus = proveedor.estado == statusFilter
+            val matchesStatus = estado == null || proveedor.estado == estado
+
+            Log.d("ProveedoresActivity", "Filtrando: ${proveedor.nombre} - matchesName: $matchesName, matchesStatus: $matchesStatus (estado: ${proveedor.estado}, filtro: $estado)")
 
             matchesName && matchesStatus
         }.toMutableList()
 
+        Log.d("ProveedoresActivity", "Resultado filtrado: ${filteredList.size} proveedores")
+        filteredList.forEach { proveedor ->
+            Log.d("ProveedoresActivity", "Proveedor filtrado: ${proveedor.nombre}, Estado: ${proveedor.estado}")
+        }
+
         // Actualizar el RecyclerView con la lista filtrada
-        adapter.updateList(filteredList) // Asegúrate de que este método esté correctamente implementado
+        adapter.updateList(filteredList)
     }
 }
