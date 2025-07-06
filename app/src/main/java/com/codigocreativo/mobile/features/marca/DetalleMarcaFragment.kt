@@ -24,7 +24,6 @@ class DetalleMarcaFragment(
 ) : BottomSheetDialogFragment() {
 
     private lateinit var nombreInput: TextInputEditText
-    private lateinit var idInput: TextInputEditText
     private lateinit var btnConfirmar: MaterialButton
     private lateinit var estadoSpinner: Spinner
 
@@ -35,12 +34,10 @@ class DetalleMarcaFragment(
         val view = inflater.inflate(R.layout.fragment_detalle_marca, container, false)
 
         nombreInput = view.findViewById(R.id.nombreInput)
-        idInput = view.findViewById(R.id.idInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
         // Populate fields with data from the marca object
-        idInput.setText(marca.id?.toString() ?: "")
         nombreInput.setText(marca.nombre)
 
         // Populate estadoSpinner with Estado enum values

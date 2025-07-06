@@ -21,7 +21,6 @@ class DetalleUsuarioFragment(
     private val onEdit: (Usuario) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var idInput: TextView
     private lateinit var cedulaInput: EditText
     private lateinit var nombreInput: EditText
     private lateinit var apellidoInput: EditText
@@ -46,7 +45,6 @@ class DetalleUsuarioFragment(
         )
 
         // Initialize views
-        idInput = view.findViewById(R.id.idInput)
         nombreInput = view.findViewById(R.id.nombreInput)
         apellidoInput = view.findViewById(R.id.apellidoInput)
         fechaNacimientoInput = view.findViewById(R.id.fechaNacimientoInput)
@@ -63,7 +61,6 @@ class DetalleUsuarioFragment(
         institucionSpinner = view.findViewById(R.id.institucionSpinner)
 
         // Populate fields with data from the usuario object
-        idInput.text = usuario.id.toString()
         nombreInput.setText(usuario.nombre)
         apellidoInput.setText(usuario.apellido)
         fechaNacimientoInput.setText(usuario.fechaNacimiento)

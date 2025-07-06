@@ -59,21 +59,6 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- ID (solo lectura) -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="ID"
-                    android:layout_marginBottom="12dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/idInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:enabled="false"
-                        android:drawableStart="@drawable/ic_user_avatar"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <!-- Nombre -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"

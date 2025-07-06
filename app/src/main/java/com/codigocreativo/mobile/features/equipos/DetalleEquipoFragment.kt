@@ -27,7 +27,6 @@ class DetalleEquipoFragment(
     private lateinit var nombreInput: TextInputEditText
     private lateinit var descripcionInput: TextInputEditText
     private lateinit var btnConfirmar: MaterialButton
-    private lateinit var idInput: TextInputEditText
     private lateinit var estadoSpinner: Spinner
     private lateinit var imagenEquipo: ImageView
 
@@ -42,12 +41,10 @@ class DetalleEquipoFragment(
         nombreInput = view.findViewById(R.id.nombreInput)
         descripcionInput = view.findViewById(R.id.descripcionInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
-        idInput = view.findViewById(R.id.idInput)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
         imagenEquipo = view.findViewById(R.id.imagenEquipo)
 
         // Populate fields with data from the equipo object
-        idInput.setText(equipo.id?.toString() ?: "")
         nombreInput.setText(equipo.nombre ?: "")
         descripcionInput.setText(equipo.descripcion ?: "")
 

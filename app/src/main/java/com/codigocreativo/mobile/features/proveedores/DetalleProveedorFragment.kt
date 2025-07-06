@@ -25,7 +25,6 @@ class DetalleProveedorFragment(
     private lateinit var direccionInput: TextInputEditText
     private lateinit var btnConfirmar: MaterialButton
     private lateinit var paisPickerFragment: SelectorPaisFragment
-    private lateinit var idInput: TextInputEditText
     private lateinit var estadoSpinner: Spinner
 
     override fun onCreateView(
@@ -41,11 +40,9 @@ class DetalleProveedorFragment(
         direccionInput = view.findViewById(R.id.direccionInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
         paisPickerFragment = childFragmentManager.findFragmentById(R.id.fragmentPaisPicker) as SelectorPaisFragment
-        idInput = view.findViewById(R.id.idInput)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
 
         // Populate fields with data from the proveedor object
-        idInput.setText(proveedor.idProveedor.toString())
         nombreInput.setText(proveedor.nombre)
         
         // Setear campos adicionales si existen en el modelo Proveedor
