@@ -18,6 +18,7 @@ import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
 import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 import com.codigocreativo.mobile.utils.SessionManager
+import com.codigocreativo.mobile.network.User
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -118,11 +119,11 @@ class DashboardActivity : AppCompatActivity() {
             val userRoleTextView = headerView.findViewById<TextView>(R.id.nav_user_role)
 
             // Obtener información del usuario desde SessionManager
-            val user = SessionManager.getCurrentUser(this)
+            val user = SessionManager.getUser(this)
             if (user != null) {
                 val fullName = "${user.nombre} ${user.apellido}"
                 userNameTextView.text = fullName
-                userRoleTextView.text = user.idPerfil?.nombre ?: "Usuario"
+                userRoleTextView.text = user.idPerfil?.nombrePerfil ?: "Usuario"
                 
                 Log.d("DashboardActivity", "Usuario actualizado en header: $fullName")
             } else {

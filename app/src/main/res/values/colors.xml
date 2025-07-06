@@ -17,8 +17,8 @@
     <color name="background_light">#F6F7FB</color>
 
     <!-- Colores para Navigation Drawer -->
-    <color name="navigation_item_text">#5E35B1</color>
-    <color name="navigation_item_icon">#5E35B1</color>
+    <color name="navigation_item_text_color">#5E35B1</color>
+    <color name="navigation_item_icon_color">#5E35B1</color>
     <color name="navigation_item_selected">#E8E2F3</color>
     <color name="navigation_item_selected_text">#5E35B1</color>
     <color name="navigation_header_gradient_start">#5E35B1</color>
