@@ -19,6 +19,9 @@
             android:name=".main.DetallePerfilUsuarioActivity"
             android:exported="false" />
         <activity
+            android:name=".main.AccessDeniedActivity"
+            android:exported="false" />
+        <activity
             android:name=".main.Registro"
             android:exported="false" />
         <activity

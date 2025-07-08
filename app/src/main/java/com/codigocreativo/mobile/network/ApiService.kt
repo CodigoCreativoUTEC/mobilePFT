@@ -35,7 +35,7 @@ data class User(
     @SerializedName("email")
     val email: String,
     @SerializedName("contrasenia")
-    val contrasenia: String,
+    val contrasenia: String?,
     @SerializedName("fechaNacimiento")
     val fechaNacimiento: String,
     @SerializedName("estado")

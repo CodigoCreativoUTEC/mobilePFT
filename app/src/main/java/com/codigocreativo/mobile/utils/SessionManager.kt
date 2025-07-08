@@ -59,6 +59,38 @@ object SessionManager {
         }
     }
 
+    // Convertir User a Usuario
+    fun getUserAsUsuario(context: Context): com.codigocreativo.mobile.features.usuarios.Usuario? {
+        val user = getUser(context) ?: return null
+        
+        return com.codigocreativo.mobile.features.usuarios.Usuario(
+            id = user.id,
+            cedula = user.cedula,
+            email = user.email,
+            contrasenia = user.contrasenia ?: "",
+            fechaNacimiento = user.fechaNacimiento,
+            estado = user.estado,
+            nombre = user.nombre,
+            apellido = user.apellido,
+            nombreUsuario = user.nombreUsuario,
+            idInstitucion = com.codigocreativo.mobile.features.institucion.Institucion(
+                id = user.idInstitucion.id,
+                nombre = user.idInstitucion.nombre
+            ),
+            idPerfil = com.codigocreativo.mobile.features.perfiles.Perfil(
+                id = user.idPerfil.id,
+                nombrePerfil = user.idPerfil.nombrePerfil,
+                estado = user.idPerfil.estado
+            ),
+            usuariosTelefonos = user.usuariosTelefonos.map { telefono ->
+                com.codigocreativo.mobile.features.usuarios.Telefono(
+                    id = telefono.id,
+                    numero = telefono.numero
+                )
+            }
+        )
+    }
+
     // Borrar los datos de sesión
     fun clearSession(context: Context) {
         val sharedPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

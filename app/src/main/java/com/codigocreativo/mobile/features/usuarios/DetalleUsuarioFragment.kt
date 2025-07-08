@@ -111,7 +111,7 @@ class DetalleUsuarioFragment(
                     apellido = nuevoApellido,
                     fechaNacimiento = nuevoFechaNacimiento,
                     email = nuevoEmail,
-                    contrasenia = usuario.contrasenia,  // Assuming contrasenia remains the same
+                    contrasenia = usuario.contrasenia ?: "",  // Provide empty string if null
                     usuariosTelefonos = nuevosTelefonos,
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,

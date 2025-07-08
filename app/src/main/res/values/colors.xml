@@ -23,5 +23,6 @@
     <color name="navigation_item_selected_text">#5E35B1</color>
     <color name="navigation_header_gradient_start">#5E35B1</color>
     <color name="navigation_header_gradient_end">#673AB7</color>
+    <color name="error_red">#F44336</color>
 
 </resources>

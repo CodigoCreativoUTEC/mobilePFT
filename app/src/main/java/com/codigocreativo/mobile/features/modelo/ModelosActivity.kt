@@ -142,11 +142,10 @@ class ModelosActivity : AppCompatActivity() {
                             val apiService = retrofit.create(ModeloApiService::class.java)
 
                             lifecycleScope.launch {
+                                val modeloInactivo = modelo.copy(estado = Estado.INACTIVO)
                                 val result = dataRepository.guardarDatos(
                                     token = token,
-                                    apiCall = { apiService.eliminarModelo("Bearer $token",
-                                        modelo.id!!
-                                    ) }
+                                    apiCall = { apiService.editarModelo("Bearer $token", modeloInactivo) }
                                 )
 
                                 result.onSuccess {
@@ -159,7 +158,7 @@ class ModelosActivity : AppCompatActivity() {
                                 }.onFailure { error ->
                                     Snackbar.make(
                                         findViewById(android.R.id.content),
-                                        "Error al dar de baja el modelo: ${error.message}",
+                                        "Error al dar de baja el modelo: "+ error.message,
                                         Snackbar.LENGTH_LONG
                                     ).show()
                                     Log.e("ModelosActivity", "Error al dar de baja el modelo: ${error.message}")

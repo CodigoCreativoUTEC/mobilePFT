@@ -36,6 +36,6 @@ interface ModeloApiService {
     @POST("modelo/crear")
     suspend fun crearModelo(@Header("Authorization") authHeader: String, @Body modelo: Modelo): Response<Unit>
 
-    @DELETE("modelo/inactivar")
+    @POST("modelo/inactivar")
     suspend fun eliminarModelo(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>
 }

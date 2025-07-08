@@ -19,6 +19,7 @@ import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
 import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 import com.codigocreativo.mobile.utils.SessionManager
 import com.codigocreativo.mobile.network.User
+import com.codigocreativo.mobile.main.AccessDeniedActivity
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -46,6 +47,13 @@ class DashboardActivity : AppCompatActivity() {
         equiposCard = findViewById(R.id.equiposCard)
         tipoEquiposCard = findViewById(R.id.tipoequiposCard)
         modelosCard = findViewById(R.id.modelosCard)
+
+        // Verificar permisos del usuario
+        if (!hasAdminAccess()) {
+            // Si no tiene permisos, mostrar pantalla de acceso denegado
+            showAccessDeniedScreen()
+            return
+        }
 
         // Configura el botón del menú lateral
         setupDrawer()
@@ -123,7 +131,7 @@ class DashboardActivity : AppCompatActivity() {
             if (user != null) {
                 val fullName = "${user.nombre} ${user.apellido}"
                 userNameTextView.text = fullName
-                userRoleTextView.text = user.idPerfil?.nombrePerfil ?: "Usuario"
+                userRoleTextView.text = user.idPerfil.nombrePerfil
                 
                 Log.d("DashboardActivity", "Usuario actualizado en header: $fullName")
             } else {
@@ -223,6 +231,35 @@ class DashboardActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    /**
+     * Verifica si el usuario tiene permisos de administrador auxiliar
+     */
+    private fun hasAdminAccess(): Boolean {
+        try {
+            val user = SessionManager.getUser(this)
+            if (user != null) {
+                val profileName = user.idPerfil.nombrePerfil
+                Log.d("DashboardActivity", "Verificando permisos para perfil: $profileName")
+                
+                // Solo los usuarios con perfil "Aux administrativo" tienen acceso
+                return profileName.equals("Aux administrativo", ignoreCase = true)
+            }
+        } catch (e: Exception) {
+            Log.e("DashboardActivity", "Error verificando permisos: ${e.message}")
+        }
+        return false
+    }
+
+    /**
+     * Muestra la pantalla de acceso denegado
+     */
+    private fun showAccessDeniedScreen() {
+        Log.d("DashboardActivity", "Mostrando pantalla de acceso denegado")
+        val intent = Intent(this, AccessDeniedActivity::class.java)
+        startActivity(intent)
+        finish() // Cierra esta actividad para que no se pueda volver atrás
     }
 }
 
