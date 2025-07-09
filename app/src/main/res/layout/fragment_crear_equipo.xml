@@ -50,8 +50,9 @@
 
                     <ImageView
                         android:id="@+id/imagenImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:src="@drawable/agregar"
                         android:contentDescription="Imagen del equipo"
@@ -140,11 +141,43 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"/>
 
+                <!-- Identificación Interna Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Identificación Interna"
+                    android:layout_marginBottom="12dp"
+                    style="@style/OutlinedTextField">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/identificacionInternaInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Marca (Fragment) -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccionar Marca"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="4dp"/>
+                <fragment
+                    android:id="@+id/fragmentSelectorMarca"
+                    android:name="com.codigocreativo.mobile.features.marca.SelectorMarcaFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"/>
+
                 <!-- País (Fragment) -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar País"
+                    android:text="Seleccionar País de Origen"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"

@@ -129,9 +129,9 @@ class EquiposActivity : AppCompatActivity() {
                     val inflater = LayoutInflater.from(this@EquiposActivity)
                     val dialogView = inflater.inflate(R.layout.dialog_baja_equipo, null)
 
-                    val etRazonBaja = dialogView.findViewById<EditText>(R.id.etRazonBaja)
-                    val etFechaBaja = dialogView.findViewById<EditText>(R.id.etFechaBaja)
-                    val etComentarios = dialogView.findViewById<EditText>(R.id.etComentarios)
+                    val etRazonBaja = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etRazonBaja)
+                    val etFechaBaja = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etFechaBaja)
+                    val etComentarios = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComentarios)
 
                     // Function to show a toast message
                     fun showToast(message: String) {
@@ -143,85 +143,93 @@ class EquiposActivity : AppCompatActivity() {
                     etFechaBaja.setText(currentDate)
 
                     // Create the alert dialog
-                    AlertDialog.Builder(this@EquiposActivity).apply {
-                        setTitle("Confirmar baja de equipo")
-                        setMessage("Por favor, ingresa los detalles para confirmar la baja del equipo ${equipo.nombre}")
+                    val dialog = AlertDialog.Builder(this@EquiposActivity).apply {
                         setView(dialogView)
-                        setPositiveButton("Confirmar") { _, _ ->
-                            val razonBaja = etRazonBaja.text.toString()
-                            val fechaBaja = etFechaBaja.text.toString()
-                            val comentarios = etComentarios.text.toString()
+                        setCancelable(false)
+                        create()
+                    }.create()
 
-                            // Validate that razón de baja is not empty
-                            if (razonBaja.isEmpty()) {
-                                showToast("La razón de la baja es obligatoria")
-                                return@setPositiveButton
-                            }
-                            //obtener el objeto usauario que esta logueado
-                            val usuario = SessionManager.getLoggedUser(this@EquiposActivity)
+                    // Set up button click listeners
+                    val btnCancelar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCancelar)
+                    val btnConfirmar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnConfirmar)
 
-                            // Prepare the request object
-                            val bajaEquipoRequest = usuario?.let {
-                                BajaEquipoRequest(
-                                    razon = razonBaja,
-                                    fecha = fechaBaja,
-                                    idUsuario = it,
-                                    idEquipo = equipo,
-                                    estado = Estado.ACTIVO,
-                                    comentarios = comentarios
-                                )
-                            }
+                    btnCancelar.setOnClickListener {
+                        dialog.dismiss()
+                        adapter.notifyItemChanged(position)
+                    }
 
-                            // Realizar la baja lógica del equipo
-                            if (token != null) {
-                                val retrofit = RetrofitClient.getClient(token)
-                                val apiService = retrofit.create(EquiposApiService::class.java)
+                    btnConfirmar.setOnClickListener {
+                        val razonBaja = etRazonBaja.text.toString()
+                        val fechaBaja = etFechaBaja.text.toString()
+                        val comentarios = etComentarios.text.toString()
 
-                                lifecycleScope.launch {
-                                    val result = dataRepository.guardarDatos(
-                                        token = token,
-                                        apiCall = {
-                                            apiService.eliminar(
-                                                "Bearer $token",
-                                                bajaEquipoRequest  // Pass the object as the body
-                                            )
-                                        }
-                                    )
+                        // Validate that razón de baja is not empty
+                        if (razonBaja.isEmpty()) {
+                            showToast("La razón de la baja es obligatoria")
+                            return@setOnClickListener
+                        }
 
-                                    result.onSuccess {
-                                        Snackbar.make(
-                                            findViewById(android.R.id.content),
-                                            "Equipo dado de baja correctamente",
-                                            Snackbar.LENGTH_LONG
-                                        ).show()
-                                        loadEquipos(token)
-                                    }.onFailure { error ->
-                                        Snackbar.make(
-                                            findViewById(android.R.id.content),
-                                            "Error al dar de baja al equipo: ${error.message}",
-                                            Snackbar.LENGTH_LONG
-                                        ).show()
-                                        Log.e(
-                                            "EquiposActivity",
-                                            "Error al dar de baja al equipo: ${error.message}"
+                        //obtener el objeto usuario que esta logueado
+                        val usuario = SessionManager.getLoggedUser(this@EquiposActivity)
+
+                        // Prepare the request object
+                        val bajaEquipoRequest = usuario?.let {
+                            BajaEquipoRequest(
+                                razon = razonBaja,
+                                fecha = fechaBaja,
+                                idUsuario = it,
+                                idEquipo = equipo,
+                                estado = Estado.ACTIVO,
+                                comentarios = comentarios
+                            )
+                        }
+
+                        // Realizar la baja lógica del equipo
+                        if (token != null) {
+                            val retrofit = RetrofitClient.getClient(token)
+                            val apiService = retrofit.create(EquiposApiService::class.java)
+
+                            lifecycleScope.launch {
+                                val result = dataRepository.guardarDatos(
+                                    token = token,
+                                    apiCall = {
+                                        apiService.eliminar(
+                                            "Bearer $token",
+                                            bajaEquipoRequest  // Pass the object as the body
                                         )
                                     }
+                                )
+
+                                result.onSuccess {
+                                    dialog.dismiss()
+                                    Snackbar.make(
+                                        findViewById(android.R.id.content),
+                                        "Equipo dado de baja correctamente",
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
+                                    loadEquipos(token)
+                                }.onFailure { error ->
+                                    Snackbar.make(
+                                        findViewById(android.R.id.content),
+                                        "Error al dar de baja al equipo: ${error.message}",
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
+                                    Log.e(
+                                        "EquiposActivity",
+                                        "Error al dar de baja al equipo: ${error.message}"
+                                    )
                                 }
-                            } else {
-                                Snackbar.make(
-                                    findViewById(R.id.main),
-                                    "Token no encontrado, por favor inicia sesión",
-                                    Snackbar.LENGTH_LONG
-                                ).show()
                             }
+                        } else {
+                            Snackbar.make(
+                                findViewById(R.id.main),
+                                "Token no encontrado, por favor inicia sesión",
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
-                        setNegativeButton("Cancelar") { dialog, _ ->
-                            dialog.dismiss()
-                            adapter.notifyItemChanged(position)
-                        }
-                        create()
-                        show()
                     }
+
+                    dialog.show()
                 }
             })
         itemTouchHelper.attachToRecyclerView(recyclerView)

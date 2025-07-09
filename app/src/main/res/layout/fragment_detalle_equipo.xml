@@ -73,19 +73,147 @@
                         android:drawableStart="@drawable/ic_user_avatar"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Descripción -->
+                <!-- Identificación Interna -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Descripción"
+                    android:hint="Identificación Interna"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/descripcionInput"
+                        android:id="@+id/identificacionInternaInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:drawableStart="@drawable/ic_user_avatar"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Número de Serie -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Número de Serie"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/nroSerieInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Garantía -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Garantía"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/garantiaInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Fecha de Adquisición -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha de Adquisición"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fechaAdquisicionInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:drawableStart="@drawable/ic_calendar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Tipo de Equipo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tipo de Equipo"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tipoEquipoInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Marca -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Marca"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/marcaInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Modelo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Modelo"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/modeloInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- País de Origen -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="País de Origen"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/paisInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Proveedor -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Proveedor"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/proveedorInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Ubicación -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ubicación"
+                    android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/ubicacionInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
 
                 <!-- Estado (spinner) -->
                 <TextView

@@ -11,13 +11,30 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.marca.Marca
+import com.codigocreativo.mobile.features.marca.MarcaApiService
+import com.codigocreativo.mobile.features.modelo.Modelo
+import com.codigocreativo.mobile.features.modelo.ModeloApiService
+import com.codigocreativo.mobile.features.paises.Pais
+import com.codigocreativo.mobile.features.paises.PaisApiService
+import com.codigocreativo.mobile.features.proveedores.Proveedor
+import com.codigocreativo.mobile.features.proveedores.ProveedoresApiService
+import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipo
+import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoApiService
+import com.codigocreativo.mobile.features.ubicacion.Ubicacion
+import com.codigocreativo.mobile.features.ubicacion.UbicacionesApiService
+import com.codigocreativo.mobile.network.DataRepository
+import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.Estado
+import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class DetalleEquipoFragment(
     private val equipo: Equipo,
@@ -25,10 +42,29 @@ class DetalleEquipoFragment(
 ) : BottomSheetDialogFragment() {
 
     private lateinit var nombreInput: TextInputEditText
-    private lateinit var descripcionInput: TextInputEditText
+    private lateinit var identificacionInternaInput: TextInputEditText
+    private lateinit var nroSerieInput: TextInputEditText
+    private lateinit var garantiaInput: TextInputEditText
+    private lateinit var fechaAdquisicionInput: TextInputEditText
+    private lateinit var tipoEquipoInput: TextInputEditText
+    private lateinit var marcaInput: TextInputEditText
+    private lateinit var modeloInput: TextInputEditText
+    private lateinit var paisInput: TextInputEditText
+    private lateinit var proveedorInput: TextInputEditText
+    private lateinit var ubicacionInput: TextInputEditText
     private lateinit var btnConfirmar: MaterialButton
     private lateinit var estadoSpinner: Spinner
     private lateinit var imagenEquipo: ImageView
+
+    // Variables para almacenar las entidades seleccionadas
+    private var selectedTipoEquipo: TipoEquipo? = equipo.idTipo
+    private var selectedMarca: Marca? = equipo.idModelo?.idMarca
+    private var selectedModelo: Modelo? = equipo.idModelo
+    private var selectedPais: Pais? = equipo.idPais
+    private var selectedProveedor: Proveedor? = equipo.idProveedor
+    private var selectedUbicacion: Ubicacion? = equipo.ubicacion
+
+    private val dataRepository = DataRepository()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -39,14 +75,37 @@ class DetalleEquipoFragment(
 
         // Inicializar las vistas
         nombreInput = view.findViewById(R.id.nombreInput)
-        descripcionInput = view.findViewById(R.id.descripcionInput)
+        identificacionInternaInput = view.findViewById(R.id.identificacionInternaInput)
+        nroSerieInput = view.findViewById(R.id.nroSerieInput)
+        garantiaInput = view.findViewById(R.id.garantiaInput)
+        fechaAdquisicionInput = view.findViewById(R.id.fechaAdquisicionInput)
+        tipoEquipoInput = view.findViewById(R.id.tipoEquipoInput)
+        marcaInput = view.findViewById(R.id.marcaInput)
+        modeloInput = view.findViewById(R.id.modeloInput)
+        paisInput = view.findViewById(R.id.paisInput)
+        proveedorInput = view.findViewById(R.id.proveedorInput)
+        ubicacionInput = view.findViewById(R.id.ubicacionInput)
         btnConfirmar = view.findViewById(R.id.btnConfirmar)
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
         imagenEquipo = view.findViewById(R.id.imagenEquipo)
 
         // Populate fields with data from the equipo object
         nombreInput.setText(equipo.nombre ?: "")
-        descripcionInput.setText(equipo.descripcion ?: "")
+        identificacionInternaInput.setText(equipo.idInterno ?: "")
+        nroSerieInput.setText(equipo.nroSerie ?: "")
+        garantiaInput.setText(equipo.garantia ?: "")
+        fechaAdquisicionInput.setText(equipo.fechaAdquisicion ?: "")
+        
+        // Mostrar nombres en lugar de IDs para los campos de relación
+        tipoEquipoInput.setText(equipo.idTipo?.nombreTipo ?: "")
+        marcaInput.setText(equipo.idModelo?.idMarca?.nombre ?: "")
+        modeloInput.setText(equipo.idModelo?.nombre ?: "")
+        paisInput.setText(equipo.idPais?.nombre ?: "")
+        proveedorInput.setText(equipo.idProveedor?.nombre ?: "")
+        ubicacionInput.setText(equipo.ubicacion?.nombre ?: "")
+
+        // Configurar click listeners para los campos de selección
+        setupSelectorClickListeners()
 
         // Cargar la imagen del equipo
         cargarImagenEquipo()
@@ -75,7 +134,6 @@ class DetalleEquipoFragment(
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
             val nuevoNombre = nombreInput.text.toString()
-            val nuevaDescripcion = descripcionInput.text.toString()
             val nuevoEstado = Estado.entries[estadoSpinner.selectedItemPosition]
 
             // Validar los campos obligatorios antes de editar el equipo
@@ -83,19 +141,18 @@ class DetalleEquipoFragment(
                 val nuevoEquipo = Equipo(
                     equiposUbicaciones = equipo.equiposUbicaciones,
                     estado = nuevoEstado,
-                    fechaAdquisicion = equipo.fechaAdquisicion,
-                    garantia = equipo.garantia,
+                    fechaAdquisicion = fechaAdquisicionInput.text.toString(),
+                    garantia = garantiaInput.text.toString(),
                     id = equipo.id,
-                    idInterno = equipo.idInterno,
-                    idModelo = equipo.idModelo,
-                    idPais = equipo.idPais,
-                    idProveedor = equipo.idProveedor,
-                    idTipo = equipo.idTipo,
-                    ubicacion = equipo.ubicacion,
+                    idInterno = identificacionInternaInput.text.toString(),
+                    idModelo = selectedModelo,
+                    idPais = selectedPais,
+                    idProveedor = selectedProveedor,
+                    idTipo = selectedTipoEquipo,
+                    ubicacion = selectedUbicacion,
                     imagen = equipo.imagen,
                     nombre = nuevoNombre,
-                    nroSerie = equipo.nroSerie,
-                    descripcion = nuevaDescripcion.takeIf { it.isNotBlank() }
+                    nroSerie = nroSerieInput.text.toString()
                 )
                 onEdit(nuevoEquipo)
                 dismiss()
@@ -105,6 +162,229 @@ class DetalleEquipoFragment(
         }
 
         return view
+    }
+
+    private fun setupSelectorClickListeners() {
+        // Tipo de Equipo
+        tipoEquipoInput.setOnClickListener {
+            mostrarSelectorTipoEquipo()
+        }
+
+        // Marca
+        marcaInput.setOnClickListener {
+            mostrarSelectorMarca()
+        }
+
+        // Modelo
+        modeloInput.setOnClickListener {
+            mostrarSelectorModelo()
+        }
+
+        // País
+        paisInput.setOnClickListener {
+            mostrarSelectorPais()
+        }
+
+        // Proveedor
+        proveedorInput.setOnClickListener {
+            mostrarSelectorProveedor()
+        }
+
+        // Ubicación
+        ubicacionInput.setOnClickListener {
+            mostrarSelectorUbicacion()
+        }
+    }
+
+    private fun mostrarSelectorTipoEquipo() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(TipoEquipoApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listarTipoEquipos("Bearer $token")
+                }
+
+                result.onSuccess { tiposEquipo ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar Tipo de Equipo",
+                        tiposEquipo.map { it.nombreTipo },
+                        tiposEquipo
+                    ) { tipoEquipo ->
+                        selectedTipoEquipo = tipoEquipo
+                        tipoEquipoInput.setText(tipoEquipo.nombreTipo)
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar tipos de equipo", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarSelectorMarca() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(MarcaApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listarMarcas("Bearer $token")
+                }
+
+                result.onSuccess { marcas ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar Marca",
+                        marcas.map { it.nombre },
+                        marcas
+                    ) { marca ->
+                        selectedMarca = marca
+                        marcaInput.setText(marca.nombre)
+                        // Reset modelo cuando se cambia la marca
+                        selectedModelo = null
+                        modeloInput.setText("")
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar marcas", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarSelectorModelo() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(ModeloApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listarModelos("Bearer $token")
+                }
+
+                result.onSuccess { modelos ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar Modelo",
+                        modelos.map { it.nombre },
+                        modelos
+                    ) { modelo ->
+                        selectedModelo = modelo
+                        modeloInput.setText(modelo.nombre)
+                        // Actualizar marca cuando se selecciona un modelo
+                        selectedMarca = modelo.idMarca
+                        marcaInput.setText(modelo.idMarca?.nombre ?: "")
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar modelos", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarSelectorPais() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(PaisApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listarPaises("Bearer $token")
+                }
+
+                result.onSuccess { paises ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar País",
+                        paises.map { it.nombre },
+                        paises
+                    ) { pais ->
+                        selectedPais = pais
+                        paisInput.setText(pais.nombre)
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar países", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarSelectorProveedor() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(ProveedoresApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listarProveedores("Bearer $token")
+                }
+
+                result.onSuccess { proveedores ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar Proveedor",
+                        proveedores.map { it.nombre },
+                        proveedores
+                    ) { proveedor ->
+                        selectedProveedor = proveedor
+                        proveedorInput.setText(proveedor.nombre)
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar proveedores", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarSelectorUbicacion() {
+        val token = SessionManager.getToken(requireContext())
+        if (token != null) {
+            val retrofit = RetrofitClient.getClient(token)
+            val apiService = retrofit.create(UbicacionesApiService::class.java)
+
+            lifecycleScope.launch {
+                val result = dataRepository.obtenerDatos(token) {
+                    apiService.listar("Bearer $token")
+                }
+
+                result.onSuccess { ubicaciones ->
+                    mostrarDialogoSeleccion(
+                        "Seleccionar Ubicación",
+                        ubicaciones.map { it.nombre },
+                        ubicaciones
+                    ) { ubicacion ->
+                        selectedUbicacion = ubicacion
+                        ubicacionInput.setText(ubicacion.nombre)
+                    }
+                }.onFailure { exception ->
+                    Snackbar.make(requireView(), "Error al cargar ubicaciones", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun <T> mostrarDialogoSeleccion(
+        titulo: String,
+        opciones: List<String>,
+        items: List<T>,
+        onSeleccion: (T) -> Unit
+    ) {
+        val dialog = Dialog(requireContext())
+        dialog.setTitle(titulo)
+        dialog.setCancelable(true)
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, opciones)
+        val listView = android.widget.ListView(requireContext())
+        listView.adapter = adapter
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            onSeleccion(items[position])
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(listView)
+        dialog.show()
     }
 
     private fun cargarImagenEquipo() {

@@ -47,6 +47,7 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
     private lateinit var nroSerieInput: EditText
     private lateinit var garantiaInput: EditText
     private lateinit var fechaAdquisicionInput: EditText
+    private lateinit var identificacionInternaInput: EditText
     private lateinit var imagenImageView: ImageView
     private var imagenUri: Uri? = null
     private var imageUrl: String? = null // Para almacenar la URL de la imagen subida
@@ -122,6 +123,7 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
         nroSerieInput = view.findViewById(R.id.serieInput)
         garantiaInput = view.findViewById(R.id.garantiaInput)
         fechaAdquisicionInput = view.findViewById(R.id.fechaAdquisicionInput)
+        identificacionInternaInput = view.findViewById(R.id.identificacionInternaInput)
         imagenImageView = view.findViewById(R.id.imagenImageView)
 
         // Configurar el selector de imagen
@@ -139,6 +141,17 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
                 return@setOnClickListener
             }
 
+            val identificacionInterna = identificacionInternaInput.text.toString().trim()
+            if (identificacionInterna.isEmpty()) {
+                Snackbar.make(view, "La identificación interna es obligatoria", Snackbar.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (imageUrl == null) {
+                Snackbar.make(view, "Por favor espera a que la imagen se suba", Snackbar.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val modelo = modeloPickerFragment.getSelectedModelo()
             val pais = paisPickerFragment.getSelectedCountry()
             val tipoEquipo = tipoEquipoPickerFragment.getSelectedTipo()
@@ -147,11 +160,6 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
 
             if (modelo == null || pais == null || tipoEquipo == null || proveedor == null || ubicacion == null) {
                 Snackbar.make(view, "Por favor selecciona todos los datos requeridos", Snackbar.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            if (imageUrl == null) {
-                Snackbar.make(view, "Por favor espera a que la imagen se suba", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
@@ -176,6 +184,7 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
         val garantia = garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: "Sin garantía"
         val fechaAdquisicion = fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01"
         val estado = Estado.ACTIVO
+        val identificacionInterna = identificacionInternaInput.text.toString().trim()
 
         return Equipo(
             id = null,
@@ -185,7 +194,7 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
             equiposUbicaciones = emptyList(),
             fechaAdquisicion = fechaAdquisicion,
             garantia = garantia,
-            idInterno = null.toString(),
+            idInterno = identificacionInterna,
             idPais = pais,
             idProveedor = proveedor,
             idTipo = tipoEquipo,

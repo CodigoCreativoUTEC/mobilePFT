@@ -326,7 +326,7 @@ class Registro : AppCompatActivity() {
             telefonos.add(Telefono(0, phoneNumber))
         }
 
-        return Usuario(
+        val usuario = Usuario(
             id = 0,
             cedula = etCedula.text.toString().trim(),
             email = etEmail.text.toString().trim(),
@@ -340,10 +340,49 @@ class Registro : AppCompatActivity() {
             idPerfil = perfilSeleccionado!!,
             usuariosTelefonos = telefonos
         )
+
+        // Validar que todos los campos requeridos estén presentes
+        validateUsuarioData(usuario)
+        
+        return usuario
+    }
+
+    private fun validateUsuarioData(usuario: Usuario) {
+        Log.d("Registro", "Validando datos del usuario antes del envío:")
+        
+        val errors = mutableListOf<String>()
+        
+        if (usuario.cedula.isBlank()) errors.add("Cédula vacía")
+        if (usuario.email.isBlank()) errors.add("Email vacío")
+        if (usuario.contrasenia.isBlank()) errors.add("Contraseña vacía")
+        if (usuario.nombre.isBlank()) errors.add("Nombre vacío")
+        if (usuario.apellido.isBlank()) errors.add("Apellido vacío")
+        if (usuario.nombreUsuario.isBlank()) errors.add("Nombre de usuario vacío")
+        if (usuario.fechaNacimiento.isBlank()) errors.add("Fecha de nacimiento vacía")
+        if (usuario.idInstitucion.id <= 0) errors.add("ID de institución inválido")
+        if (usuario.idPerfil.id <= 0) errors.add("ID de perfil inválido")
+        
+        if (errors.isNotEmpty()) {
+            Log.e("Registro", "Errores de validación encontrados: ${errors.joinToString(", ")}")
+            throw IllegalArgumentException("Datos de usuario inválidos: ${errors.joinToString(", ")}")
+        }
+        
+        Log.d("Registro", "Datos del usuario validados correctamente")
     }
 
     private fun registrarUsuario(usuario: Usuario) {
         Log.d("Registro", "Enviando usuario: $usuario")
+        Log.d("Registro", "Datos del usuario:")
+        Log.d("Registro", "- Cédula: ${usuario.cedula}")
+        Log.d("Registro", "- Email: ${usuario.email}")
+        Log.d("Registro", "- Nombre: ${usuario.nombre}")
+        Log.d("Registro", "- Apellido: ${usuario.apellido}")
+        Log.d("Registro", "- Usuario: ${usuario.nombreUsuario}")
+        Log.d("Registro", "- Fecha Nacimiento: ${usuario.fechaNacimiento}")
+        Log.d("Registro", "- Estado: ${usuario.estado}")
+        Log.d("Registro", "- Institución: ${usuario.idInstitucion}")
+        Log.d("Registro", "- Perfil: ${usuario.idPerfil}")
+        Log.d("Registro", "- Teléfonos: ${usuario.usuariosTelefonos}")
         
         val apiService = RetrofitClient.getClientSinToken().create(UsuariosApiService::class.java)
         lifecycleScope.launch {
@@ -359,7 +398,17 @@ class Registro : AppCompatActivity() {
                     finish()
                 }.onFailure { error ->
                     Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
-                    Snackbar.make(findViewById(android.R.id.content), "Error al registrar usuario: ${error.message}", Snackbar.LENGTH_LONG).show()
+                    
+                    // Mostrar mensaje más específico según el tipo de error
+                    val errorMessage = when {
+                        error.message?.contains("500") == true -> "Error del servidor. Por favor, intente más tarde o contacte al administrador."
+                        error.message?.contains("400") == true -> "Datos inválidos. Verifique la información ingresada."
+                        error.message?.contains("409") == true -> "El usuario ya existe. Verifique el email o cédula."
+                        error.message?.contains("422") == true -> "Datos incompletos o inválidos."
+                        else -> "Error al registrar usuario: ${error.message}"
+                    }
+                    
+                    Snackbar.make(findViewById(android.R.id.content), errorMessage, Snackbar.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("Registro", "Excepción durante el registro: ${e.message}", e)

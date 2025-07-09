@@ -25,4 +25,13 @@
     <color name="navigation_header_gradient_end">#673AB7</color>
     <color name="error_red">#F44336</color>
 
+    <!-- Colores para Login Screen -->
+    <color name="login_card_background">#FFFFFF</color>
+    <color name="login_text_primary">#5E35B1</color>
+    <color name="login_text_secondary">#757575</color>
+    <color name="login_input_background">#F5F5F5</color>
+    <color name="login_button_ripple">#E8E2F3</color>
+    <color name="login_divider">#E0E0E0</color>
+    <color name="login_shadow">#1A000000</color>
+
 </resources>

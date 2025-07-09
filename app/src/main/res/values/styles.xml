@@ -69,4 +69,59 @@
         <item name="android:divider">@color/colorDivider</item>
         <item name="android:dividerHeight">1dp</item>
     </style>
+
+    <!-- Estilos específicos para Login Screen -->
+    <style name="LoginCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">32dp</item>
+        <item name="cardElevation">16dp</item>
+        <item name="cardBackgroundColor">@color/login_card_background</item>
+        <item name="contentPadding">32dp</item>
+        <item name="android:layout_margin">16dp</item>
+    </style>
+
+    <style name="LoginInputFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/login_text_primary</item>
+        <item name="hintTextColor">@color/login_text_primary</item>
+        <item name="startIconTint">@color/login_text_primary</item>
+        <item name="endIconTint">@color/login_text_primary</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+    </style>
+
+    <style name="LoginButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="backgroundTint">@color/login_text_primary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="elevation">8dp</item>
+        <item name="rippleColor">@color/login_button_ripple</item>
+    </style>
+
+    <style name="LoginTextButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:textColor">@color/login_text_primary</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/login_button_ripple</item>
+    </style>
+
+    <style name="LoginWelcomeTextStyle" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/login_text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="LoginSubtitleTextStyle" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/login_text_secondary</item>
+        <item name="android:alpha">0.6</item>
+    </style>
+
 </resources>

@@ -3,6 +3,7 @@ package com.codigocreativo.mobile.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -49,8 +50,8 @@ class DashboardActivity : AppCompatActivity() {
         modelosCard = findViewById(R.id.modelosCard)
 
         // Verificar permisos del usuario
-        if (!hasAdminAccess()) {
-            // Si no tiene permisos, mostrar pantalla de acceso denegado
+        if (!hasAnyAccess()) {
+            // Si no tiene ningún permiso, mostrar pantalla de acceso denegado
             showAccessDeniedScreen()
             return
         }
@@ -61,11 +62,17 @@ class DashboardActivity : AppCompatActivity() {
         // Configura los OnClickListener para cada CardView
         setupCardListeners()
 
+        // Configura la visibilidad de las tarjetas según los permisos
+        setupCardVisibility()
+
         // Actualiza la información del usuario en el header
         updateUserInfo()
     }
 
     private fun setupDrawer() {
+        // Configura la visibilidad de los elementos del menú según los permisos
+        setupMenuVisibility()
+
         // Configura el listener para las opciones del menú
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -119,6 +126,28 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupMenuVisibility() {
+        val menu = navigationView.menu
+        
+        if (hasAdminAccess()) {
+            // Aux administrativo: acceso completo a todas las opciones
+            menu.findItem(R.id.nav_users).isVisible = true
+            menu.findItem(R.id.nav_equipos).isVisible = true
+            menu.findItem(R.id.nav_tipo_equipo).isVisible = true
+            menu.findItem(R.id.nav_marcas).isVisible = true
+            menu.findItem(R.id.nav_modelos).isVisible = true
+            menu.findItem(R.id.nav_proveedores).isVisible = true
+        } else if (hasEquiposAccess()) {
+            // Ingeniero Biomédico, Tecnólogo, Técnico: solo acceso a Equipos
+            menu.findItem(R.id.nav_users).isVisible = false
+            menu.findItem(R.id.nav_equipos).isVisible = true
+            menu.findItem(R.id.nav_tipo_equipo).isVisible = false
+            menu.findItem(R.id.nav_marcas).isVisible = false
+            menu.findItem(R.id.nav_modelos).isVisible = false
+            menu.findItem(R.id.nav_proveedores).isVisible = false
+        }
+    }
+
     private fun updateUserInfo() {
         try {
             // Obtener el header view del NavigationView
@@ -167,6 +196,26 @@ class DashboardActivity : AppCompatActivity() {
 
         modelosCard.setOnClickListener {
             openModelosScreen()
+        }
+    }
+
+    private fun setupCardVisibility() {
+        if (hasAdminAccess()) {
+            // Aux administrativo: acceso completo a todas las tarjetas
+            marcasCard.visibility = View.VISIBLE
+            usuarioCard.visibility = View.VISIBLE
+            proveedorCard.visibility = View.VISIBLE
+            equiposCard.visibility = View.VISIBLE
+            tipoEquiposCard.visibility = View.VISIBLE
+            modelosCard.visibility = View.VISIBLE
+        } else if (hasEquiposAccess()) {
+            // Ingeniero Biomédico, Tecnólogo, Técnico: solo acceso a Equipos
+            marcasCard.visibility = View.GONE
+            usuarioCard.visibility = View.GONE
+            proveedorCard.visibility = View.GONE
+            equiposCard.visibility = View.VISIBLE
+            tipoEquiposCard.visibility = View.GONE
+            modelosCard.visibility = View.GONE
         }
     }
 
@@ -234,22 +283,52 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     /**
-     * Verifica si el usuario tiene permisos de administrador auxiliar
+     * Verifica si el usuario tiene acceso completo al dashboard (Aux administrativo)
      */
     private fun hasAdminAccess(): Boolean {
         try {
             val user = SessionManager.getUser(this)
             if (user != null) {
                 val profileName = user.idPerfil.nombrePerfil
-                Log.d("DashboardActivity", "Verificando permisos para perfil: $profileName")
+                Log.d("DashboardActivity", "Verificando permisos de administrador para perfil: $profileName")
                 
-                // Solo los usuarios con perfil "Aux administrativo" tienen acceso
                 return profileName.equals("Aux administrativo", ignoreCase = true)
             }
         } catch (e: Exception) {
-            Log.e("DashboardActivity", "Error verificando permisos: ${e.message}")
+            Log.e("DashboardActivity", "Error verificando permisos de administrador: ${e.message}")
         }
         return false
+    }
+
+    /**
+     * Verifica si el usuario tiene acceso solo a Equipos
+     */
+    private fun hasEquiposAccess(): Boolean {
+        try {
+            val user = SessionManager.getUser(this)
+            if (user != null) {
+                val profileName = user.idPerfil.nombrePerfil
+                Log.d("DashboardActivity", "Verificando permisos de equipos para perfil: $profileName")
+                
+                val equiposProfiles = listOf(
+                    "Ingeniero Biomédico",
+                    "Tecnólogo",
+                    "Técnico"
+                )
+                
+                return equiposProfiles.any { it.equals(profileName, ignoreCase = true) }
+            }
+        } catch (e: Exception) {
+            Log.e("DashboardActivity", "Error verificando permisos de equipos: ${e.message}")
+        }
+        return false
+    }
+
+    /**
+     * Verifica si el usuario tiene algún tipo de acceso
+     */
+    private fun hasAnyAccess(): Boolean {
+        return hasAdminAccess() || hasEquiposAccess()
     }
 
     /**
