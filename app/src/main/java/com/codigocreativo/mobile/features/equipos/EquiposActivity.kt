@@ -69,7 +69,7 @@ class EquiposActivity : AppCompatActivity() {
 
         // Action listener de Ingresar Equipo
         findViewById<ImageView>(R.id.image_add).setOnClickListener {
-            val bottomSheetFragment = IngresarEquipoFragment { equipo ->
+            val bottomSheetFragment = IngresarEquipoFragment { equipoRequest ->
                 if (token != null) {
                     val retrofit = RetrofitClient.getClient(token)
                     val apiService = retrofit.create(EquiposApiService::class.java)
@@ -78,7 +78,7 @@ class EquiposActivity : AppCompatActivity() {
                         val result = dataRepository.guardarDatos(
                             token = token,
                             apiCall = {
-                                apiService.crear("Bearer $token", equipo)
+                                apiService.crear("Bearer $token", equipoRequest)
                             })
 
                         result.onSuccess {
@@ -96,7 +96,7 @@ class EquiposActivity : AppCompatActivity() {
                             ).show()
                             Log.e(
                                 "EquiposActivity",
-                                "Error al ingresar el equipo: ${error.message}\nPayload: ${equipo}"
+                                "Error al ingresar el equipo: ${error.message}\nPayload: ${equipoRequest}"
                             )
                         }
                     }
@@ -268,9 +268,10 @@ class EquiposActivity : AppCompatActivity() {
                 val apiService = retrofit.create(EquiposApiService::class.java)
 
                 lifecycleScope.launch {
+                    val equipoRequest = convertirAEquipoRequest(updatedEquipo)
                     val result = dataRepository.guardarDatos(
                         token = token,
-                        apiCall = { apiService.actualizar("Bearer $token", updatedEquipo) }
+                        apiCall = { apiService.actualizar("Bearer $token", equipoRequest) }
                     )
 
                     result.onSuccess {
@@ -373,5 +374,26 @@ class EquiposActivity : AppCompatActivity() {
 
         // Actualizar el RecyclerView con la lista filtrada
         adapter.updateList(filteredList)
+    }
+
+    // Función para convertir Equipo a EquipoRequest (objetos completos)
+    private fun convertirAEquipoRequest(equipo: Equipo): EquipoRequest {
+        return EquipoRequest(
+            id = equipo.id,
+            nombre = equipo.nombre,
+            idModelo = equipo.idModelo,
+            estado = equipo.estado,
+            equiposUbicaciones = equipo.equiposUbicaciones,
+            fechaAdquisicion = equipo.fechaAdquisicion,
+            garantia = equipo.garantia,
+            idInterno = equipo.idInterno,
+            idPais = equipo.idPais,
+            idProveedor = equipo.idProveedor,
+            idTipo = equipo.idTipo,
+            idUbicacion = equipo.idUbicacion,
+            imagen = equipo.imagen,
+            nroSerie = equipo.nroSerie,
+            descripcion = equipo.descripcion
+        )
     }
 }

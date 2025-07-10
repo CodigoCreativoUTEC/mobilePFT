@@ -130,7 +130,7 @@ class DashboardActivity : AppCompatActivity() {
         val menu = navigationView.menu
         
         if (hasAdminAccess()) {
-            // Aux administrativo: acceso completo a todas las opciones
+            // Admin: acceso completo a todas las opciones
             menu.findItem(R.id.nav_users).isVisible = true
             menu.findItem(R.id.nav_equipos).isVisible = true
             menu.findItem(R.id.nav_tipo_equipo).isVisible = true
@@ -201,7 +201,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun setupCardVisibility() {
         if (hasAdminAccess()) {
-            // Aux administrativo: acceso completo a todas las tarjetas
+            // Admin: acceso completo a todas las tarjetas
             marcasCard.visibility = View.VISIBLE
             usuarioCard.visibility = View.VISIBLE
             proveedorCard.visibility = View.VISIBLE
@@ -283,7 +283,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     /**
-     * Verifica si el usuario tiene acceso completo al dashboard (Aux administrativo)
+     * Verifica si el usuario tiene acceso completo al dashboard (Admin)
      */
     private fun hasAdminAccess(): Boolean {
         try {
@@ -292,7 +292,7 @@ class DashboardActivity : AppCompatActivity() {
                 val profileName = user.idPerfil.nombrePerfil
                 Log.d("DashboardActivity", "Verificando permisos de administrador para perfil: $profileName")
                 
-                return profileName.equals("Aux administrativo", ignoreCase = true)
+                return profileName.equals("Admin", ignoreCase = true)
             }
         } catch (e: Exception) {
             Log.e("DashboardActivity", "Error verificando permisos de administrador: ${e.message}")

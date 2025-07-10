@@ -17,13 +17,18 @@ import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
 import com.codigocreativo.mobile.features.usuarios.Usuario
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequest
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSinId
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
+import com.codigocreativo.mobile.features.usuarios.TelefonoConId
 import com.codigocreativo.mobile.features.usuarios.UsuariosApiService
+import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.features.institucion.Institucion
 import com.codigocreativo.mobile.features.perfiles.Perfil
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.features.usuarios.Telefono
-import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -31,6 +36,9 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import com.codigocreativo.mobile.features.perfiles.PerfilSinId
+import com.codigocreativo.mobile.features.usuarios.InstitucionSinId
+import com.codigocreativo.mobile.features.usuarios.TelefonoSinId
 
 class Registro : AppCompatActivity() {
 
@@ -327,7 +335,7 @@ class Registro : AppCompatActivity() {
         }
 
         val usuario = Usuario(
-            id = 0,
+            id = 0, // Este será ignorado por el servidor para nuevos usuarios
             cedula = etCedula.text.toString().trim(),
             email = etEmail.text.toString().trim(),
             contrasenia = etPassword.text.toString().trim(),
@@ -371,24 +379,52 @@ class Registro : AppCompatActivity() {
     }
 
     private fun registrarUsuario(usuario: Usuario) {
-        Log.d("Registro", "Enviando usuario: $usuario")
+        val usuarioRequest = convertirAUsuarioRequestSimpleConTelefonos(usuario)
+        Log.d("Registro", "Enviando usuario: $usuarioRequest")
         Log.d("Registro", "Datos del usuario:")
-        Log.d("Registro", "- Cédula: ${usuario.cedula}")
-        Log.d("Registro", "- Email: ${usuario.email}")
-        Log.d("Registro", "- Nombre: ${usuario.nombre}")
-        Log.d("Registro", "- Apellido: ${usuario.apellido}")
-        Log.d("Registro", "- Usuario: ${usuario.nombreUsuario}")
-        Log.d("Registro", "- Fecha Nacimiento: ${usuario.fechaNacimiento}")
-        Log.d("Registro", "- Estado: ${usuario.estado}")
-        Log.d("Registro", "- Institución: ${usuario.idInstitucion}")
-        Log.d("Registro", "- Perfil: ${usuario.idPerfil}")
-        Log.d("Registro", "- Teléfonos: ${usuario.usuariosTelefonos}")
+        Log.d("Registro", "- Cédula: ${usuarioRequest.cedula}")
+        Log.d("Registro", "- Email: ${usuarioRequest.email}")
+        Log.d("Registro", "- Nombre: ${usuarioRequest.nombre}")
+        Log.d("Registro", "- Apellido: ${usuarioRequest.apellido}")
+        Log.d("Registro", "- Usuario: ${usuarioRequest.nombreUsuario}")
+        Log.d("Registro", "- Fecha Nacimiento: ${usuarioRequest.fechaNacimiento}")
+        Log.d("Registro", "- Estado: ${usuarioRequest.estado}")
+        Log.d("Registro", "- Institución ID: ${usuarioRequest.idInstitucion}")
+        Log.d("Registro", "- Perfil ID: ${usuarioRequest.idPerfil}")
+        Log.d("Registro", "- Teléfonos: ${usuarioRequest.usuariosTelefonos}")
+        
+        // Log del JSON que se enviará
+        try {
+            val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
+            val json = gson.toJson(usuarioRequest)
+            Log.d("Registro", "JSON que se enviará:")
+            Log.d("Registro", json)
+            
+            // También log de cada campo individualmente para debugging
+            Log.d("Registro", "=== CAMPOS INDIVIDUALES ===")
+            Log.d("Registro", "Cédula: '${usuarioRequest.cedula}'")
+            Log.d("Registro", "Email: '${usuarioRequest.email}'")
+            Log.d("Registro", "Contraseña length: ${usuarioRequest.contrasenia.length}")
+            Log.d("Registro", "Fecha nacimiento: '${usuarioRequest.fechaNacimiento}'")
+            Log.d("Registro", "Estado: '${usuarioRequest.estado}'")
+            Log.d("Registro", "Nombre: '${usuarioRequest.nombre}'")
+            Log.d("Registro", "Apellido: '${usuarioRequest.apellido}'")
+            Log.d("Registro", "Nombre usuario: '${usuarioRequest.nombreUsuario}'")
+            Log.d("Registro", "Institución ID: ${usuarioRequest.idInstitucion}")
+            Log.d("Registro", "Perfil ID: ${usuarioRequest.idPerfil}")
+            Log.d("Registro", "Teléfonos count: ${usuarioRequest.usuariosTelefonos.size}")
+            usuarioRequest.usuariosTelefonos.forEachIndexed { index, telefono ->
+                Log.d("Registro", "Teléfono $index: '${telefono.numero}'")
+            }
+        } catch (e: Exception) {
+            Log.e("Registro", "Error serializando JSON: ${e.message}")
+        }
         
         val apiService = RetrofitClient.getClientSinToken().create(UsuariosApiService::class.java)
         lifecycleScope.launch {
             try {
                 val result = dataRepository.obtenerDatosSinToken() {
-                    apiService.crearUsuario(usuario)
+                    apiService.crearUsuario(usuarioRequest)
                 }
                 
                 Log.d("Registro", "Resultado de API: $result")
@@ -398,13 +434,28 @@ class Registro : AppCompatActivity() {
                     finish()
                 }.onFailure { error ->
                     Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
+                    Log.e("Registro", "Error completo: $error")
+                    Log.e("Registro", "Stack trace: ${error.stackTraceToString()}")
+                    
+                    // Intentar extraer el cuerpo del error si es un error HTTP
+                    try {
+                        if (error is retrofit2.HttpException) {
+                            val errorBody = error.response()?.errorBody()?.string()
+                            Log.e("Registro", "Error body del servidor: $errorBody")
+                            Log.e("Registro", "Código de error HTTP: ${error.code()}")
+                            Log.e("Registro", "Mensaje HTTP: ${error.message()}")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Registro", "Error al extraer detalles del error HTTP: ${e.message}")
+                    }
                     
                     // Mostrar mensaje más específico según el tipo de error
                     val errorMessage = when {
-                        error.message?.contains("500") == true -> "Error del servidor. Por favor, intente más tarde o contacte al administrador."
-                        error.message?.contains("400") == true -> "Datos inválidos. Verifique la información ingresada."
-                        error.message?.contains("409") == true -> "El usuario ya existe. Verifique el email o cédula."
-                        error.message?.contains("422") == true -> "Datos incompletos o inválidos."
+                        error.message?.contains("500") == true -> "Error del servidor (500). Por favor, intente más tarde o contacte al administrador."
+                        error.message?.contains("400") == true -> "Datos inválidos (400). Verifique la información ingresada."
+                        error.message?.contains("409") == true -> "El usuario ya existe (409). Verifique el email o cédula."
+                        error.message?.contains("422") == true -> "Datos incompletos o inválidos (422)."
+                        error.message?.contains("404") == true -> "Endpoint no encontrado (404). Revise la configuración del servidor."
                         else -> "Error al registrar usuario: ${error.message}"
                     }
                     
@@ -419,6 +470,105 @@ class Registro : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    // Función para convertir Usuario a UsuarioRequest
+    private fun convertirAUsuarioRequest(usuario: Usuario): UsuarioRequest {
+        return UsuarioRequest(
+            id = usuario.id,
+            cedula = usuario.cedula,
+            email = usuario.email,
+            contrasenia = usuario.contrasenia,
+            fechaNacimiento = usuario.fechaNacimiento,
+            estado = usuario.estado,
+            nombre = usuario.nombre,
+            apellido = usuario.apellido,
+            nombreUsuario = usuario.nombreUsuario,
+            idInstitucion = usuario.idInstitucion,
+            idPerfil = usuario.idPerfil,
+            usuariosTelefonos = usuario.usuariosTelefonos
+        )
+    }
+
+    // Función para convertir Usuario a UsuarioRequestSimple (solo IDs)
+    private fun convertirAUsuarioRequestSimple(usuario: Usuario): UsuarioRequestSimple {
+        return UsuarioRequestSimple(
+            cedula = usuario.cedula,
+            email = usuario.email,
+            contrasenia = usuario.contrasenia,
+            fechaNacimiento = usuario.fechaNacimiento,
+            estado = when (usuario.estado) {
+                Estado.ACTIVO -> "Activo"
+                Estado.INACTIVO -> "Inactivo"
+                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
+            },
+            nombre = usuario.nombre,
+            apellido = usuario.apellido,
+            nombreUsuario = usuario.nombreUsuario,
+            idInstitucion = usuario.idInstitucion.id,
+            idPerfil = usuario.idPerfil.id,
+            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
+                TelefonoSinId(numero = telefono.numero)
+            }
+        )
+    }
+
+    // Función para convertir Usuario a UsuarioRequestSimpleConTelefonos (con teléfonos que incluyen ID)
+    private fun convertirAUsuarioRequestSimpleConTelefonos(usuario: Usuario): UsuarioRequestSimpleConTelefonos {
+        return UsuarioRequestSimpleConTelefonos(
+            cedula = usuario.cedula,
+            email = usuario.email,
+            contrasenia = usuario.contrasenia,
+            fechaNacimiento = usuario.fechaNacimiento,
+            estado = when (usuario.estado) {
+                Estado.ACTIVO -> "Activo"
+                Estado.INACTIVO -> "Inactivo"
+                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
+            },
+            nombre = usuario.nombre,
+            apellido = usuario.apellido,
+            nombreUsuario = usuario.nombreUsuario,
+            idInstitucion = usuario.idInstitucion.id,
+            idPerfil = usuario.idPerfil.id,
+            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
+                TelefonoConId(id = 0, numero = telefono.numero) // ID 0 para nuevos teléfonos
+            }
+        )
+    }
+
+    // Función para convertir Usuario a UsuarioRequestSinId (sin campo id)
+    private fun convertirAUsuarioRequestSinId(usuario: Usuario): UsuarioRequestSinId {
+        return UsuarioRequestSinId(
+            cedula = usuario.cedula,
+            email = usuario.email,
+            contrasenia = usuario.contrasenia,
+            fechaNacimiento = usuario.fechaNacimiento,
+            estado = when (usuario.estado) {
+                Estado.ACTIVO -> "Activo"
+                Estado.INACTIVO -> "Inactivo"
+                Estado.SIN_VALIDAR -> "SIN_VALIDAR"
+            },
+            nombre = usuario.nombre,
+            apellido = usuario.apellido,
+            nombreUsuario = usuario.nombreUsuario,
+            idInstitucion = InstitucionSinId(
+                id = usuario.idInstitucion.id,
+                nombre = usuario.idInstitucion.nombre,
+                estado = "Activo" // Instituciones normalmente están activas
+            ),
+            idPerfil = PerfilSinId(
+                id = usuario.idPerfil.id,
+                nombrePerfil = usuario.idPerfil.nombrePerfil,
+                estado = when (usuario.idPerfil.estado) {
+                    Estado.ACTIVO -> "Activo"
+                    Estado.INACTIVO -> "Inactivo"
+                    Estado.SIN_VALIDAR -> "SIN_VALIDAR"
+                }
+            ),
+            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
+                TelefonoSinId(numero = telefono.numero)
+            }
+        )
     }
 }
 

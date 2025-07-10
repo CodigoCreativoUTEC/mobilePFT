@@ -72,6 +72,7 @@ dependencies {
 
     // OkHttpClient para manejar peticiones HTTP
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
     // Coroutines para llamadas asíncronas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")

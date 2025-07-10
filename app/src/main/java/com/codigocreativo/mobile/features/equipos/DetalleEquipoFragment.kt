@@ -62,7 +62,7 @@ class DetalleEquipoFragment(
     private var selectedModelo: Modelo? = equipo.idModelo
     private var selectedPais: Pais? = equipo.idPais
     private var selectedProveedor: Proveedor? = equipo.idProveedor
-    private var selectedUbicacion: Ubicacion? = equipo.ubicacion
+    private var selectedUbicacion: Ubicacion? = equipo.idUbicacion
 
     private val dataRepository = DataRepository()
 
@@ -102,7 +102,7 @@ class DetalleEquipoFragment(
         modeloInput.setText(equipo.idModelo?.nombre ?: "")
         paisInput.setText(equipo.idPais?.nombre ?: "")
         proveedorInput.setText(equipo.idProveedor?.nombre ?: "")
-        ubicacionInput.setText(equipo.ubicacion?.nombre ?: "")
+        ubicacionInput.setText(equipo.idUbicacion?.nombre ?: "")
 
         // Configurar click listeners para los campos de selección
         setupSelectorClickListeners()
@@ -149,7 +149,7 @@ class DetalleEquipoFragment(
                     idPais = selectedPais,
                     idProveedor = selectedProveedor,
                     idTipo = selectedTipoEquipo,
-                    ubicacion = selectedUbicacion,
+                    idUbicacion = selectedUbicacion,
                     imagen = equipo.imagen,
                     nombre = nuevoNombre,
                     nroSerie = nroSerieInput.text.toString()

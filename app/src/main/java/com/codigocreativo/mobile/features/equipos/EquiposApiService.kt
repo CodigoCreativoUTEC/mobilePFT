@@ -24,10 +24,10 @@ interface EquiposApiService {
     ): Response<List<Equipo>>
 
     @PUT("equipos/modificar")
-    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body equipo: Equipo):  Response<Unit>
+    suspend fun actualizar(@Header("Authorization") authHeader: String, @Body equipo: EquipoRequest):  Response<Unit>
 
     @POST("equipos/crear")
-    suspend fun crear(@Header("Authorization") authHeader: String, @Body equipo: Equipo) : Response<Unit>
+    suspend fun crear(@Header("Authorization") authHeader: String, @Body equipo: EquipoRequest) : Response<Unit>
 
     @PUT("equipos/inactivar")
     suspend fun eliminar(

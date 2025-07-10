@@ -73,7 +73,7 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
                         Log.d("IngresarProveedorFragment", "Proveedores obtenidos: ${proveedores.size}")
 
                         // Si ya existe un proveedor con ese nombre
-                        if (proveedores.any { it.nombre.equals(nombre, ignoreCase = true) }) {
+                        if (proveedores.isNotEmpty()) {
                             Snackbar.make(view, "El proveedor '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación

@@ -3,4 +3,12 @@
     <string name="server_client_id">103181333646-gp6uip6g6k1rg6p52tsidphj3gt22qut.apps.googleusercontent.com</string>
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="access_denied_title">Acceso Denegado</string>
+    <string name="access_denied_message">No tienes permisos para acceder a esta aplicación.\n\nPor favor, contacta al administrador del sistema.</string>
+    <string name="back_to_login">Volver al Login</string>
+    <string name="network_diagnosis_title">Diagnóstico de Red</string>
+    <string name="network_status_title">Estado de la Red</string>
+    <string name="server_status_title">Estado del Servidor</string>
+    <string name="refresh_button">Actualizar</string>
+    <string name="back_button">Volver</string>
 </resources>

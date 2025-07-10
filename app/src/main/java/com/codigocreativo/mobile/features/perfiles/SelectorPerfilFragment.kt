@@ -52,8 +52,8 @@ class SelectorPerfilFragment : Fragment() {
         // Para el registro, usamos perfiles hardcodeados ya que no tenemos token
         // En un entorno real, deberías tener un endpoint público para obtener perfiles
         perfiles = listOf(
-            Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-            Perfil(id = 2, nombrePerfil = "Usuario", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+            Perfil(id = 1, nombrePerfil = "Admin", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+            Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
             Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
             Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
         )

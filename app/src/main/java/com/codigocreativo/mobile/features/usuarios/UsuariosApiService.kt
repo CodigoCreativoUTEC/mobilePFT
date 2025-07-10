@@ -1,5 +1,7 @@
 package com.codigocreativo.mobile.features.usuarios
 
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -26,7 +28,7 @@ interface UsuariosApiService {
     suspend fun actualizar(@Header("Authorization") authHeader: String, @Body usuario: Usuario): Response<Unit>
 
     @POST("usuarios/crear")
-    suspend fun crearUsuario(@Body usuario: Usuario): Response<Unit>
+    suspend fun crearUsuario(@Body usuario: UsuarioRequestSimpleConTelefonos): Response<Unit>
 
     @DELETE("usuarios/inactivar")
     suspend fun eliminarUsuario(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>

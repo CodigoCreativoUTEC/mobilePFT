@@ -250,7 +250,7 @@ class ProveedoresActivity : AppCompatActivity() {
 
         // Configuración del AutoCompleteTextView de estado con opción "Todos"
         val estadosConTodos = listOf("Todos") + Estado.values().map { it.name }
-        val statusAdapter = ArrayAdapter(this, R.layout.item_dropdown_minimal, estadosConTodos)
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, estadosConTodos)
         filterStatus.setAdapter(statusAdapter)
         filterStatus.setText("Todos", false) // Establecer valor por defecto
         

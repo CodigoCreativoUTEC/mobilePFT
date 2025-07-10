@@ -8,10 +8,9 @@ import com.codigocreativo.mobile.features.ubicacion.Ubicacion
 import com.codigocreativo.mobile.utils.Estado
 import com.google.gson.annotations.SerializedName
 
-data class Equipo(
-
+data class EquipoRequest(
     @SerializedName("equiposUbicaciones")
-    val equiposUbicaciones: List<Any>,
+    val equiposUbicaciones: List<Any> = emptyList(),
     @SerializedName("estado")
     val estado: Estado,
     @SerializedName("fechaAdquisicion")
@@ -40,4 +39,4 @@ data class Equipo(
     val nroSerie: String,
     @SerializedName("descripcion")
     val descripcion: String? = null
-)
+) 

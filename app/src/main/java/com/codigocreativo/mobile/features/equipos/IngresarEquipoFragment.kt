@@ -33,9 +33,13 @@ import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import android.app.DatePickerDialog
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSheetDialogFragment() {
+class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : BottomSheetDialogFragment() {
 
     private lateinit var nombreInput: EditText
     private lateinit var btnConfirmar: Button
@@ -106,6 +110,29 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
 
     private val dataRepository = DataRepository()
 
+    // Función para formatear la fecha al formato esperado por el servidor (YYYY-MM-DD)
+    private fun formatearFecha(fecha: String): String {
+        return try {
+            // Si la fecha está en formato DD/MM/YYYY, convertirla a YYYY-MM-DD
+            if (fecha.contains("/")) {
+                val partes = fecha.split("/")
+                if (partes.size == 3) {
+                    val dia = partes[0].padStart(2, '0')
+                    val mes = partes[1].padStart(2, '0')
+                    val anio = partes[2]
+                    "$anio-$mes-$dia"
+                } else {
+                    fecha
+                }
+            } else {
+                fecha
+            }
+        } catch (e: Exception) {
+            Log.e("IngresarEquipoFragment", "Error formateando fecha: ${e.message}")
+            "2024-01-01" // Fecha por defecto
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -125,6 +152,24 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
         fechaAdquisicionInput = view.findViewById(R.id.fechaAdquisicionInput)
         identificacionInternaInput = view.findViewById(R.id.identificacionInternaInput)
         imagenImageView = view.findViewById(R.id.imagenImageView)
+
+        // Configurar DatePicker para garantía
+        garantiaInput.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(
+                requireContext(),
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    val fecha = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                    garantiaInput.setText(fecha)
+                },
+                year, month, day
+            )
+            datePickerDialog.show()
+        }
 
         // Configurar el selector de imagen
         imagenImageView.setOnClickListener {
@@ -165,7 +210,8 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
 
             // Crear el equipo con la URL de la imagen subida
             val equipo = crearEquipo(imageUrl!!)
-            onConfirm(equipo)
+            val equipoRequest = convertirAEquipoRequest(equipo)
+            onConfirm(equipoRequest)
             dismiss()
         }
 
@@ -181,8 +227,8 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
 
         val nombre = nombreInput.text.toString().trim()
         val nroSerie = nroSerieInput.text.toString().trim()
-        val garantia = garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: "Sin garantía"
-        val fechaAdquisicion = fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01"
+        val garantia = formatearFecha(garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
+        val fechaAdquisicion = formatearFecha(fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
         val estado = Estado.ACTIVO
         val identificacionInterna = identificacionInternaInput.text.toString().trim()
 
@@ -200,7 +246,29 @@ class IngresarEquipoFragment(private val onConfirm: (Equipo) -> Unit) : BottomSh
             idTipo = tipoEquipo,
             imagen = imagenUrl,
             nroSerie = nroSerie,
-            ubicacion = ubicacion
+            idUbicacion = ubicacion,
+            descripcion = null
+        )
+    }
+
+    // Función para convertir Equipo a EquipoRequest (objetos completos)
+    private fun convertirAEquipoRequest(equipo: Equipo): EquipoRequest {
+        return EquipoRequest(
+            id = equipo.id,
+            nombre = equipo.nombre,
+            idModelo = equipo.idModelo,
+            estado = equipo.estado,
+            equiposUbicaciones = equipo.equiposUbicaciones,
+            fechaAdquisicion = equipo.fechaAdquisicion,
+            garantia = equipo.garantia,
+            idInterno = equipo.idInterno,
+            idPais = equipo.idPais,
+            idProveedor = equipo.idProveedor,
+            idTipo = equipo.idTipo,
+            idUbicacion = equipo.idUbicacion,
+            imagen = equipo.imagen,
+            nroSerie = equipo.nroSerie,
+            descripcion = equipo.descripcion
         )
     }
 }
