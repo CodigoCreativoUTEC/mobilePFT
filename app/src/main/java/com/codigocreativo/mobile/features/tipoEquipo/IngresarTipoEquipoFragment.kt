@@ -40,11 +40,9 @@ class IngresarTipoEquipoFragment(private val onConfirm: (TipoEquipo) -> Unit) : 
         btnConfirmar.setOnClickListener {
             val nuevoTipoEquipo = tfNombre.text.toString()
 
-
             if (nuevoTipoEquipo.isNotBlank()) {
-                val tipoEquipo = TipoEquipo(id = null, nombreTipo = nuevoTipoEquipo, estado = Estado.ACTIVO)
-                onConfirm(tipoEquipo)
-                dismiss()
+                // Verificar si el tipo de equipo ya existe antes de crear
+                checkIfTipoEquipoExists(nuevoTipoEquipo, view)
             } else {
                 Snackbar.make(view, "Llene todos los campos para agregar un tipo de equipo", Snackbar.LENGTH_LONG).show()
             }

@@ -111,6 +111,60 @@ data class UsuarioRequestSimpleConTelefonos(
     val usuariosTelefonos: List<TelefonoConId>
 )
 
+// Clase correcta basada en la estructura del servidor
+data class UsuarioRequestCorrecto(
+    @SerializedName("cedula")
+    val cedula: String,
+    @SerializedName("email")
+    val email: String,
+    @SerializedName("contrasenia")
+    val contrasenia: String,
+    @SerializedName("fechaNacimiento")
+    val fechaNacimiento: String,
+    @SerializedName("estado")
+    val estado: String,
+    @SerializedName("nombre")
+    val nombre: String,
+    @SerializedName("apellido")
+    val apellido: String,
+    @SerializedName("nombreUsuario")
+    val nombreUsuario: String,
+    @SerializedName("idInstitucion")
+    val idInstitucion: InstitucionSimple,
+    @SerializedName("idPerfil")
+    val idPerfil: PerfilSimple,
+    @SerializedName("usuariosTelefonos")
+    val usuariosTelefonos: List<TelefonoConIdUsuario>
+)
+
+// Clase Institucion simple para el request
+data class InstitucionSimple(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("nombre")
+    val nombre: String
+)
+
+// Clase Perfil simple para el request
+data class PerfilSimple(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("nombrePerfil")
+    val nombrePerfil: String,
+    @SerializedName("estado")
+    val estado: String
+)
+
+// Clase Telefono con idUsuario para el request
+data class TelefonoConIdUsuario(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("numero")
+    val numero: String,
+    @SerializedName("idUsuario")
+    val idUsuario: String
+)
+
 // Clase Institucion con estado como string para registros
 data class InstitucionSinId(
     @SerializedName("id")

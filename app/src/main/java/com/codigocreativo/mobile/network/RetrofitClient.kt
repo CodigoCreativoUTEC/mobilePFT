@@ -1,5 +1,6 @@
 package com.codigocreativo.mobile.network
 
+import com.codigocreativo.mobile.utils.SessionManager
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,7 +19,7 @@ object RetrofitClient {
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-
+            
         // Agregar token si se proporciona
         token?.let { authToken ->
             clientBuilder.addInterceptor { chain ->
@@ -43,6 +44,7 @@ object RetrofitClient {
             .build()
     }
 
+    // Función para obtener una instancia de Retrofit sin token
     fun getClientSinToken(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

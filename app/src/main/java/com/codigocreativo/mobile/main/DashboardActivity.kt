@@ -283,7 +283,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     /**
-     * Verifica si el usuario tiene acceso completo al dashboard (Admin)
+     * Verifica si el usuario tiene acceso completo al dashboard (Admin y Aux administrativo)
      */
     private fun hasAdminAccess(): Boolean {
         try {
@@ -292,7 +292,12 @@ class DashboardActivity : AppCompatActivity() {
                 val profileName = user.idPerfil.nombrePerfil
                 Log.d("DashboardActivity", "Verificando permisos de administrador para perfil: $profileName")
                 
-                return profileName.equals("Admin", ignoreCase = true)
+                val adminProfiles = listOf(
+                    "Administrador",
+                    "Aux administrativo"
+                )
+                
+                return adminProfiles.any { it.equals(profileName, ignoreCase = true) }
             }
         } catch (e: Exception) {
             Log.e("DashboardActivity", "Error verificando permisos de administrador: ${e.message}")

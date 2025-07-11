@@ -21,7 +21,11 @@ import com.codigocreativo.mobile.features.usuarios.UsuarioRequest
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSinId
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestCorrecto
 import com.codigocreativo.mobile.features.usuarios.TelefonoConId
+import com.codigocreativo.mobile.features.usuarios.TelefonoConIdUsuario
+import com.codigocreativo.mobile.features.usuarios.InstitucionSimple
+import com.codigocreativo.mobile.features.usuarios.PerfilSimple
 import com.codigocreativo.mobile.features.usuarios.UsuariosApiService
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.features.institucion.Institucion
@@ -379,7 +383,7 @@ class Registro : AppCompatActivity() {
     }
 
     private fun registrarUsuario(usuario: Usuario) {
-        val usuarioRequest = convertirAUsuarioRequestSimpleConTelefonos(usuario)
+        val usuarioRequest = convertirAUsuarioRequestCorrecto(usuario)
         Log.d("Registro", "Enviando usuario: $usuarioRequest")
         Log.d("Registro", "Datos del usuario:")
         Log.d("Registro", "- Cédula: ${usuarioRequest.cedula}")
@@ -389,16 +393,28 @@ class Registro : AppCompatActivity() {
         Log.d("Registro", "- Usuario: ${usuarioRequest.nombreUsuario}")
         Log.d("Registro", "- Fecha Nacimiento: ${usuarioRequest.fechaNacimiento}")
         Log.d("Registro", "- Estado: ${usuarioRequest.estado}")
-        Log.d("Registro", "- Institución ID: ${usuarioRequest.idInstitucion}")
-        Log.d("Registro", "- Perfil ID: ${usuarioRequest.idPerfil}")
+        Log.d("Registro", "- Institución ID: ${usuarioRequest.idInstitucion.id}, Nombre: ${usuarioRequest.idInstitucion.nombre}")
+        Log.d("Registro", "- Perfil ID: ${usuarioRequest.idPerfil.id}, Nombre: ${usuarioRequest.idPerfil.nombrePerfil}")
         Log.d("Registro", "- Teléfonos: ${usuarioRequest.usuariosTelefonos}")
         
         // Log del JSON que se enviará
         try {
             val gson = com.google.gson.GsonBuilder().setPrettyPrinting().create()
             val json = gson.toJson(usuarioRequest)
-            Log.d("Registro", "JSON que se enviará:")
+            Log.d("Registro", "=== JSON COMPLETO QUE SE ENVIARÁ ===")
             Log.d("Registro", json)
+            Log.d("Registro", "=== FIN JSON ===")
+            
+            // También log del JSON sin formatear para copiar fácilmente
+            val jsonSimple = com.google.gson.Gson().toJson(usuarioRequest)
+            Log.d("Registro", "JSON simple: $jsonSimple")
+            
+            // Log para copiar y pegar en Postman o similar
+            Log.d("Registro", "=== JSON PARA POSTMAN ===")
+            Log.d("Registro", "URL: POST http://192.168.1.100:8080/api/usuarios/crear")
+            Log.d("Registro", "Headers: Content-Type: application/json")
+            Log.d("Registro", "Body: $jsonSimple")
+            Log.d("Registro", "=== FIN JSON PARA POSTMAN ===")
             
             // También log de cada campo individualmente para debugging
             Log.d("Registro", "=== CAMPOS INDIVIDUALES ===")
@@ -410,8 +426,11 @@ class Registro : AppCompatActivity() {
             Log.d("Registro", "Nombre: '${usuarioRequest.nombre}'")
             Log.d("Registro", "Apellido: '${usuarioRequest.apellido}'")
             Log.d("Registro", "Nombre usuario: '${usuarioRequest.nombreUsuario}'")
-            Log.d("Registro", "Institución ID: ${usuarioRequest.idInstitucion}")
-            Log.d("Registro", "Perfil ID: ${usuarioRequest.idPerfil}")
+            Log.d("Registro", "Institución ID: ${usuarioRequest.idInstitucion.id}")
+            Log.d("Registro", "Institución nombre: '${usuarioRequest.idInstitucion.nombre}'")
+            Log.d("Registro", "Perfil ID: ${usuarioRequest.idPerfil.id}")
+            Log.d("Registro", "Perfil nombre: '${usuarioRequest.idPerfil.nombrePerfil}'")
+            Log.d("Registro", "Perfil estado: '${usuarioRequest.idPerfil.estado}'")
             Log.d("Registro", "Teléfonos count: ${usuarioRequest.usuariosTelefonos.size}")
             usuarioRequest.usuariosTelefonos.forEachIndexed { index, telefono ->
                 Log.d("Registro", "Teléfono $index: '${telefono.numero}'")
@@ -509,6 +528,61 @@ class Registro : AppCompatActivity() {
             idPerfil = usuario.idPerfil.id,
             usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
                 TelefonoSinId(numero = telefono.numero)
+            }
+        )
+    }
+
+    // Función para convertir Usuario a UsuarioRequestCorrecto (estructura correcta del servidor)
+    private fun convertirAUsuarioRequestCorrecto(usuario: Usuario): UsuarioRequestCorrecto {
+        // Validar y loggear cada campo antes de crear el request
+        Log.d("Registro", "=== VALIDACIÓN DE DATOS ===")
+        Log.d("Registro", "Cédula: '${usuario.cedula}' (longitud: ${usuario.cedula.length})")
+        Log.d("Registro", "Email: '${usuario.email}' (longitud: ${usuario.email.length})")
+        Log.d("Registro", "Contraseña: '${usuario.contrasenia}' (longitud: ${usuario.contrasenia.length})")
+        Log.d("Registro", "Fecha: '${usuario.fechaNacimiento}' (longitud: ${usuario.fechaNacimiento.length})")
+        Log.d("Registro", "Nombre: '${usuario.nombre}' (longitud: ${usuario.nombre.length})")
+        Log.d("Registro", "Apellido: '${usuario.apellido}' (longitud: ${usuario.apellido.length})")
+        Log.d("Registro", "Usuario: '${usuario.nombreUsuario}' (longitud: ${usuario.nombreUsuario.length})")
+        Log.d("Registro", "Institución ID: ${usuario.idInstitucion.id}, Nombre: '${usuario.idInstitucion.nombre}'")
+        Log.d("Registro", "Perfil ID: ${usuario.idPerfil.id}, Nombre: '${usuario.idPerfil.nombrePerfil}'")
+        Log.d("Registro", "Teléfonos: ${usuario.usuariosTelefonos.size} teléfonos")
+        usuario.usuariosTelefonos.forEachIndexed { index, telefono ->
+            Log.d("Registro", "  Teléfono $index: '${telefono.numero}' (longitud: ${telefono.numero.length})")
+        }
+        Log.d("Registro", "=== FIN VALIDACIÓN ===")
+        
+        return UsuarioRequestCorrecto(
+            cedula = usuario.cedula,
+            email = usuario.email,
+            contrasenia = usuario.contrasenia,
+            fechaNacimiento = usuario.fechaNacimiento,
+            estado = when (usuario.estado) {
+                Estado.ACTIVO -> "Activo"
+                Estado.INACTIVO -> "Inactivo"
+                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
+            },
+            nombre = usuario.nombre,
+            apellido = usuario.apellido,
+            nombreUsuario = usuario.nombreUsuario,
+            idInstitucion = InstitucionSimple(
+                id = usuario.idInstitucion.id,
+                nombre = usuario.idInstitucion.nombre
+            ),
+            idPerfil = PerfilSimple(
+                id = usuario.idPerfil.id,
+                nombrePerfil = usuario.idPerfil.nombrePerfil,
+                estado = when (usuario.idPerfil.estado) {
+                    Estado.ACTIVO -> "Activo"
+                    Estado.INACTIVO -> "Inactivo"
+                    Estado.SIN_VALIDAR -> "Activo"
+                }
+            ),
+            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
+                TelefonoConIdUsuario(
+                    id = 0, // ID 0 para nuevos teléfonos
+                    numero = telefono.numero,
+                    idUsuario = "" // Campo requerido por el servidor
+                )
             }
         )
     }
