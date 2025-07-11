@@ -11,11 +11,13 @@ import retrofit2.http.Query
 
 interface PerfilApiService {
 
-
     @GET("perfiles/listar")
     suspend fun listarPerfiles(
         @Header("Authorization") token: String
     ): Response<List<Perfil>>
+
+    @GET("perfiles/listar")
+    suspend fun listarPerfilesSinToken(): Response<List<Perfil>>
 
     @PUT("perfiles/modificar")
     suspend fun actualizar(@Header("Authorization") authHeader: String, @Body perfil: Perfil): Response<Unit>

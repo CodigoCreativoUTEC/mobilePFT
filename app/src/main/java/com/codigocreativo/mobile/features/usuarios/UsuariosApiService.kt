@@ -3,6 +3,7 @@ package com.codigocreativo.mobile.features.usuarios
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestCorrecto
+import com.codigocreativo.mobile.features.usuarios.UsuarioRequestFinal
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -30,6 +31,12 @@ interface UsuariosApiService {
 
     @POST("usuarios/crear")
     suspend fun crearUsuario(@Body usuario: UsuarioRequestCorrecto): Response<Unit>
+
+    @POST("usuarios/crear")
+    suspend fun crearUsuarioSinToken(@Body usuario: UsuarioRequestCorrecto): Response<Unit>
+
+    @POST("usuarios/crear")
+    suspend fun crearUsuarioFinal(@Body usuario: UsuarioRequestFinal): Response<Unit>
 
     @DELETE("usuarios/inactivar")
     suspend fun eliminarUsuario(@Header("Authorization") authHeader: String, @Query("id") id: Int): Response<Unit>

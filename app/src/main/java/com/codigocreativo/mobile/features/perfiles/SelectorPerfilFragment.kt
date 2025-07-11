@@ -17,6 +17,7 @@ import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 import android.widget.AdapterView
+import android.widget.Toast
 
 
 class SelectorPerfilFragment : Fragment() {
@@ -41,68 +42,105 @@ class SelectorPerfilFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_selector_perfil, container, false)
         spinnerPerfil = view.findViewById(R.id.spinnerPerfil)
         Log.d("SelectorPerfilFragment", "Spinner encontrado: ${spinnerPerfil != null}")
-        cargarPerfiles()
-        setupSpinnerListener() // Configurar el listener para el spinner
+        
+        // Configurar el listener para el spinner
+        setupSpinnerListener()
+        
+        // Cargar perfiles desde la API
+        cargarPerfilesDesdeAPI()
+        
         return view
     }
 
-    private fun cargarPerfiles() {
-        Log.d("SelectorPerfilFragment", "Cargando perfiles...")
+    private fun cargarPerfilesDesdeAPI() {
+        Log.d("SelectorPerfilFragment", "Cargando perfiles desde API...")
         
-        // Para el registro, usamos perfiles hardcodeados ya que no tenemos token
-        // En un entorno real, deberías tener un endpoint público para obtener perfiles
-        perfiles = listOf(
-            Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-            Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-            Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-            Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
-        )
-
-        Log.d("SelectorPerfilFragment", "Perfiles cargados: ${perfiles.size} perfiles")
-
-        val nombresPerfiles = perfiles.map { it.nombrePerfil }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresPerfiles)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPerfil.adapter = adapter
-
-        Log.d("SelectorPerfilFragment", "Adapter configurado con ${nombresPerfiles.size} elementos")
-
-        // Set pending selection if there was one
-        pendingPerfilSelection?.let {
-            setSelectedPerfil(it)
-            pendingPerfilSelection = null
-        }
-
-        // Update the loading state
-        _isDataLoaded.value = true
-        Log.d("SelectorPerfilFragment", "Estado de carga actualizado: true")
-
-        // Intentar cargar desde el servidor si hay token disponible
-        val token = SessionManager.getToken(requireContext())
-        if (token != null) {
-            Log.d("SelectorPerfilFragment", "Token encontrado, intentando cargar desde servidor")
-            cargarPerfilesDesdeServidor(token)
-        } else {
-            Log.d("SelectorPerfilFragment", "No hay token disponible, usando datos locales")
-        }
-    }
-
-    private fun cargarPerfilesDesdeServidor(token: String) {
-        val retrofit = RetrofitClient.getClient(token)
+        // Mostrar indicador de carga si es necesario
+        _isDataLoaded.value = false
+        
+        val retrofit = RetrofitClient.getClientSinToken()
         val perfilApiService = retrofit.create(PerfilApiService::class.java)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = dataRepository.obtenerDatos(token) {
-                perfilApiService.listarPerfiles("Bearer $token")
-            }
+            try {
+                Log.d("SelectorPerfilFragment", "Realizando llamada a la API...")
+                
+                val result = dataRepository.obtenerDatosSinToken() {
+                    perfilApiService.listarPerfilesSinToken()
+                }
 
-            result.onSuccess { perfilesList ->
-                perfiles = perfilesList
-                val nombresPerfiles = perfiles.map { it.nombrePerfil }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresPerfiles)
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerPerfil.adapter = adapter
+                result.onSuccess { perfilesList ->
+                    Log.d("SelectorPerfilFragment", "Perfiles obtenidos exitosamente: ${perfilesList.size} perfiles")
+                    
+                    perfiles = perfilesList
+                    
+                    // Filtrar solo perfiles activos
+                    val perfilesActivos = perfiles.filter { it.estado == com.codigocreativo.mobile.utils.Estado.ACTIVO }
+                    
+                    if (perfilesActivos.isEmpty()) {
+                        Log.w("SelectorPerfilFragment", "No hay perfiles activos disponibles")
+                        // Usar perfiles por defecto si no hay activos
+                        perfiles = listOf(
+                            Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                            Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                            Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                            Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
+                        )
+                    } else {
+                        perfiles = perfilesActivos
+                    }
 
+                    configurarSpinner()
+                    
+                    // Set pending selection if there was one
+                    pendingPerfilSelection?.let {
+                        setSelectedPerfil(it)
+                        pendingPerfilSelection = null
+                    }
+
+                    // Update the loading state
+                    _isDataLoaded.value = true
+                    Log.d("SelectorPerfilFragment", "Perfiles cargados exitosamente desde API")
+                    
+                }.onFailure { exception ->
+                    Log.e("SelectorPerfilFragment", "Error al cargar los perfiles desde API", exception)
+                    
+                    // En caso de error, usar perfiles por defecto
+                    perfiles = listOf(
+                        Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                        Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                        Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                        Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
+                    )
+                    
+                    configurarSpinner()
+                    
+                    // Set pending selection if there was one
+                    pendingPerfilSelection?.let {
+                        setSelectedPerfil(it)
+                        pendingPerfilSelection = null
+                    }
+
+                    // Update the loading state
+                    _isDataLoaded.value = true
+                    
+                    // Mostrar mensaje de error al usuario
+                    Toast.makeText(requireContext(), "Error al cargar perfiles. Usando perfiles por defecto.", Toast.LENGTH_SHORT).show()
+                }
+                
+            } catch (e: Exception) {
+                Log.e("SelectorPerfilFragment", "Excepción durante la carga de perfiles", e)
+                
+                // En caso de excepción, usar perfiles por defecto
+                perfiles = listOf(
+                    Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                    Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                    Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                    Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
+                )
+                
+                configurarSpinner()
+                
                 // Set pending selection if there was one
                 pendingPerfilSelection?.let {
                     setSelectedPerfil(it)
@@ -111,11 +149,25 @@ class SelectorPerfilFragment : Fragment() {
 
                 // Update the loading state
                 _isDataLoaded.value = true
-                Log.d("SelectorPerfilFragment", "Perfiles cargados desde servidor: ${perfiles.size} perfiles")
-            }.onFailure { exception ->
-                Log.e("SelectorPerfilFragment", "Error al cargar los perfiles desde servidor, usando datos locales", exception)
-                // Si falla, mantenemos los datos hardcodeados
+                
+                Toast.makeText(requireContext(), "Error de conexión. Usando perfiles por defecto.", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun configurarSpinner() {
+        Log.d("SelectorPerfilFragment", "Configurando spinner con ${perfiles.size} perfiles")
+        
+        val nombresPerfiles = perfiles.map { it.nombrePerfil }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresPerfiles)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPerfil.adapter = adapter
+
+        Log.d("SelectorPerfilFragment", "Adapter configurado con ${nombresPerfiles.size} elementos")
+        
+        // Log de los perfiles disponibles
+        perfiles.forEachIndexed { index, perfil ->
+            Log.d("SelectorPerfilFragment", "Perfil $index: ID=${perfil.id}, Nombre=${perfil.nombrePerfil}, Estado=${perfil.estado}")
         }
     }
 

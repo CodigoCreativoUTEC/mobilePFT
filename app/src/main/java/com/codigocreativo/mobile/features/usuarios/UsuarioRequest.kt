@@ -187,4 +187,42 @@ data class TelefonoConId(
     val id: Int,
     @SerializedName("numero")
     val numero: String
+)
+
+// Clase final que coincide exactamente con el JSON esperado por el backend
+data class UsuarioRequestFinal(
+    @SerializedName("cedula")
+    val cedula: String,
+    @SerializedName("email")
+    val email: String,
+    @SerializedName("contrasenia")
+    val contrasenia: String,
+    @SerializedName("fechaNacimiento")
+    val fechaNacimiento: String,
+    @SerializedName("nombre")
+    val nombre: String,
+    @SerializedName("apellido")
+    val apellido: String,
+    @SerializedName("nombreUsuario")
+    val nombreUsuario: String,
+    @SerializedName("idPerfil")
+    val idPerfil: PerfilFinal,
+    @SerializedName("usuariosTelefonos")
+    val usuariosTelefonos: List<TelefonoFinal>
+)
+
+// Clase Perfil final que coincide con el JSON esperado
+data class PerfilFinal(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("nombrePerfil")
+    val nombrePerfil: String,
+    @SerializedName("estado")
+    val estado: String
+)
+
+// Clase Telefono final que coincide con el JSON esperado
+data class TelefonoFinal(
+    @SerializedName("numero")
+    val numero: String
 ) 
