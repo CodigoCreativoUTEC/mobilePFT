@@ -302,15 +302,15 @@ class TipoEquipoActivity : AppCompatActivity() {
         val searchView: SearchView = findViewById(R.id.search_view)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
-        val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
+        val nombreTipo = searchView.query.toString().takeIf { it.isNotEmpty() }
         val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
 
-        filterTipoEquipos(nombre, estado) // Aplica los filtros localmente
+        filterTipoEquipos(nombreTipo, estado) // Aplica los filtros localmente
     }
 
     // Función para filtrar la lista de marcas (actualizada)
-    private fun filterTipoEquipos(nombre: String?, estado: Estado) {
-        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
+    private fun filterTipoEquipos(nombreTipo: String?, estado: Estado) {
+        val nameFilter = nombreTipo?.lowercase(Locale.getDefault()) ?: ""
         val statusFilter = estado
 
         // Filtrar la lista de tipo de equipos

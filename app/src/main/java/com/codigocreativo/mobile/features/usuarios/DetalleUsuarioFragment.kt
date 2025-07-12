@@ -100,8 +100,15 @@ class DetalleUsuarioFragment(
                 nuevoEmail.isNotBlank() && nuevoTelefono.isNotBlank() && nuevoCedula.isNotBlank() &&
                 nuevoNombreUsuario.isNotBlank() && nuevoPerfil != null) {
 
-                // Create a list of Telefono objects with a single entry for simplicity
-                val nuevosTelefonos = listOf(Telefono(id = 0, numero = nuevoTelefono))
+                // Create a list of Telefono objects preserving the original ID
+                val originalPhoneId = usuario.usuariosTelefonos?.firstOrNull()?.id ?: 0
+                val nuevosTelefonos = listOf(Telefono(
+                    id = originalPhoneId,
+                    numero = nuevoTelefono
+                ))
+                
+                // Log the phone ID for debugging
+                android.util.Log.d("DetalleUsuarioFragment", "Original phone ID: $originalPhoneId, New phone number: $nuevoTelefono")
 
 
                 // Update the usuario object with new data

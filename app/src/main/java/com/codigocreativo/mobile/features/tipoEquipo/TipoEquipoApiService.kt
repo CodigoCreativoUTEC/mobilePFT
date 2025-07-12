@@ -16,7 +16,7 @@ interface TipoEquipoApiService {
     @GET("tipoEquipos/listar")
     suspend fun listarTipoEquipos(
         @Header("Authorization") token: String,
-        @Query("nombre") nombre: String? = null,
+        @Query("nombre") nombreTipo: String? = null,
         @Query("estado") estado: String? = null
     ): Response<List<TipoEquipo>>
 

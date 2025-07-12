@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -50,7 +51,7 @@ class SelectorTipoEquipoFragment : Fragment() {
                 }
 
                 result.onSuccess { tiposEquiposList ->
-                    tiposEquipos = tiposEquiposList
+                    tiposEquipos = tiposEquiposList.filter { it.estado == Estado.ACTIVO }
                     val nombresTipoEquipoes = tiposEquipos.map { it.nombreTipo }
                     val adapter = ArrayAdapter(
                         requireContext(),

@@ -64,7 +64,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nombre"
+                    android:hint="Nombre*"
                     android:layout_marginBottom="12dp"
                     style="@style/OutlinedTextField">
                     <com.google.android.material.textfield.TextInputEditText
@@ -79,7 +79,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Número de Serie"
+                    android:hint="Número de Serie*"
                     android:layout_marginBottom="12dp"
                     style="@style/OutlinedTextField">
                     <com.google.android.material.textfield.TextInputEditText
@@ -94,7 +94,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Garantía"
+                    android:hint="Garantía*"
                     android:layout_marginBottom="12dp"
                     style="@style/OutlinedTextField">
                     <com.google.android.material.textfield.TextInputEditText
@@ -107,11 +107,43 @@
                         android:drawableStart="@drawable/ic_user_avatar"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Identificación Interna Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Identificación Interna*"
+                    android:layout_marginBottom="12dp"
+                    style="@style/OutlinedTextField">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/identificacionInternaInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:drawableStart="@drawable/ic_user_avatar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Fecha de Adquisición Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha de Adquisición*"
+                    android:layout_marginBottom="12dp"
+                    style="@style/OutlinedTextField">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fechaAdquisicionInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:drawableStart="@drawable/ic_calendar"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <!-- Tipo de Equipo (Fragment) -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar Tipo de Equipo"
+                    android:text="Seleccionar Tipo de Equipo*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -128,7 +160,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar Proveedor"
+                    android:text="Seleccionar Proveedor*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -141,26 +173,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"/>
 
-                <!-- Identificación Interna Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Identificación Interna"
-                    android:layout_marginBottom="12dp"
-                    style="@style/OutlinedTextField">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/identificacionInternaInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:drawableStart="@drawable/ic_user_avatar"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <!-- Marca (Fragment) -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar Marca"
+                    android:text="Seleccionar Marca*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -177,7 +194,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar País de Origen"
+                    android:text="Seleccionar País de Origen*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -194,7 +211,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar Modelo"
+                    android:text="Seleccionar Modelo*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -211,7 +228,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccionar Ubicación"
+                    android:text="Seleccionar Ubicación*"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
@@ -223,23 +240,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"/>
-
-                <!-- Fecha de Adquisición Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Fecha de Adquisición"
-                    android:layout_marginBottom="12dp"
-                    style="@style/OutlinedTextField">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fechaAdquisicionInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="date"
-                        android:focusable="true"
-                        android:clickable="true"
-                        android:drawableStart="@drawable/ic_calendar"/>
-                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Confirm Button -->
                 <com.google.android.material.button.MaterialButton

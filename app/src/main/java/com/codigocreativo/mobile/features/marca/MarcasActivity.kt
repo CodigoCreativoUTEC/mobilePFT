@@ -126,11 +126,10 @@ class MarcasActivity : AppCompatActivity() {
                             val apiService = retrofit.create(MarcaApiService::class.java)
 
                             lifecycleScope.launch {
+                                val marcaInactiva = marca.copy(estado = Estado.INACTIVO)
                                 val result = dataRepository.guardarDatos(
                                     token = token,
-                                    apiCall = { apiService.eliminarMarca("Bearer $token",
-                                        marca.id!!
-                                    ) }
+                                    apiCall = { apiService.editarMarca("Bearer $token", marcaInactiva) }
                                 )
 
                                 result.onSuccess {

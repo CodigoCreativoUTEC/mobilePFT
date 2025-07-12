@@ -92,15 +92,29 @@ class Registro : AppCompatActivity() {
         val etBirthdate = findViewById<TextInputEditText>(R.id.etBirthdate)
         val etPhone = findViewById<TextInputEditText>(R.id.etPhone)
 
+        val tilFirstName = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilFirstName)
+        val tilLastName = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilLastName)
+        val tilCedula = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilCedula)
+        val tilBirthdate = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilBirthdate)
+        val tilPhone = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPhone)
+        val tilUsername = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilUsername)
+        val tilEmail = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilEmail)
+        val tilPassword = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPassword)
+        val tilConfirmPassword = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilConfirmPassword)
+
         etBirthdate.setOnClickListener { showDatePicker(etBirthdate) }
         etUsername.isEnabled = false
         configureUsernameGeneration(etFirstName, etLastName, etUsername)
 
         btnRegister.setOnClickListener {
-            // Validar que todos los campos obligatorios estén completos
-            if (!validateRequiredFields(etFirstName, etLastName, etCedula, etEmail, etPassword, etConfirmPassword)) {
-                return@setOnClickListener
-            }
+            if (!validarCamposRegistro(
+                    tilFirstName, etFirstName,
+                    tilLastName, etLastName,
+                    tilCedula, etCedula,
+                    tilEmail, etEmail,
+                    tilPassword, etPassword,
+                    tilConfirmPassword, etConfirmPassword
+                )) return@setOnClickListener
 
             // Verificar si el perfil está seleccionado
             if (perfilSeleccionado == null) {
@@ -114,6 +128,14 @@ class Registro : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Validar que el usuario tenga al menos 18 años
+            val calendar18 = Calendar.getInstance()
+            calendar18.add(Calendar.YEAR, -18)
+            if (birthDate.after(calendar18.time)) {
+                showToast("Debes ser mayor de 18 años para registrarte")
+                return@setOnClickListener
+            }
+
             if (!validateFields(etCedula, etEmail, etPassword, etConfirmPassword)) return@setOnClickListener
 
             val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone)
@@ -121,45 +143,66 @@ class Registro : AppCompatActivity() {
         }
     }
 
-    private fun validateRequiredFields(
-        etFirstName: TextInputEditText,
-        etLastName: TextInputEditText,
-        etCedula: TextInputEditText,
-        etEmail: TextInputEditText,
-        etPassword: TextInputEditText,
-        etConfirmPassword: TextInputEditText
+    private fun validarCamposRegistro(
+        tilFirstName: com.google.android.material.textfield.TextInputLayout, etFirstName: com.google.android.material.textfield.TextInputEditText,
+        tilLastName: com.google.android.material.textfield.TextInputLayout, etLastName: com.google.android.material.textfield.TextInputEditText,
+        tilCedula: com.google.android.material.textfield.TextInputLayout, etCedula: com.google.android.material.textfield.TextInputEditText,
+        tilEmail: com.google.android.material.textfield.TextInputLayout, etEmail: com.google.android.material.textfield.TextInputEditText,
+        tilPassword: com.google.android.material.textfield.TextInputLayout, etPassword: com.google.android.material.textfield.TextInputEditText,
+        tilConfirmPassword: com.google.android.material.textfield.TextInputLayout, etConfirmPassword: com.google.android.material.textfield.TextInputEditText
     ): Boolean {
+        var esValido = true
+        // Limpiar errores previos
+        tilFirstName.error = null
+        tilLastName.error = null
+        tilCedula.error = null
+        tilEmail.error = null
+        tilPassword.error = null
+        tilConfirmPassword.error = null
+
+        // Nombres
         if (etFirstName.text.toString().trim().isEmpty()) {
-            showToast("El nombre es obligatorio")
-            etFirstName.requestFocus()
-            return false
+            tilFirstName.error = "El nombre es obligatorio"
+            esValido = false
         }
+        // Apellidos
         if (etLastName.text.toString().trim().isEmpty()) {
-            showToast("El apellido es obligatorio")
-            etLastName.requestFocus()
-            return false
+            tilLastName.error = "El apellido es obligatorio"
+            esValido = false
         }
+        // Cédula
         if (etCedula.text.toString().trim().isEmpty()) {
-            showToast("La cédula es obligatoria")
-            etCedula.requestFocus()
-            return false
+            tilCedula.error = "La cédula es obligatoria"
+            esValido = false
         }
-        if (etEmail.text.toString().trim().isEmpty()) {
-            showToast("El email es obligatorio")
-            etEmail.requestFocus()
-            return false
+        // Email
+        val email = etEmail.text.toString().trim()
+        if (email.isEmpty()) {
+            tilEmail.error = "El email es obligatorio"
+            esValido = false
+        } else if (!email.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$"))) {
+            tilEmail.error = "El email debe tener formato mail@mail.com"
+            esValido = false
         }
-        if (etPassword.text.toString().trim().isEmpty()) {
-            showToast("La contraseña es obligatoria")
-            etPassword.requestFocus()
-            return false
+        // Contraseña
+        val password = etPassword.text.toString()
+        if (password.isEmpty()) {
+            tilPassword.error = "La contraseña es obligatoria"
+            esValido = false
+        } else if (password.length < 8) {
+            tilPassword.error = "La contraseña debe tener al menos 8 caracteres"
+            esValido = false
         }
-        if (etConfirmPassword.text.toString().trim().isEmpty()) {
-            showToast("Debe confirmar la contraseña")
-            etConfirmPassword.requestFocus()
-            return false
+        // Confirmar contraseña
+        val confirmPassword = etConfirmPassword.text.toString()
+        if (confirmPassword.isEmpty()) {
+            tilConfirmPassword.error = "Debe confirmar la contraseña"
+            esValido = false
+        } else if (password != confirmPassword) {
+            tilConfirmPassword.error = "Las contraseñas no coinciden"
+            esValido = false
         }
-        return true
+        return esValido
     }
 
     private fun showDatePicker(editText: TextInputEditText) {

@@ -46,4 +46,10 @@ interface UsuariosApiService {
         @Header("Authorization") authHeader: String,
         @Query("email") email: String
     ): Response<Usuario>
+
+    @PUT("usuarios/modificar-propio-usuario")
+    suspend fun modificarPropioUsuario(
+        @Header("Authorization") authHeader: String,
+        @Body usuario: Usuario
+    ): Response<Unit>
 }
