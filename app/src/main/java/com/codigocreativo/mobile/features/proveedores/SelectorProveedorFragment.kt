@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -50,7 +51,7 @@ class SelectorProveedorFragment : Fragment() {
                 }
 
                 result.onSuccess { proveedoresList ->
-                    proveedores = proveedoresList
+                    proveedores = proveedoresList.filter { it.estado == Estado.ACTIVO }
                     val nombresProveedores = proveedores.map { it.nombre }
                     val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresProveedores)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

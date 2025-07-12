@@ -130,11 +130,10 @@ class ProveedoresActivity : AppCompatActivity() {
                             val apiService = retrofit.create(ProveedoresApiService::class.java)
 
                             lifecycleScope.launch {
+                                val proveedorInactivo = proveedor.copy(estado = Estado.INACTIVO)
                                 val result = dataRepository.guardarDatos(
                                     token = token,
-                                    apiCall = { apiService.eliminarProveedor("Bearer $token",
-                                        proveedor.idProveedor!!
-                                    ) }
+                                    apiCall = { apiService.actualizar("Bearer $token", proveedorInactivo) }
                                 )
 
                                 result.onSuccess {

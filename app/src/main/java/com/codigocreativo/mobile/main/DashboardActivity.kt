@@ -21,6 +21,7 @@ import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 import com.codigocreativo.mobile.utils.SessionManager
 import com.codigocreativo.mobile.network.User
 import com.codigocreativo.mobile.main.AccessDeniedActivity
+import com.google.android.material.snackbar.Snackbar
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -257,8 +258,21 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun openProfileScreen() {
         Log.d("DashboardActivity", "Abriendo pantalla de Perfil")
-        val intent = Intent(this, DetallePerfilUsuarioActivity::class.java)
-        startActivity(intent)
+        
+        // Check if user has permission to access their profile
+        val user = SessionManager.getUser(this)
+        if (user != null) {
+            val profileName = user.idPerfil.nombrePerfil
+            Log.d("DashboardActivity", "Usuario con perfil: $profileName intentando acceder a su perfil")
+            
+            // For now, allow all profiles to access their profile
+            // The server-side permission check will be handled in the activity
+            val intent = Intent(this, DetallePerfilUsuarioActivity::class.java)
+            startActivity(intent)
+        } else {
+            Log.e("DashboardActivity", "No se pudo obtener información del usuario")
+            Snackbar.make(findViewById(android.R.id.content), "Error: No se pudo obtener información del usuario", Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun logout() {

@@ -189,9 +189,20 @@ class UsuariosActivity : AppCompatActivity() {
                         ).show()
                         loadUsuarios(token)
                     }.onFailure { error ->
+                        val errorMessage = when {
+                            error.message?.contains("OptimisticLockException") == true -> {
+                                // Reload users list to get latest data
+                                loadUsuarios(token)
+                                "Error de concurrencia: El usuario fue modificado por otro usuario. Los datos han sido actualizados."
+                            }
+                            error.message?.contains("500") == true -> 
+                                "Error interno del servidor. Intenta más tarde."
+                            else -> "Error al actualizar el usuario: ${error.message}"
+                        }
+                        
                         Snackbar.make(
                             findViewById(android.R.id.content),
-                            "Error al actualizar el usuario: ${error.message}",
+                            errorMessage,
                             Snackbar.LENGTH_LONG
                         ).show()
                         Log.e("UsuariosActivity", "Error al actualizar el usuario: ${error.message}\nPayload: ${updatedUsuario}")
