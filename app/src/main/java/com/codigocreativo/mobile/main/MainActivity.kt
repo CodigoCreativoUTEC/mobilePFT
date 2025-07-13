@@ -3,10 +3,13 @@ package com.codigocreativo.mobile.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.network.ApiService
@@ -17,9 +20,9 @@ import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
@@ -31,8 +34,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Aplicar animaciones
+        applyAnimations()
+
         // Inicializa el botón de Google Sign-In
-        val googleSignInButton: SignInButton = findViewById(R.id.googleSignInButton)
+        val googleSignInButton: MaterialButton = findViewById(R.id.googleSignInButton)
         googleSignInButton.setOnClickListener {
             startGoogleSignIn()
         }
@@ -51,16 +57,28 @@ class MainActivity : AppCompatActivity() {
 
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            val hashedPassword = hashPassword(password)
+
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
 
-                Log.d("MainActivity", "Email: $email, Password: $hashedPassword")
-                sendLoginRequestToBackend(email, hashedPassword)
+                Log.d("MainActivity", "Email: $email, Password: $password")
+                sendLoginRequestToBackend(email, password)
             } else {
                 Toast.makeText(this, "Por favor ingresa email y contraseña", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun applyAnimations() {
+        // Animación para el header
+        val headerLayout: LinearLayout = findViewById(R.id.headerLayout)
+        val fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+        headerLayout.startAnimation(fadeInAnimation)
+
+        // Animación para la tarjeta de login
+        val loginCardView: CardView = findViewById(R.id.loginCardView)
+        val slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up)
+        loginCardView.startAnimation(slideUpAnimation)
     }
 
     private fun startGoogleSignIn() {
@@ -145,18 +163,13 @@ class MainActivity : AppCompatActivity() {
                         Log.e("MainActivity", "No se recibió JWT en la respuesta.")
                     }
                 } else {
-                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()} - ${response.errorBody()?.string()}")
+                    Toast.makeText(this@MainActivity, "Error: Cuenta inactiva o Eliminada, aguarde.", Toast.LENGTH_SHORT).show()
+
+                    Log.e("MainActivity", "Error en la respuesta del backend: ${response.code()} - ${response.errorBody().toString()}")
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error al enviar la solicitud de login: ${e.message}", e)
             }
         }
     }
-
-    private fun hashPassword(password: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hash = digest.digest(password.toByteArray())
-        return hash.joinToString("") { String.format("%02x", it) }
-    }
-
 }

@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName
 
 data class Modelo(
     @SerializedName("id")
-    val id: Int,
+    val id: Int?,
     @SerializedName("nombre")
     val nombre: String,
     @SerializedName("idMarca")
-    val idMarca: Marca,
+    val idMarca: Marca?,
     @SerializedName("estado")
     var estado: Estado
 )

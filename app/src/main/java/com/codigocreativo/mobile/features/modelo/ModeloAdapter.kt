@@ -11,17 +11,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.marca.Marca
+import com.codigocreativo.mobile.features.proveedores.Proveedor
 
 class ModeloAdapter(
-    private var modelosList: List<Modelo>,
-    private val activity: FragmentActivity
+    var modelosList: List<Modelo>,
+    private val activity: FragmentActivity,
+    private val onDetalleClick: (Modelo) -> Unit
 ) : RecyclerView.Adapter<ModeloAdapter.ModeloViewHolder>() {
 
     inner class ModeloViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
-        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
-        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
+
+        val nombreTextView: TextView = itemView.findViewById(R.id.nombreModeloTextView)
+        val estadoTextView: TextView = itemView.findViewById(R.id.estadoModeloTextView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModeloViewHolder {
@@ -31,20 +33,12 @@ class ModeloAdapter(
 
     override fun onBindViewHolder(holder: ModeloViewHolder, position: Int) {
         val modelo = modelosList[position]
-        holder.idTextView.text = modelo.id.toString()
         holder.nombreTextView.text = modelo.nombre
         holder.estadoTextView.text = modelo.estado.name
 
-        holder.btnDetalle.setOnClickListener {
-            val fragment = DetalleModeloFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("id", modelo.id)
-                }
-            }
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+        // Manejar el clic en el elemento completo
+        holder.itemView.setOnClickListener {
+            onDetalleClick(modelo)
         }
     }
 
@@ -52,11 +46,11 @@ class ModeloAdapter(
         return modelosList.size
     }
 
-    // Método para actualizar la lista de modelos y notificar al adaptador de los cambios
-    fun updateList(newModelosList: List<Modelo>) {
-        modelosList = newModelosList
+    fun updateList(newModeloList: List<Modelo>) {
+        modelosList = newModeloList
         notifyDataSetChanged()
     }
 }
+
 
 

@@ -1,16 +1,22 @@
 package com.codigocreativo.mobile.features.proveedores
 
-import com.codigocreativo.mobile.features.marca.Marca
+import com.codigocreativo.mobile.features.paises.Pais
 import com.codigocreativo.mobile.utils.Estado
 import com.google.gson.annotations.SerializedName
 
 data class Proveedor(
     @SerializedName("id")
-    val idProveedor: Int,
+    val idProveedor: Int?,
     @SerializedName("nombre")
-    val nombre: String,
+    var nombre: String,
     @SerializedName("estado")
     var estado: Estado,
     @SerializedName("pais")
-    val pais: Pais
+    var pais: Pais?,
+    @SerializedName("telefono")
+    var telefono: String? = null,
+    @SerializedName("email")
+    var email: String? = null,
+    @SerializedName("direccion")
+    var direccion: String? = null
 )

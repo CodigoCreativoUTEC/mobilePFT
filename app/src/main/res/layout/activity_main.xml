@@ -1,186 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/main"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="@drawable/hospital"
-tools:context=".main.MainActivity">
-
-<RelativeLayout
-    android:id="@+id/backgroundLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/my_primary"
-    android:alpha="0.7" />
+    android:background="@drawable/hospital"
+    tools:context=".main.MainActivity">
 
-<LinearLayout
-    android:id="@+id/headerLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="28dp">
-
-    <TextView
-        android:id="@+id/hospitalTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HOSPITAL"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="32sp"
-        android:textColor="@color/white" />
-
-</LinearLayout>
-
-<androidx.cardview.widget.CardView
-    android:id="@+id/loginCardView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    app:cardCornerRadius="28dp"
-    android:layout_marginBottom="-20dp">
+    <RelativeLayout
+        android:id="@+id/backgroundLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/my_primary"
+        android:alpha="0.8" />
 
     <LinearLayout
-        android:id="@+id/formLayout"
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="28dp">
+        android:gravity="center"
+        android:padding="32dp">
 
         <TextView
-            android:id="@+id/welcomeTextView"
+            android:id="@+id/hospitalTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bienvenido!"
-            android:textColor="@color/my_primary"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:text="HOSPITAL"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="38sp"
+            android:textColor="@color/white"
+            android:letterSpacing="0.1" />
 
-        <TextView
-            android:id="@+id/loginPromptTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Inicia sesión con tu usuario y contraseña"
-            android:alpha="0.7" />
+    </LinearLayout>
 
-        <View
-            android:id="@+id/spacingView1"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp" />
-
-        <TextView
-            android:id="@+id/usernameLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nombre de Usuario"
-            android:alpha="0.7"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/usernameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre de Usuario"
-            android:padding="15dp"/>
-
-        <View
-            android:id="@+id/spacingView2"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
-
-        <TextView
-            android:id="@+id/passwordLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Contraseña"
-            android:alpha="0.7"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/passwordEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="Contraseña"
-            android:padding="15dp"/>
-
-        <RelativeLayout
-            android:id="@+id/optionsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/spacingView3"
-            android:layout_width="wrap_content"
-            android:layout_height="10dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/loginButton"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Iniciar Sesión"
-            app:cornerRadius="32dp" />
-
-        <View
-            android:id="@+id/spacingView4"
-            android:layout_width="wrap_content"
-            android:layout_height="10dp" />
-
-        <TextView
-            android:id="@+id/alternativeLoginTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="o Inicia Sesión con"
-            android:layout_gravity="center"
-            android:alpha="0.7" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loginCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        style="@style/LoginCardStyle"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
 
         <LinearLayout
-            android:id="@+id/socialLoginLayout"
+            android:id="@+id/formLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <!-- activity_main.xml -->
-            <!-- Google Sign-In Button -->
-            <com.google.android.gms.common.SignInButton
-                app:cornerRadius="32dp"
-                android:id="@+id/googleSignInButton"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/welcomeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¡Bienvenido!"
+                    style="@style/LoginWelcomeTextStyle"
+                    android:textSize="26sp"
+                    android:textColor="@color/my_primary" />
 
-        <LinearLayout
-            android:id="@+id/registrationPromptLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/loginPromptTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Inicia sesión con tu usuario y contraseña"
+                    style="@style/LoginSubtitleTextStyle"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/usernameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:startIconDrawable="@drawable/ic_user_avatar"
+                style="@style/LoginInputFieldStyle"
+                app:startIconContentDescription="Usuario">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/usernameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de Usuario"
+                    android:inputType="text"
+                    android:paddingStart="48dp"
+                    android:paddingLeft="48dp"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_phone"
+                app:endIconMode="password_toggle"
+                style="@style/LoginInputFieldStyle"
+                app:startIconContentDescription="Contraseña">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    android:paddingStart="48dp"
+                    android:paddingLeft="48dp"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:id="@+id/optionsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Iniciar Sesión"
+                style="@style/LoginButtonStyle"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/login_divider" />
+
+                <TextView
+                    android:id="@+id/alternativeLoginTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="o continúa con"
+                    style="@style/LoginSubtitleTextStyle"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/login_divider" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/socialLoginLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/googleSignInButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Continuar con Google"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_google"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:cornerRadius="24dp"
+                    app:strokeColor="@color/login_divider"
+                    app:strokeWidth="1dp"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/common_google_signin_btn_text_light_default"
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/notRegisteredTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aún no estás registrado?"
-                android:alpha="0.7"
-                android:layout_marginRight="10dp"/>
+                android:text="¿Aún no estás registrado?"
+                style="@style/LoginSubtitleTextStyle"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="2dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registrate aqui!"
-                android:textStyle="bold"
-                android:layout_marginLeft="50dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="15dp"/>
-        </LinearLayout>
+                android:text="Registrarse"
+                style="@style/LoginTextButtonStyle"
+                android:layout_gravity="center" />
 
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
 

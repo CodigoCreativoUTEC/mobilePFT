@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TipoEquipo(
     @SerializedName("id")
-    val id: Int,
+    val id: Int?,
     @SerializedName("nombreTipo")
     val nombreTipo: String,
     @SerializedName("estado")

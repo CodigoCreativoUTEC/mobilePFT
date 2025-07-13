@@ -1,35 +1,72 @@
 package com.codigocreativo.mobile.network
 
+import com.codigocreativo.mobile.utils.SessionManager
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // Función para obtener una instancia de Retrofit con el token de autenticación
-    fun getClient(token: String): Retrofit {
-        // Crear un cliente HTTP que agrega el encabezado Authorization
-        val client = OkHttpClient.Builder()
-            .addInterceptor { chain ->
+    private const val BASE_URL = "http://codigocreativo.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/"
+    private const val CONNECT_TIMEOUT = 30L // 30 segundos para conectar
+    private const val READ_TIMEOUT = 30L // 30 segundos para leer
+    private const val WRITE_TIMEOUT = 30L // 30 segundos para escribir
+
+    private fun createOkHttpClient(token: String? = null): OkHttpClient {
+        val clientBuilder = OkHttpClient.Builder()
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            
+        // Agregar token si se proporciona
+        token?.let { authToken ->
+            clientBuilder.addInterceptor { chain ->
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $token") // Agrega el token en el encabezado
+                    .header("Authorization", "Bearer $authToken")
                     .method(original.method, original.body)
                 val request = requestBuilder.build()
                 chain.proceed(request)
             }
-            .build()
+        }
 
+        return clientBuilder.build()
+    }
+
+    // Función para obtener una instancia de Retrofit con el token de autenticación
+    fun getClient(token: String): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/")
-            .client(client) // Usa el cliente con el token
+            .baseUrl(BASE_URL)
+            .client(createOkHttpClient(token))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    // Función para obtener una instancia de Retrofit sin token
+    fun getClientSinToken(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(createOkHttpClient())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     fun getLogin(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://gns3serv.ddns.net:8080/ServidorApp-1.0-SNAPSHOT/api/") // Cambia por tu URL del backend
+            .baseUrl(BASE_URL)
+            .client(createOkHttpClient())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    fun getImgBBClient(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.imgbb.com/")
+            .client(createOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 }
+

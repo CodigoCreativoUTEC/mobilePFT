@@ -10,15 +10,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
+import com.codigocreativo.mobile.features.proveedores.Proveedor
 
-class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activity: FragmentActivity) : RecyclerView.Adapter<MarcaAdapter.MarcaViewHolder>() {
+class MarcaAdapter(
+    var marcaList: List<Marca>,
+    private val activity: FragmentActivity,
+    private val onDetalleClick: (Marca) -> Unit
+) : RecyclerView.Adapter<MarcaAdapter.MarcaViewHolder>() {
 
-    class MarcaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idTextView: TextView = itemView.findViewById(R.id.idTextView)
-        val nombreTextView: TextView = itemView.findViewById(R.id.nombreTextView)
-        val estadoTextView: TextView = itemView.findViewById(R.id.estadoTextView)
-        val btnDetalle: Button = itemView.findViewById(R.id.btnDetalle)
-        val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
+    inner class MarcaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val nombreTextView: TextView = itemView.findViewById(R.id.nombreMarcaTextView)
+        val estadoTextView: TextView = itemView.findViewById(R.id.estadoMarcaTextView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarcaViewHolder {
@@ -27,54 +30,23 @@ class MarcaAdapter(private var marcasList: MutableList<Marca>, private val activ
     }
 
     override fun onBindViewHolder(holder: MarcaViewHolder, position: Int) {
-        val marca = marcasList[position]
-        holder.idTextView.text = marca.id.toString()
+        val marca = marcaList[position]
         holder.nombreTextView.text = marca.nombre
         holder.estadoTextView.text = marca.estado.name
 
-        // Acción del botón "Detalle"
-        holder.btnDetalle.setOnClickListener {
-            // Crear una instancia del fragmento y pasarle los datos de la marca
-            val fragment = DetalleMarcaFragment()
-            val bundle = Bundle()
-            bundle.putInt("marca_id", marca.id)
-            fragment.arguments = bundle
-
-            // Reemplazar el contenido actual con el fragmento de detalles
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+        // Manejar el clic en el elemento completo
+        holder.itemView.setOnClickListener {
+            onDetalleClick(marca)
         }
-
-        holder.btnEliminar.setOnClickListener {
-            // Crear el diálogo de confirmación para eliminar
-            AlertDialog.Builder(activity)
-                .setTitle("Confirmar eliminación")
-                .setMessage("¿Está seguro que desea eliminar la marca ${marca.nombre}?")
-                .setPositiveButton("Aceptar") { _, _ ->
-                    // Simulación de eliminación
-                    marcasList.removeAt(position)
-                    notifyItemRemoved(position)
-                    notifyItemRangeChanged(position, marcasList.size)
-                }
-                .setNegativeButton("Cancelar", null)  // No hacer nada si se cancela
-                .show()
-        }
-
     }
 
     override fun getItemCount(): Int {
-        return marcasList.size
+        return marcaList.size
     }
 
-    // Método para actualizar la lista filtrada
-    fun updateList(newList: MutableList<Marca>) {
-        marcasList = newList
+    fun updateList(newMarcaList: List<Marca>) {
+        marcaList = newMarcaList
         notifyDataSetChanged()
     }
-
-
 }
-
 

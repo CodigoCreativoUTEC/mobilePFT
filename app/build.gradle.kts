@@ -2,15 +2,21 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+    id("org.sonarqube") version "6.2.0.5505"
 }
-
+sonar {
+    properties {
+        property("sonar.projectKey", "CodigoCreativoUTEC_mobilePFT_7e6d6750-d21c-465b-8965-d60487ac1443")
+        property("sonar.projectName", "mobilePFT")
+    }
+}
 android {
     namespace = "com.codigocreativo.mobile"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "com.codigocreativo.mobile"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -34,6 +40,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    viewBinding {
+        enable = true
+    }
 }
 
 dependencies {
@@ -46,6 +55,7 @@ dependencies {
     implementation(libs.filament.android)
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.identity.credential)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -67,6 +77,7 @@ dependencies {
 
     // OkHttpClient para manejar peticiones HTTP
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
     // Coroutines para llamadas asíncronas
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
@@ -79,7 +90,9 @@ dependencies {
     implementation (libs.androidx.credentials.play.services.auth.v120beta03)
     implementation (libs.play.services.auth.v2070)
 
+    // Glide para cargar imágenes
+    implementation(libs.glide)
+
 }
 
-// Aquí debes agregar el plugin de Google Services al final
 apply(plugin = "com.google.gms.google-services")

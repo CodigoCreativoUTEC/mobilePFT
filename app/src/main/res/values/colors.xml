@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
 
     <color name="my_primary">#5E35B1</color>
     <color name="my_secondary">#673AB7</color>
-"
+    <color name="colorPrimary">#2841bf</color>
+    <color name="colorPrimaryDark">#2841bf</color>
+    <color name="colorAccent">#333333</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="PrimaryLight">#ead7fe</color>
+    <color name="colorBackground">#EBEBEB</color>
+    <color name="colorTrendingStart">#0f00b0</color>
+    <color name="colorTrendingEnd">#3d5ec9</color>
+    <color name="colorDivider">#D6D6D6</color>
+    <color name="background_light">#F6F7FB</color>
+
+    <!-- Colores para Navigation Drawer -->
+    <color name="navigation_item_text_color">#5E35B1</color>
+    <color name="navigation_item_icon_color">#5E35B1</color>
+    <color name="navigation_item_selected">#E8E2F3</color>
+    <color name="navigation_item_selected_text">#5E35B1</color>
+    <color name="navigation_header_gradient_start">#5E35B1</color>
+    <color name="navigation_header_gradient_end">#673AB7</color>
+    <color name="error_red">#F44336</color>
+
+    <!-- Colores para Login Screen -->
+    <color name="login_card_background">#FFFFFF</color>
+    <color name="login_text_primary">#5E35B1</color>
+    <color name="login_text_secondary">#757575</color>
+    <color name="login_input_background">#F5F5F5</color>
+    <color name="login_button_ripple">#E8E2F3</color>
+    <color name="login_divider">#E0E0E0</color>
+    <color name="login_shadow">#1A000000</color>
+
 </resources>
