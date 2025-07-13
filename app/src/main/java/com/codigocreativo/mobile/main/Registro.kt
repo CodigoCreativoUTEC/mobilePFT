@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
-import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,18 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
 import com.codigocreativo.mobile.features.usuarios.Usuario
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequest
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSinId
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestCorrecto
 import com.codigocreativo.mobile.features.usuarios.UsuarioRequestFinal
 import com.codigocreativo.mobile.features.usuarios.PerfilFinal
 import com.codigocreativo.mobile.features.usuarios.TelefonoFinal
-import com.codigocreativo.mobile.features.usuarios.TelefonoConId
-import com.codigocreativo.mobile.features.usuarios.TelefonoConIdUsuario
-import com.codigocreativo.mobile.features.usuarios.InstitucionSimple
-import com.codigocreativo.mobile.features.usuarios.PerfilSimple
 import com.codigocreativo.mobile.features.usuarios.UsuariosApiService
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.features.institucion.Institucion
@@ -36,16 +26,12 @@ import com.codigocreativo.mobile.features.perfiles.Perfil
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.features.usuarios.Telefono
-import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import com.codigocreativo.mobile.features.perfiles.PerfilSinId
-import com.codigocreativo.mobile.features.usuarios.InstitucionSinId
-import com.codigocreativo.mobile.features.usuarios.TelefonoSinId
 
 class Registro : AppCompatActivity() {
 
@@ -95,9 +81,6 @@ class Registro : AppCompatActivity() {
         val tilFirstName = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilFirstName)
         val tilLastName = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilLastName)
         val tilCedula = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilCedula)
-        val tilBirthdate = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilBirthdate)
-        val tilPhone = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPhone)
-        val tilUsername = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilUsername)
         val tilEmail = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilEmail)
         val tilPassword = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPassword)
         val tilConfirmPassword = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilConfirmPassword)
@@ -105,6 +88,23 @@ class Registro : AppCompatActivity() {
         etBirthdate.setOnClickListener { showDatePicker(etBirthdate) }
         etUsername.isEnabled = false
         configureUsernameGeneration(etFirstName, etLastName, etUsername)
+
+        // 1. Eliminar logs de depuración innecesarios (mantener solo los de error críticos y validación de datos)
+        // 2. Permitir seleccionar la institución desde la UI
+        //
+        // Paso 1: Agregar un Spinner para institución (supone que existe en el layout activity_registro.xml)
+        // Paso 2: Llenar el spinner con instituciones disponibles
+        // Paso 3: Usar la institución seleccionada en createUsuario
+
+        // En onCreate, después de obtener referencias a los elementos de la interfaz:
+        val institucionSpinner = findViewById<android.widget.Spinner>(R.id.institucionSpinner)
+        val instituciones = listOf(
+            Institucion(1, "CodigoCreativo"),
+            Institucion(2, "Otra Institucion")
+        )
+        val institucionAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, instituciones.map { it.nombre })
+        institucionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        institucionSpinner.adapter = institucionAdapter
 
         btnRegister.setOnClickListener {
             if (!validarCamposRegistro(
@@ -138,7 +138,8 @@ class Registro : AppCompatActivity() {
 
             if (!validateFields(etCedula, etEmail, etPassword, etConfirmPassword)) return@setOnClickListener
 
-            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone)
+            // En el onClick de btnRegister, pasar el spinner y la lista de instituciones:
+            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone, institucionSpinner, instituciones)
             registrarUsuario(nuevoUsuario)
         }
     }
@@ -373,7 +374,7 @@ class Registro : AppCompatActivity() {
 
     private fun createUsuario(
         etCedula: TextInputEditText, etEmail: TextInputEditText, etPassword: TextInputEditText, etFirstName: TextInputEditText, etLastName: TextInputEditText,
-        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText
+        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText, institucionSpinner: android.widget.Spinner, instituciones: List<Institucion>
     ): Usuario {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         
@@ -384,6 +385,7 @@ class Registro : AppCompatActivity() {
             telefonos.add(Telefono(0, phoneNumber))
         }
 
+        val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
         val usuario = Usuario(
             id = 0, // Este será ignorado por el servidor para nuevos usuarios
             cedula = etCedula.text.toString().trim(),
@@ -394,7 +396,7 @@ class Registro : AppCompatActivity() {
             nombre = etFirstName.text.toString().trim(),
             apellido = etLastName.text.toString().trim(),
             nombreUsuario = etUsername.text.toString().trim(),
-            idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"),
+            idInstitucion = institucionSeleccionada,
             idPerfil = perfilSeleccionado!!,
             usuariosTelefonos = telefonos
         )
@@ -530,7 +532,8 @@ class Registro : AppCompatActivity() {
                     Snackbar.make(findViewById(android.R.id.content), errorMessage, Snackbar.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Log.e("Registro", "Excepción durante el registro: ${e.message}", e)
+                Log.e("Registro", "Excepción durante el registro: ", e)
+                e.printStackTrace()
                 Snackbar.make(findViewById(android.R.id.content), "Error inesperado: ${e.message}", Snackbar.LENGTH_LONG).show()
             }
         }
@@ -540,46 +543,6 @@ class Registro : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    // Función para convertir Usuario a UsuarioRequest
-    private fun convertirAUsuarioRequest(usuario: Usuario): UsuarioRequest {
-        return UsuarioRequest(
-            id = usuario.id,
-            cedula = usuario.cedula,
-            email = usuario.email,
-            contrasenia = usuario.contrasenia,
-            fechaNacimiento = usuario.fechaNacimiento,
-            estado = usuario.estado,
-            nombre = usuario.nombre,
-            apellido = usuario.apellido,
-            nombreUsuario = usuario.nombreUsuario,
-            idInstitucion = usuario.idInstitucion,
-            idPerfil = usuario.idPerfil,
-            usuariosTelefonos = usuario.usuariosTelefonos
-        )
-    }
-
-    // Función para convertir Usuario a UsuarioRequestSimple (solo IDs)
-    private fun convertirAUsuarioRequestSimple(usuario: Usuario): UsuarioRequestSimple {
-        return UsuarioRequestSimple(
-            cedula = usuario.cedula,
-            email = usuario.email,
-            contrasenia = usuario.contrasenia,
-            fechaNacimiento = usuario.fechaNacimiento,
-            estado = when (usuario.estado) {
-                Estado.ACTIVO -> "Activo"
-                Estado.INACTIVO -> "Inactivo"
-                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
-            },
-            nombre = usuario.nombre,
-            apellido = usuario.apellido,
-            nombreUsuario = usuario.nombreUsuario,
-            idInstitucion = usuario.idInstitucion.id,
-            idPerfil = usuario.idPerfil.id,
-            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
-                TelefonoSinId(numero = telefono.numero)
-            }
-        )
-    }
 
     // Función para convertir Usuario a UsuarioRequestFinal (estructura exacta del backend)
     private fun convertirAUsuarioRequestFinal(usuario: Usuario): UsuarioRequestFinal {
@@ -614,119 +577,6 @@ class Registro : AppCompatActivity() {
             ),
             usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
                 TelefonoFinal(numero = telefono.numero)
-            }
-        )
-    }
-
-    // Función para convertir Usuario a UsuarioRequestCorrecto (estructura correcta del servidor)
-    private fun convertirAUsuarioRequestCorrecto(usuario: Usuario): UsuarioRequestCorrecto {
-        // Validar y loggear cada campo antes de crear el request
-        Log.d("Registro", "=== VALIDACIÓN DE DATOS ===")
-        Log.d("Registro", "Cédula: '${usuario.cedula}' (longitud: ${usuario.cedula.length})")
-        Log.d("Registro", "Email: '${usuario.email}' (longitud: ${usuario.email.length})")
-        Log.d("Registro", "Contraseña: '${usuario.contrasenia}' (longitud: ${usuario.contrasenia.length})")
-        Log.d("Registro", "Fecha: '${usuario.fechaNacimiento}' (longitud: ${usuario.fechaNacimiento.length})")
-        Log.d("Registro", "Nombre: '${usuario.nombre}' (longitud: ${usuario.nombre.length})")
-        Log.d("Registro", "Apellido: '${usuario.apellido}' (longitud: ${usuario.apellido.length})")
-        Log.d("Registro", "Usuario: '${usuario.nombreUsuario}' (longitud: ${usuario.nombreUsuario.length})")
-        Log.d("Registro", "Institución ID: ${usuario.idInstitucion.id}, Nombre: '${usuario.idInstitucion.nombre}'")
-        Log.d("Registro", "Perfil ID: ${usuario.idPerfil.id}, Nombre: '${usuario.idPerfil.nombrePerfil}'")
-        Log.d("Registro", "Teléfonos: ${usuario.usuariosTelefonos.size} teléfonos")
-        usuario.usuariosTelefonos.forEachIndexed { index, telefono ->
-            Log.d("Registro", "  Teléfono $index: '${telefono.numero}' (longitud: ${telefono.numero.length})")
-        }
-        Log.d("Registro", "=== FIN VALIDACIÓN ===")
-        
-        return UsuarioRequestCorrecto(
-            cedula = usuario.cedula,
-            email = usuario.email,
-            contrasenia = usuario.contrasenia,
-            fechaNacimiento = usuario.fechaNacimiento,
-            estado = when (usuario.estado) {
-                Estado.ACTIVO -> "Activo"
-                Estado.INACTIVO -> "Inactivo"
-                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
-            },
-            nombre = usuario.nombre,
-            apellido = usuario.apellido,
-            nombreUsuario = usuario.nombreUsuario,
-            idInstitucion = InstitucionSimple(
-                id = usuario.idInstitucion.id,
-                nombre = usuario.idInstitucion.nombre
-            ),
-            idPerfil = PerfilSimple(
-                id = usuario.idPerfil.id,
-                nombrePerfil = usuario.idPerfil.nombrePerfil,
-                estado = when (usuario.idPerfil.estado) {
-                    Estado.ACTIVO -> "Activo"
-                    Estado.INACTIVO -> "Inactivo"
-                    Estado.SIN_VALIDAR -> "Activo"
-                }
-            ),
-            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
-                TelefonoConIdUsuario(
-                    id = 0, // ID 0 para nuevos teléfonos
-                    numero = telefono.numero,
-                    idUsuario = "" // Campo requerido por el servidor
-                )
-            }
-        )
-    }
-
-    // Función para convertir Usuario a UsuarioRequestSimpleConTelefonos (con teléfonos que incluyen ID)
-    private fun convertirAUsuarioRequestSimpleConTelefonos(usuario: Usuario): UsuarioRequestSimpleConTelefonos {
-        return UsuarioRequestSimpleConTelefonos(
-            cedula = usuario.cedula,
-            email = usuario.email,
-            contrasenia = usuario.contrasenia,
-            fechaNacimiento = usuario.fechaNacimiento,
-            estado = when (usuario.estado) {
-                Estado.ACTIVO -> "Activo"
-                Estado.INACTIVO -> "Inactivo"
-                Estado.SIN_VALIDAR -> "Activo" // Cambiado de "SIN_VALIDAR" a "Activo"
-            },
-            nombre = usuario.nombre,
-            apellido = usuario.apellido,
-            nombreUsuario = usuario.nombreUsuario,
-            idInstitucion = usuario.idInstitucion.id,
-            idPerfil = usuario.idPerfil.id,
-            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
-                TelefonoConId(id = 0, numero = telefono.numero) // ID 0 para nuevos teléfonos
-            }
-        )
-    }
-
-    // Función para convertir Usuario a UsuarioRequestSinId (sin campo id)
-    private fun convertirAUsuarioRequestSinId(usuario: Usuario): UsuarioRequestSinId {
-        return UsuarioRequestSinId(
-            cedula = usuario.cedula,
-            email = usuario.email,
-            contrasenia = usuario.contrasenia,
-            fechaNacimiento = usuario.fechaNacimiento,
-            estado = when (usuario.estado) {
-                Estado.ACTIVO -> "Activo"
-                Estado.INACTIVO -> "Inactivo"
-                Estado.SIN_VALIDAR -> "SIN_VALIDAR"
-            },
-            nombre = usuario.nombre,
-            apellido = usuario.apellido,
-            nombreUsuario = usuario.nombreUsuario,
-            idInstitucion = InstitucionSinId(
-                id = usuario.idInstitucion.id,
-                nombre = usuario.idInstitucion.nombre,
-                estado = "Activo" // Instituciones normalmente están activas
-            ),
-            idPerfil = PerfilSinId(
-                id = usuario.idPerfil.id,
-                nombrePerfil = usuario.idPerfil.nombrePerfil,
-                estado = when (usuario.idPerfil.estado) {
-                    Estado.ACTIVO -> "Activo"
-                    Estado.INACTIVO -> "Inactivo"
-                    Estado.SIN_VALIDAR -> "SIN_VALIDAR"
-                }
-            ),
-            usuariosTelefonos = usuario.usuariosTelefonos.map { telefono ->
-                TelefonoSinId(numero = telefono.numero)
             }
         )
     }

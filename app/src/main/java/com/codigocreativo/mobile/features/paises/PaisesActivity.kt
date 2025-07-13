@@ -27,6 +27,10 @@ import java.util.Locale
 
 class PaisesActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     private lateinit var adapter: PaisAdapter
     private lateinit var recyclerView: RecyclerView
     private var paisesList = mutableListOf<Pais>() // Lista dinámica de países cargados desde el API
@@ -54,7 +58,7 @@ class PaisesActivity : AppCompatActivity() {
         } else {
             Snackbar.make(
                 findViewById(R.id.recyclerView),
-                "Token no encontrado, por favor inicia sesión",
+                TOKEN_NOT_FOUND_MESSAGE,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -114,7 +118,7 @@ class PaisesActivity : AppCompatActivity() {
                         } else {
                             Snackbar.make(
                                 findViewById(R.id.recyclerView),
-                                "Token no encontrado, por favor inicia sesión",
+                                TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -134,7 +138,7 @@ class PaisesActivity : AppCompatActivity() {
         closeButton.setImageResource(R.drawable.ic_close)
     }
 
-    private fun loadPaises(token: String, nombre: String? = null, estado: String? = null) {
+    private fun loadPaises(token: String) {
         val retrofit = RetrofitClient.getClient(token)
         val apiService = retrofit.create(PaisApiService::class.java)
 
@@ -188,16 +192,16 @@ class PaisesActivity : AppCompatActivity() {
                         Log.e("PaisesActivity", "Error al actualizar el país: ${error.message}\nPayload: ${updatedPais}")
                     }
                 }
-            } else {
-                Snackbar.make(
-                    findViewById(R.id.recyclerView),
-                    "Token no encontrado, por favor inicia sesión",
-                    Snackbar.LENGTH_LONG
-                ).show()
+                            } else {
+                    Snackbar.make(
+                        findViewById(R.id.recyclerView),
+                        TOKEN_NOT_FOUND_MESSAGE,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
-        }
 
-        fragment.show(supportFragmentManager, "DetallePaisFragment")
+            fragment.show(supportFragmentManager, "DetallePaisFragment")
     }
 
     private fun showIngresarPaisFragment() {
@@ -232,7 +236,7 @@ class PaisesActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     findViewById(R.id.recyclerView),
-                    "Token no encontrado, por favor inicia sesión",
+                    TOKEN_NOT_FOUND_MESSAGE,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -253,8 +257,8 @@ class PaisesActivity : AppCompatActivity() {
         // Configurar listeners
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                applyFilters()
-                return true
+                // No hacer nada especial al enviar
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -269,7 +273,7 @@ class PaisesActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // No hacer nada
+                // No se requiere acción cuando no hay selección en el spinner
             }
         }
     }

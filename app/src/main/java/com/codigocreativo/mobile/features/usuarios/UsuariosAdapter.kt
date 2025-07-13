@@ -3,12 +3,10 @@ package com.codigocreativo.mobile.features.usuarios
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.proveedores.Proveedor
 
 class UsuariosAdapter(
     var usuarioList: List<Usuario>,

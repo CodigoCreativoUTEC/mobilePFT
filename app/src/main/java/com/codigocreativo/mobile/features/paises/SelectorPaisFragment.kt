@@ -87,4 +87,8 @@ class SelectorPaisFragment : Fragment() {
             pendingCountrySelection = nombrePais
         }
     }
+
+    operator fun get(key: String): Pais? {
+        return if (key == "selectedCountry") getSelectedCountry() else null
+    }
 }

@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +31,10 @@ class MarcasActivity : AppCompatActivity() {
     private var filteredList = mutableListOf<Marca>()
     private val dataRepository = DataRepository()
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,7 @@ class MarcasActivity : AppCompatActivity() {
         } else {
             Snackbar.make(
                 findViewById(R.id.main),
-                "Token no encontrado, por favor inicia sesión",
+                TOKEN_NOT_FOUND_MESSAGE,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -94,7 +97,7 @@ class MarcasActivity : AppCompatActivity() {
                 } else {
                     Snackbar.make(
                         findViewById(R.id.main),
-                        "Token no encontrado, por favor inicia sesión",
+                        TOKEN_NOT_FOUND_MESSAGE,
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
@@ -151,7 +154,7 @@ class MarcasActivity : AppCompatActivity() {
                         } else {
                             Snackbar.make(
                                 findViewById(R.id.main),
-                                "Token no encontrado, por favor inicia sesión",
+                                TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -229,7 +232,7 @@ class MarcasActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     findViewById(R.id.main),
-                    "Token no encontrado, por favor inicia sesión",
+                    TOKEN_NOT_FOUND_MESSAGE,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -271,7 +274,9 @@ class MarcasActivity : AppCompatActivity() {
                 applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No se requiere acción cuando no hay selección en el spinner
+            }
         }
 
         // Listener para el evento de cierre del SearchView (opcional)

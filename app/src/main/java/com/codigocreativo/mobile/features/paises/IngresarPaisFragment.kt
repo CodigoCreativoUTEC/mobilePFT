@@ -71,7 +71,7 @@ class IngresarPaisFragment(private val onConfirm: (Pais) -> Unit) : BottomSheetD
                             Snackbar.make(view, "El país '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación
-                            showConfirmationDialog(nombre, view)
+                            showConfirmationDialog(nombre)
                         }
                     }.onFailure { error ->
                         Snackbar.make(view, "Error al verificar el país: ${error.message}", Snackbar.LENGTH_LONG).show()
@@ -86,7 +86,7 @@ class IngresarPaisFragment(private val onConfirm: (Pais) -> Unit) : BottomSheetD
         }
     }
 
-    private fun showConfirmationDialog(nombre: String, view: View) {
+    private fun showConfirmationDialog(nombre: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Confirmar creación")
             .setMessage("¿Desea crear el país '$nombre'?")

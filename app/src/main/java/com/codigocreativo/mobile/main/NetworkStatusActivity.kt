@@ -1,6 +1,5 @@
 package com.codigocreativo.mobile.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -9,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,6 +17,8 @@ import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
 class NetworkStatusActivity : AppCompatActivity() {
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +69,7 @@ class NetworkStatusActivity : AppCompatActivity() {
 
         serverStatusTextView.text = "🔄 Probando conexión al servidor..."
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(ioDispatcher).launch {
             try {
                 val client = OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -82,7 +84,7 @@ class NetworkStatusActivity : AppCompatActivity() {
                 val responseCode = response.code
                 val responseMessage = response.message
 
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     serverStatusTextView.text = if (response.isSuccessful) {
                         "✅ Servidor accesible"
                     } else {
@@ -98,8 +100,8 @@ class NetworkStatusActivity : AppCompatActivity() {
                     Log.d("NetworkStatusActivity", "Prueba de servidor completada: $responseCode $responseMessage")
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    serverStatusTextView.text = "❌ No se puede conectar al servidor"
+                withContext(mainDispatcher) {
+                    serverStatusTextView.text =  "No se puede conectar al servidor"
                     serverInfoTextView.text = """
                         Error: ${e.message}
                         URL: codigocreativo.ddns.net:8080

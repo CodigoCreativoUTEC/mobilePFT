@@ -88,4 +88,8 @@ class SelectorProveedorFragment : Fragment() {
             pendingSelection = nombreProveedor
         }
     }
+
+    operator fun get(key: String): Proveedor? {
+        return if (key == "selectedProveedor") getSelectedProveedor() else null
+    }
 }

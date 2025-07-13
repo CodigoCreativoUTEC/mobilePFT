@@ -88,4 +88,8 @@ class SelectorModeloFragment : Fragment() {
             pendingModeloSelection = nombreModelo
         }
     }
+
+    operator fun get(key: String): Modelo? {
+        return if (key == "selectedModelo") getSelectedModelo() else null
+    }
 }

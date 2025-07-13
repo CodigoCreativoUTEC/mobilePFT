@@ -11,8 +11,6 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.paises.Pais
-import com.codigocreativo.mobile.features.paises.PaisApiService
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.Estado

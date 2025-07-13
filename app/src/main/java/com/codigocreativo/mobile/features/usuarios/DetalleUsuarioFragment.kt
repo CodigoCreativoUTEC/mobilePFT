@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.institucion.Institucion
 import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
@@ -110,6 +109,8 @@ class DetalleUsuarioFragment(
                 // Log the phone ID for debugging
                 android.util.Log.d("DetalleUsuarioFragment", "Original phone ID: $originalPhoneId, New phone number: $nuevoTelefono")
 
+                // Obtener la institución seleccionada
+                val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
 
                 // Update the usuario object with new data
                 val updatedUsuario = Usuario(
@@ -123,7 +124,7 @@ class DetalleUsuarioFragment(
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,
                     idPerfil = nuevoPerfil,
-                    idInstitucion = com.codigocreativo.mobile.features.institucion.Institucion(1, "CodigoCreativo"),// TODO: HARDCODED institucion reparar
+                    idInstitucion = institucionSeleccionada,
                     estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
 

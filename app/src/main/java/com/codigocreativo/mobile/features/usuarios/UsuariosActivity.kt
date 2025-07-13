@@ -2,14 +2,10 @@ package com.codigocreativo.mobile.features.usuarios
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
@@ -20,12 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.proveedores.DetalleProveedorFragment
-import com.codigocreativo.mobile.features.proveedores.IngresarProveedorFragment
-import com.codigocreativo.mobile.features.proveedores.Proveedor
-import com.codigocreativo.mobile.features.proveedores.ProveedorAdapter
-import com.codigocreativo.mobile.features.proveedores.ProveedoresApiService
-import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.main.Registro
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
@@ -36,6 +26,10 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class UsuariosActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
 
     private lateinit var adapter: UsuariosAdapter
     private lateinit var recyclerView: RecyclerView
@@ -63,7 +57,7 @@ class UsuariosActivity : AppCompatActivity() {
         } else {
             Snackbar.make(
                 findViewById(R.id.main),
-                "Token no encontrado, por favor inicia sesión",
+                TOKEN_NOT_FOUND_MESSAGE,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -138,7 +132,7 @@ class UsuariosActivity : AppCompatActivity() {
                         } else {
                             Snackbar.make(
                                 findViewById(R.id.main),
-                                "Token no encontrado, por favor inicia sesión",
+                                TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -175,7 +169,7 @@ class UsuariosActivity : AppCompatActivity() {
         return currentUser?.id == usuarioToDelete.id
     }
 
-    private fun loadUsuarios(token: String, nombre: String? = null, estado: String? = null) {
+    private fun loadUsuarios(token: String) {
         val retrofit = RetrofitClient.getClient(token)
         val apiService = retrofit.create(UsuariosApiService::class.java)
 
@@ -238,7 +232,7 @@ class UsuariosActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     findViewById(R.id.main),
-                    "Token no encontrado, por favor inicia sesión",
+                    TOKEN_NOT_FOUND_MESSAGE,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -280,7 +274,9 @@ class UsuariosActivity : AppCompatActivity() {
                 applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No se requiere acción cuando no hay selección en el spinner
+            }
         }
 
         // Listener para el evento de cierre del SearchView (opcional)
