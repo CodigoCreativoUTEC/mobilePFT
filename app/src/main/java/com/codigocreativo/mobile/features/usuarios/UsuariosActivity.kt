@@ -90,6 +90,17 @@ class UsuariosActivity : AppCompatActivity() {
                 val position = viewHolder.adapterPosition
                 val usuario = adapter.usuarioList[position]
 
+                // Verificar si el usuario actual es administrador y está intentando eliminarse a sí mismo
+                if (isCurrentUserAdmin() && isCurrentUserTryingToDeleteSelf(usuario)) {
+                    Snackbar.make(
+                        findViewById(android.R.id.content),
+                        "No puedes eliminar tu propio usuario administrador",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    adapter.notifyItemChanged(position)
+                    return
+                }
+
                 // Show confirmation dialog
                 AlertDialog.Builder(this@UsuariosActivity).apply {
                     setTitle("Confirmar baja")
@@ -146,6 +157,22 @@ class UsuariosActivity : AppCompatActivity() {
         val searchView: SearchView = findViewById(R.id.search_view)
         val closeButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         closeButton.setImageResource(R.drawable.ic_close)
+    }
+
+    /**
+     * Verifica si el usuario actual es administrador
+     */
+    private fun isCurrentUserAdmin(): Boolean {
+        val currentUser = SessionManager.getUser(this)
+        return currentUser?.idPerfil?.nombrePerfil?.equals("Administrador", ignoreCase = true) == true
+    }
+
+    /**
+     * Verifica si el usuario actual está intentando eliminarse a sí mismo
+     */
+    private fun isCurrentUserTryingToDeleteSelf(usuarioToDelete: Usuario): Boolean {
+        val currentUser = SessionManager.getUser(this)
+        return currentUser?.id == usuarioToDelete.id
     }
 
     private fun loadUsuarios(token: String, nombre: String? = null, estado: String? = null) {
