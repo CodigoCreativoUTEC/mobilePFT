@@ -50,6 +50,9 @@
             android:name=".features.usuarios.UsuariosActivity"
             android:exported="false" />
         <activity
+            android:name=".features.paises.PaisesActivity"
+            android:exported="false" />
+        <activity
             android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
