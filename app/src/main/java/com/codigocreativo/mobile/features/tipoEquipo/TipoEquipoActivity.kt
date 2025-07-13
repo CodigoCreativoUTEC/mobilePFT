@@ -1,16 +1,11 @@
 package com.codigocreativo.mobile.features.tipoEquipo
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -20,17 +15,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.marca.DetalleMarcaFragment
-import com.codigocreativo.mobile.features.marca.IngresarMarcaFragment
-import com.codigocreativo.mobile.features.marca.Marca
-import com.codigocreativo.mobile.features.marca.MarcaAdapter
-import com.codigocreativo.mobile.features.marca.MarcaApiService
-import com.codigocreativo.mobile.features.modelo.DetalleModeloFragment
-import com.codigocreativo.mobile.features.modelo.IngresarModeloFragment
-import com.codigocreativo.mobile.features.modelo.Modelo
-import com.codigocreativo.mobile.features.modelo.ModeloAdapter
-import com.codigocreativo.mobile.features.modelo.ModeloApiService
-import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
@@ -40,6 +24,10 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class TipoEquipoActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
 
     private lateinit var adapter: TipoEquipoAdapter
     private lateinit var recyclerView: RecyclerView
@@ -68,7 +56,7 @@ class TipoEquipoActivity : AppCompatActivity() {
         } else {
             Snackbar.make(
                 findViewById(R.id.main),
-                "Token no encontrado, por favor inicia sesión",
+                TOKEN_NOT_FOUND_MESSAGE,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -109,7 +97,7 @@ class TipoEquipoActivity : AppCompatActivity() {
                 } else {
                     Snackbar.make(
                         findViewById(R.id.main),
-                        "Token no encontrado, por favor inicia sesión",
+                        TOKEN_NOT_FOUND_MESSAGE,
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
@@ -167,7 +155,7 @@ class TipoEquipoActivity : AppCompatActivity() {
                         } else {
                             Snackbar.make(
                                 findViewById(R.id.main),
-                                "Token no encontrado, por favor inicia sesión",
+                                TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -245,7 +233,7 @@ class TipoEquipoActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     findViewById(R.id.main),
-                    "Token no encontrado, por favor inicia sesión",
+                    TOKEN_NOT_FOUND_MESSAGE,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -287,7 +275,9 @@ class TipoEquipoActivity : AppCompatActivity() {
                 applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No se requiere acción cuando no hay selección en el spinner
+            }
         }
 
         // Listener para el evento de cierre del SearchView (opcional)
@@ -302,15 +292,15 @@ class TipoEquipoActivity : AppCompatActivity() {
         val searchView: SearchView = findViewById(R.id.search_view)
         val filterStatus: Spinner = findViewById(R.id.filter_status)
 
-        val nombre = searchView.query.toString().takeIf { it.isNotEmpty() }
+        val nombreTipo = searchView.query.toString().takeIf { it.isNotEmpty() }
         val estado = filterStatus.selectedItem as Estado // Ya es de tipo Estado
 
-        filterTipoEquipos(nombre, estado) // Aplica los filtros localmente
+        filterTipoEquipos(nombreTipo, estado) // Aplica los filtros localmente
     }
 
     // Función para filtrar la lista de marcas (actualizada)
-    private fun filterTipoEquipos(nombre: String?, estado: Estado) {
-        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
+    private fun filterTipoEquipos(nombreTipo: String?, estado: Estado) {
+        val nameFilter = nombreTipo?.lowercase(Locale.getDefault()) ?: ""
         val statusFilter = estado
 
         // Filtrar la lista de tipo de equipos

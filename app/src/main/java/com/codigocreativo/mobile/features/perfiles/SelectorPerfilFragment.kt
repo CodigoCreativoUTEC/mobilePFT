@@ -14,13 +14,17 @@ import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
-import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 import android.widget.AdapterView
 import android.widget.Toast
 
 
 class SelectorPerfilFragment : Fragment() {
+
+    private companion object {
+        private const val PERFIL_AUX_ADMINISTRATIVO = "Aux administrativo"
+        private const val PERFIL_TECNICO = "Técnico"
+    }
 
     private lateinit var spinnerPerfil: Spinner
     private val dataRepository = DataRepository()
@@ -41,7 +45,6 @@ class SelectorPerfilFragment : Fragment() {
         Log.d("SelectorPerfilFragment", "onCreateView llamado")
         val view = inflater.inflate(R.layout.fragment_selector_perfil, container, false)
         spinnerPerfil = view.findViewById(R.id.spinnerPerfil)
-        Log.d("SelectorPerfilFragment", "Spinner encontrado: ${spinnerPerfil != null}")
         
         // Configurar el listener para el spinner
         setupSpinnerListener()
@@ -82,8 +85,8 @@ class SelectorPerfilFragment : Fragment() {
                         // Usar perfiles por defecto si no hay activos
                         perfiles = listOf(
                             Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                            Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                            Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                            Perfil(id = 2, nombrePerfil = PERFIL_AUX_ADMINISTRATIVO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                            Perfil(id = 3, nombrePerfil = PERFIL_TECNICO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
                             Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
                         )
                     } else {
@@ -108,8 +111,8 @@ class SelectorPerfilFragment : Fragment() {
                     // En caso de error, usar perfiles por defecto
                     perfiles = listOf(
                         Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                        Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                        Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                        Perfil(id = 2, nombrePerfil = PERFIL_AUX_ADMINISTRATIVO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                        Perfil(id = 3, nombrePerfil = PERFIL_TECNICO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
                         Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
                     )
                     
@@ -134,8 +137,8 @@ class SelectorPerfilFragment : Fragment() {
                 // En caso de excepción, usar perfiles por defecto
                 perfiles = listOf(
                     Perfil(id = 1, nombrePerfil = "Administrador", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                    Perfil(id = 2, nombrePerfil = "Aux administrativo", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
-                    Perfil(id = 3, nombrePerfil = "Técnico", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                    Perfil(id = 2, nombrePerfil = PERFIL_AUX_ADMINISTRATIVO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
+                    Perfil(id = 3, nombrePerfil = PERFIL_TECNICO, estado = com.codigocreativo.mobile.utils.Estado.ACTIVO),
                     Perfil(id = 4, nombrePerfil = "Supervisor", estado = com.codigocreativo.mobile.utils.Estado.ACTIVO)
                 )
                 
@@ -204,6 +207,7 @@ class SelectorPerfilFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
+                // No se requiere acción cuando no hay selección en el spinner
                 _selectedPerfil.value = null
                 Log.d("SelectorPerfilFragment", "Ningún perfil seleccionado")
             }

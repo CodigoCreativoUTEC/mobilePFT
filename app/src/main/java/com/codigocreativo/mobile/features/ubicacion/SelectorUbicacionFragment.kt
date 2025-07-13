@@ -91,4 +91,8 @@ class SelectorUbicacionFragment : Fragment() {
             pendingSelection = nombreUbicacion
         }
     }
+
+    operator fun get(key: String): Ubicacion? {
+        return if (key == "selectedUbicacion") getSelectedUbicacion() else null
+    }
 }

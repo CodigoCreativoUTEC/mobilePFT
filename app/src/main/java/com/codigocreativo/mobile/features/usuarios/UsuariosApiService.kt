@@ -1,9 +1,6 @@
 package com.codigocreativo.mobile.features.usuarios
 
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestCorrecto
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestFinal
+
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -46,4 +43,10 @@ interface UsuariosApiService {
         @Header("Authorization") authHeader: String,
         @Query("email") email: String
     ): Response<Usuario>
+
+    @PUT("usuarios/modificar-propio-usuario")
+    suspend fun modificarPropioUsuario(
+        @Header("Authorization") authHeader: String,
+        @Body usuario: Usuario
+    ): Response<Unit>
 }

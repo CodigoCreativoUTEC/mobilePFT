@@ -1,6 +1,5 @@
 package com.codigocreativo.mobile.network
 
-import com.codigocreativo.mobile.utils.SessionManager
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

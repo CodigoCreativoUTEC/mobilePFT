@@ -11,10 +11,9 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.paises.Pais
-import com.codigocreativo.mobile.features.paises.PaisApiService
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
+import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -48,7 +47,7 @@ class SelectorMarcaFragment : Fragment() {
                 }
 
                 result.onSuccess { marcasList ->
-                    marcas = marcasList
+                    marcas = marcasList.filter { it.estado == Estado.ACTIVO }
                     val nombresMarcas = marcas.map { it.nombre }
                     val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresMarcas)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

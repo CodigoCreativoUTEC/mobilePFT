@@ -10,8 +10,6 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.lifecycleScope
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.marca.Marca
-import com.codigocreativo.mobile.features.marca.MarcaApiService
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.utils.Estado
@@ -21,6 +19,10 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class IngresarTipoEquipoFragment(private val onConfirm: (TipoEquipo) -> Unit) : BottomSheetDialogFragment() {
+
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
 
     private lateinit var tfNombre: EditText
     private lateinit var btnConfirmar: Button
@@ -74,7 +76,7 @@ class IngresarTipoEquipoFragment(private val onConfirm: (TipoEquipo) -> Unit) : 
                             Snackbar.make(view, "El tipo de equipo: '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación
-                            showConfirmationDialog(nombre, view)
+                            showConfirmationDialog(nombre)
                         }
                     }.onFailure { error ->
                         Snackbar.make(view, "Error al verificar el tipo de equipo: ${error.message}", Snackbar.LENGTH_LONG).show()
@@ -87,11 +89,11 @@ class IngresarTipoEquipoFragment(private val onConfirm: (TipoEquipo) -> Unit) : 
                 }
             }
         } else {
-            Snackbar.make(view, "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(view, TOKEN_NOT_FOUND_MESSAGE, Snackbar.LENGTH_LONG).show()
         }
     }
     // Función para mostrar el diálogo de confirmación
-    private fun showConfirmationDialog(nombre: String, view: View) {
+    private fun showConfirmationDialog(nombre: String) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Confirmación")
             .setMessage("¿Desea confirmar el ingreso del tipo de equipo '$nombre'?")

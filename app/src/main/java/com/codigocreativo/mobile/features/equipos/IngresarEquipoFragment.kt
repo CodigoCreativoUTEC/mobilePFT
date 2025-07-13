@@ -1,7 +1,6 @@
 package com.codigocreativo.mobile.features.equipos
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -29,17 +28,18 @@ import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
 import android.app.DatePickerDialog
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
-class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : BottomSheetDialogFragment() {
+
+class IngresarEquipoFragment(
+    private val onConfirm: (EquipoRequest) -> Unit
+) : BottomSheetDialogFragment() {
+
+    companion object {
+        private const val DEFAULT_DATE = "2024-01-01"
+    }
 
     private lateinit var nombreInput: EditText
     private lateinit var btnConfirmar: Button
@@ -129,8 +129,16 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
             }
         } catch (e: Exception) {
             Log.e("IngresarEquipoFragment", "Error formateando fecha: ${e.message}")
-            "2024-01-01" // Fecha por defecto
+            DEFAULT_DATE // Fecha por defecto
         }
+    }
+
+    private fun showDatePicker(editText: EditText) {
+        val calendar = Calendar.getInstance()
+        val (year, month, day) = Triple(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            editText.setText(String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay))
+        }, year, month, day).show()
     }
 
     override fun onCreateView(
@@ -153,62 +161,44 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
         identificacionInternaInput = view.findViewById(R.id.identificacionInternaInput)
         imagenImageView = view.findViewById(R.id.imagenImageView)
 
-        // Configurar DatePicker para garantía
-        garantiaInput.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-            val datePickerDialog = DatePickerDialog(
-                requireContext(),
-                { _, selectedYear, selectedMonth, selectedDay ->
-                    val fecha = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-                    garantiaInput.setText(fecha)
-                },
-                year, month, day
-            )
-            datePickerDialog.show()
-        }
-
-        // Configurar el selector de imagen
+        // Permitir seleccionar imagen al hacer click
         imagenImageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             pickImageResult.launch(intent)
         }
 
+        // Configurar DatePicker para garantía
+        garantiaInput.setOnClickListener {
+            showDatePicker(garantiaInput)
+        }
+        // Configurar DatePicker para fecha de adquisición
+        fechaAdquisicionInput.setOnClickListener {
+            showDatePicker(fechaAdquisicionInput)
+        }
+
         // Configurar el botón de confirmación
         btnConfirmar.setOnClickListener {
             val nombre = nombreInput.text.toString().trim()
-            if (nombre.isEmpty()) {
-                Snackbar.make(view, "El nombre del equipo es obligatorio", Snackbar.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
             val identificacionInterna = identificacionInternaInput.text.toString().trim()
-            if (identificacionInterna.isEmpty()) {
-                Snackbar.make(view, "La identificación interna es obligatoria", Snackbar.LENGTH_LONG).show()
+            val nroSerie = nroSerieInput.text.toString().trim()
+            val garantia = garantiaInput.text.toString().trim()
+            val fechaAdquisicion = fechaAdquisicionInput.text.toString().trim()
+            val modelo = modeloPickerFragment["selectedModelo"]
+            val pais = paisPickerFragment["selectedCountry"]
+            val tipoEquipo = tipoEquipoPickerFragment["selectedTipo"]
+            val proveedor = proveedorPickerFragment["selectedProveedor"]
+            val ubicacion = ubicacionPickerFragment["selectedUbicacion"]
+
+            if (nombre.isEmpty() || identificacionInterna.isEmpty() || nroSerie.isEmpty() || garantia.isEmpty() || fechaAdquisicion.isEmpty() || modelo == null || pais == null || tipoEquipo == null || proveedor == null || ubicacion == null) {
+                Snackbar.make(view, "Todos los campos son obligatorios", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
             if (imageUrl == null) {
                 Snackbar.make(view, "Por favor espera a que la imagen se suba", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            val modelo = modeloPickerFragment.getSelectedModelo()
-            val pais = paisPickerFragment.getSelectedCountry()
-            val tipoEquipo = tipoEquipoPickerFragment.getSelectedTipo()
-            val proveedor = proveedorPickerFragment.getSelectedProveedor()
-            val ubicacion = ubicacionPickerFragment.getSelectedUbicacion()
-
-            if (modelo == null || pais == null || tipoEquipo == null || proveedor == null || ubicacion == null) {
-                Snackbar.make(view, "Por favor selecciona todos los datos requeridos", Snackbar.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            // Crear el equipo con la URL de la imagen subida
             val equipo = crearEquipo(imageUrl!!)
             val equipoRequest = convertirAEquipoRequest(equipo)
             onConfirm(equipoRequest)
@@ -219,16 +209,16 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
     }
 
     private fun crearEquipo(imagenUrl: String): Equipo {
-        val modelo = modeloPickerFragment.getSelectedModelo()
-        val pais = paisPickerFragment.getSelectedCountry()
-        val tipoEquipo = tipoEquipoPickerFragment.getSelectedTipo()
-        val proveedor = proveedorPickerFragment.getSelectedProveedor()
-        val ubicacion = ubicacionPickerFragment.getSelectedUbicacion()
+        val modelo = modeloPickerFragment["selectedModelo"]
+        val pais = paisPickerFragment["selectedCountry"]
+        val tipoEquipo = tipoEquipoPickerFragment["selectedTipo"]
+        val proveedor = proveedorPickerFragment["selectedProveedor"]
+        val ubicacion = ubicacionPickerFragment["selectedUbicacion"]
 
         val nombre = nombreInput.text.toString().trim()
         val nroSerie = nroSerieInput.text.toString().trim()
-        val garantia = formatearFecha(garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
-        val fechaAdquisicion = formatearFecha(fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
+        val garantia = formatearFecha(garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: DEFAULT_DATE)
+        val fechaAdquisicion = formatearFecha(fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: DEFAULT_DATE)
         val estado = Estado.ACTIVO
         val identificacionInterna = identificacionInternaInput.text.toString().trim()
 

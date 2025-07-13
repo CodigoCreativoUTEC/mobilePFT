@@ -19,6 +19,10 @@ import java.util.*
 
 class DetallePerfilUsuarioActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     private val dataRepository = DataRepository()
     private var usuarioActual: Usuario? = null
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -52,7 +56,7 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
             // Cargar los detalles del usuario usando el token
             cargarDetallesUsuario(token)
         } else {
-            Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(findViewById(R.id.main), TOKEN_NOT_FOUND_MESSAGE, Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -63,6 +67,8 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
         editEmail = findViewById(R.id.edit_email)
         editFechaNacimiento = findViewById(R.id.edit_fecha_nacimiento)
         editNombreUsuario = findViewById(R.id.edit_nombre_usuario)
+        // Deshabilitar edición del nombre de usuario
+        editNombreUsuario.isEnabled = false
         editTelefono = findViewById(R.id.edit_telefono)
         tvInstitucion = findViewById(R.id.tv_institucion)
         tvPerfil = findViewById(R.id.tv_perfil)
@@ -114,7 +120,7 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
                 val emailUserLog = userLog?.email
                 
                 if (emailUserLog == null) {
-                    Snackbar.make(findViewById(R.id.main), "No se pudo obtener el email del usuario", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(findViewById(android.R.id.content), "No se pudo obtener el email del usuario", Snackbar.LENGTH_LONG).show()
                     return@launch
                 }
                 
@@ -129,11 +135,42 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
                     actualizarInterfazUsuario(usuario)
                 }.onFailure { error ->
                     Log.e("DetallePerfilUsuarioActivity", "Error al cargar los datos del usuario: ${error.message}")
-                    Snackbar.make(findViewById(R.id.main), "Error al cargar los datos del usuario: ${error.message}", Snackbar.LENGTH_LONG).show()
+                    
+                    // Log the full error message for debugging
+                    Log.d("DetallePerfilUsuarioActivity", "Error completo: ${error.message}")
+                    
+                    val errorMessage = when {
+                        error.message?.contains("403") == true || 
+                        error.message?.contains("Acceso denegado") == true ||
+                        error.message?.contains("No tienes permisos") == true -> {
+                            // Show basic profile info from session data when server denies access
+                            Log.d("DetallePerfilUsuarioActivity", "Detectado error 403, mostrando perfil básico")
+                            mostrarPerfilBasico()
+                            
+                            // Check user profile to show appropriate message
+                            val user = SessionManager.getUser(this@DetallePerfilUsuarioActivity)
+                            val profileName = user?.idPerfil?.nombrePerfil ?: ""
+                            val allowedProfiles = listOf("Administrador", "Aux administrativo", "Ingeniero Biomédico", "Tecnólogo", "Técnico")
+                            
+                            if (allowedProfiles.any { it.equals(profileName, ignoreCase = true) }) {
+                                "Tu perfil debería ser editable. Si ves este mensaje, contacta al administrador del sistema."
+                            } else {
+                                "No tienes permisos para modificar tu perfil desde el servidor. Mostrando información básica."
+                            }
+                        }
+                        error.message?.contains("500") == true -> 
+                            "Error interno del servidor. Intenta más tarde."
+                        else -> {
+                            Log.d("DetallePerfilUsuarioActivity", "Error no reconocido, mostrando perfil básico por defecto")
+                            mostrarPerfilBasico()
+                            "Error al cargar los datos del usuario. Mostrando información básica."
+                        }
+                    }
+                    Snackbar.make(findViewById(android.R.id.content), errorMessage, Snackbar.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("DetallePerfilUsuarioActivity", "Error inesperado: ${e.message}", e)
-                Snackbar.make(findViewById(R.id.main), "Error inesperado al cargar los datos del usuario", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(findViewById(android.R.id.content), "Error inesperado al cargar los datos del usuario", Snackbar.LENGTH_LONG).show()
             }
         }
     }
@@ -165,7 +202,7 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
     private fun guardarCambios() {
         val token = SessionManager.getToken(this)
         if (token == null || usuarioActual == null) {
-            Snackbar.make(findViewById(R.id.main), "Error: No se puede guardar los cambios", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(findViewById(android.R.id.content), "Error: No se puede guardar los cambios", Snackbar.LENGTH_LONG).show()
             return
         }
 
@@ -191,7 +228,8 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
             email = editEmail.text.toString().trim(),
             fechaNacimiento = editFechaNacimiento.text.toString().trim(),
             nombreUsuario = editNombreUsuario.text.toString().trim(),
-            usuariosTelefonos = listaTelefonos
+            usuariosTelefonos = listaTelefonos,
+            contrasenia = usuarioActual?.contrasenia ?: ""
         )
 
         // Mostrar indicador de carga
@@ -204,21 +242,34 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
             try {
                 val result = dataRepository.obtenerDatos(
                     token = token,
-                    apiCall = { apiService.actualizar("Bearer $token", usuarioActualizado) }
+                    apiCall = { apiService.modificarPropioUsuario("Bearer $token", usuarioActualizado) }
                 )
 
                 result.onSuccess {
-                    Snackbar.make(findViewById(R.id.main), "Datos actualizados correctamente", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(findViewById(android.R.id.content), "Datos actualizados correctamente", Snackbar.LENGTH_LONG).show()
                     usuarioActual = usuarioActualizado
                     // Actualizar el nombre de usuario en el header
                     username.text = usuarioActualizado.nombreUsuario
                 }.onFailure { error ->
+                    val errorMessage = when {
+                        error.message?.contains("OptimisticLockException") == true -> {
+                            // Reload user data to get latest information
+                            cargarDetallesUsuario(token)
+                            "Error de concurrencia: Los datos fueron modificados por otro usuario. Los datos han sido actualizados."
+                        }
+                        error.message?.contains("403") == true || error.message?.contains("Acceso denegado") == true -> 
+                            "No tienes permisos para modificar tu perfil. Contacta al administrador."
+                        error.message?.contains("500") == true -> 
+                            "Error interno del servidor. Intenta más tarde."
+                        else -> "Error al actualizar los datos: ${error.message}"
+                    }
+                    
                     Log.e("DetallePerfilUsuarioActivity", "Error al actualizar usuario: ${error.message}")
-                    Snackbar.make(findViewById(R.id.main), "Error al actualizar los datos: ${error.message}", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(findViewById(android.R.id.content), errorMessage, Snackbar.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("DetallePerfilUsuarioActivity", "Error inesperado al actualizar: ${e.message}", e)
-                Snackbar.make(findViewById(R.id.main), "Error inesperado al actualizar los datos", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(findViewById(android.R.id.content), "Error inesperado al actualizar los datos", Snackbar.LENGTH_LONG).show()
             } finally {
                 // Restaurar botón
                 btnSave.isEnabled = true
@@ -271,5 +322,69 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
         }
 
         return true
+    }
+    
+    /**
+     * Muestra información básica del perfil usando datos de la sesión
+     * cuando el servidor deniega acceso
+     */
+    private fun mostrarPerfilBasico() {
+        try {
+            Log.d("DetallePerfilUsuarioActivity", "Iniciando mostrarPerfilBasico()")
+            val user = SessionManager.getUser(this)
+            if (user != null) {
+                Log.d("DetallePerfilUsuarioActivity", "Usuario obtenido de sesión: ${user.nombreUsuario}")
+                
+                // Populate fields with session data
+                editNombre.setText(user.nombre)
+                editApellido.setText(user.apellido)
+                editCedula.setText(user.cedula)
+                editEmail.setText(user.email)
+                editFechaNacimiento.setText(user.fechaNacimiento)
+                editNombreUsuario.setText(user.nombreUsuario)
+                
+                // Set phone from session data
+                if (!user.usuariosTelefonos.isNullOrEmpty()) {
+                    editTelefono.setText(user.usuariosTelefonos[0].numero)
+                    Log.d("DetallePerfilUsuarioActivity", "Teléfono configurado: ${user.usuariosTelefonos[0].numero}")
+                } else {
+                    editTelefono.setText("")
+                    Log.d("DetallePerfilUsuarioActivity", "No hay teléfonos en la sesión")
+                }
+                
+                // Set institution and profile from session data
+                tvInstitucion.text = user.idInstitucion.nombre
+                tvPerfil.text = user.idPerfil.nombrePerfil
+                
+                // Set username in header
+                username.text = user.nombreUsuario
+                
+                // Disable editing since we can't save changes
+                habilitarEdicion(false)
+                
+                Log.d("DetallePerfilUsuarioActivity", "Perfil básico configurado exitosamente para usuario: ${user.nombreUsuario}")
+            } else {
+                Log.e("DetallePerfilUsuarioActivity", "No se pudo obtener información del usuario de la sesión")
+                Snackbar.make(findViewById(android.R.id.content), "No se pudo obtener información del usuario", Snackbar.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Log.e("DetallePerfilUsuarioActivity", "Error mostrando perfil básico: ${e.message}", e)
+            Snackbar.make(findViewById(android.R.id.content), "Error al mostrar información del perfil", Snackbar.LENGTH_LONG).show()
+        }
+    }
+    
+    /**
+     * Habilita o deshabilita la edición de los campos del perfil
+     */
+    private fun habilitarEdicion(habilitado: Boolean) {
+        editNombre.isEnabled = habilitado
+        editApellido.isEnabled = habilitado
+        editCedula.isEnabled = habilitado
+        editEmail.isEnabled = habilitado
+        editFechaNacimiento.isEnabled = habilitado
+        editNombreUsuario.isEnabled = habilitado
+        editTelefono.isEnabled = habilitado
+        btnSave.isEnabled = habilitado
+        btnSave.text = if (habilitado) "Guardar Cambios" else "Sin permisos de edición"
     }
 }

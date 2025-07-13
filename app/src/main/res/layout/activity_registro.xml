@@ -82,6 +82,7 @@
 
                     <!-- Nombres -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilFirstName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nombres"
@@ -96,6 +97,7 @@
 
                     <!-- Apellidos -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Apellidos"
@@ -110,6 +112,7 @@
 
                     <!-- Cédula -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilCedula"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Cédula"
@@ -124,6 +127,7 @@
 
                     <!-- Fecha de Nacimiento -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilBirthdate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Fecha de Nacimiento"
@@ -140,6 +144,7 @@
 
                     <!-- Teléfono -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Teléfono de contacto"
@@ -164,6 +169,7 @@
 
                     <!-- Nombre de Usuario -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilUsername"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nombre de Usuario"
@@ -178,6 +184,7 @@
 
                     <!-- Email -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Email"
@@ -192,6 +199,7 @@
 
                     <!-- Contraseña -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Contraseña"
@@ -207,6 +215,7 @@
 
                     <!-- Confirmar Contraseña -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilConfirmPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Confirmar contraseña"

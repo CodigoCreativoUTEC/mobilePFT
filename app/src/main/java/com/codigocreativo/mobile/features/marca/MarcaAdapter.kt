@@ -1,16 +1,14 @@
 package com.codigocreativo.mobile.features.marca
 
-import android.os.Bundle
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.features.proveedores.Proveedor
+
 
 class MarcaAdapter(
     var marcaList: List<Marca>,

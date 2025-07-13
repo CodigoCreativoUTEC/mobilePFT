@@ -7,7 +7,10 @@ credentialsPlayServicesAuthVersion = "1.2.0-beta03"
 credentialsVersion = "1.2.0-beta03"
 firebaseBom = "33.3.0"
 firebaseBomVersion = "33.4.0"
-googleid = "1.0.0" # versión específica
+
+glide = "4.16.0"
+googleid = "<latest version>"
+
 googleServices = "4.4.2"
 jwtdecode = "2.0.0"
 kotlin = "1.9.0"
@@ -41,6 +44,7 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-bom-v3340 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
+glide-v4160 = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.1.1" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -36,7 +36,7 @@ class ProveedorViewModel : ViewModel() {
 
                 result.onSuccess { proveedores ->
                     proveedorList.value = proveedores // Actualiza la lista de proveedores en LiveData
-                }.onFailure { error ->
+                }.onFailure { _ ->
                     // Maneja errores aquí si es necesario
                 }
             } catch (e: Exception) {

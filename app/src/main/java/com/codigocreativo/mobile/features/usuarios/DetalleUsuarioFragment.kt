@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import com.codigocreativo.mobile.R
 import com.codigocreativo.mobile.features.institucion.Institucion
 import com.codigocreativo.mobile.features.perfiles.SelectorPerfilFragment
@@ -100,9 +99,18 @@ class DetalleUsuarioFragment(
                 nuevoEmail.isNotBlank() && nuevoTelefono.isNotBlank() && nuevoCedula.isNotBlank() &&
                 nuevoNombreUsuario.isNotBlank() && nuevoPerfil != null) {
 
-                // Create a list of Telefono objects with a single entry for simplicity
-                val nuevosTelefonos = listOf(Telefono(id = 0, numero = nuevoTelefono))
+                // Create a list of Telefono objects preserving the original ID
+                val originalPhoneId = usuario.usuariosTelefonos?.firstOrNull()?.id ?: 0
+                val nuevosTelefonos = listOf(Telefono(
+                    id = originalPhoneId,
+                    numero = nuevoTelefono
+                ))
+                
+                // Log the phone ID for debugging
+                android.util.Log.d("DetalleUsuarioFragment", "Original phone ID: $originalPhoneId, New phone number: $nuevoTelefono")
 
+                // Obtener la institución seleccionada
+                val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
 
                 // Update the usuario object with new data
                 val updatedUsuario = Usuario(
@@ -116,7 +124,7 @@ class DetalleUsuarioFragment(
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,
                     idPerfil = nuevoPerfil,
-                    idInstitucion = com.codigocreativo.mobile.features.institucion.Institucion(1, "CodigoCreativo"),// TODO: HARDCODED institucion reparar
+                    idInstitucion = institucionSeleccionada,
                     estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
 

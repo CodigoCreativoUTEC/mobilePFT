@@ -50,6 +50,14 @@
             app:showAsAction="ifRoom" />
     </group>
 
+    <group android:id="@+id/group_paises">
+        <item
+            android:id="@+id/nav_paises"
+            android:title="Paises"
+            android:icon="@drawable/ic_menu"
+            app:showAsAction="ifRoom" />
+    </group>
+
     <!-- Separador -->
     <group android:id="@+id/group_separator">
         <item android:title="" />

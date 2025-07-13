@@ -22,6 +22,10 @@ import kotlinx.coroutines.launch
 
 class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : BottomSheetDialogFragment() {
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     private lateinit var tfNombre: EditText
     private lateinit var btnConfirmar: Button
     private lateinit var paisPickerFragment: SelectorPaisFragment
@@ -77,7 +81,7 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
                             Snackbar.make(view, "El proveedor '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación
-                            showConfirmationDialog(nombre, nuevoPais, view)
+                            showConfirmationDialog(nombre, nuevoPais)
                         }
                     }.onFailure { error ->
                         Snackbar.make(view, "Error al verificar el proveedor: ${error.message}", Snackbar.LENGTH_LONG).show()
@@ -90,12 +94,12 @@ class IngresarProveedorFragment(private val onConfirm: (Proveedor) -> Unit) : Bo
                 }
             }
         } else {
-            Snackbar.make(view, "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(view, TOKEN_NOT_FOUND_MESSAGE, Snackbar.LENGTH_LONG).show()
         }
     }
 
     // Función para mostrar el diálogo de confirmación
-    private fun showConfirmationDialog(nombre: String, pais: Pais?, view: View) {
+    private fun showConfirmationDialog(nombre: String, pais: Pais?) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Confirmar Creación")
             .setMessage("¿Está seguro que desea crear el proveedor '$nombre' del país '${pais?.nombre ?: "No especificado"}'?")

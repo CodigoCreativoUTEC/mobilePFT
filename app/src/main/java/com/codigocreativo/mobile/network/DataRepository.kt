@@ -1,8 +1,7 @@
 package com.codigocreativo.mobile.network
 
-import android.content.Context
+
 import android.util.Log
-import com.codigocreativo.mobile.utils.NetworkUtils
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
@@ -23,13 +22,19 @@ import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class EquiposActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TOKEN_NOT_FOUND_MSG = "Token no encontrado, por favor inicia sesión"
+    }
 
     private lateinit var adapter: EquipoAdapter
     private lateinit var recyclerView: RecyclerView
@@ -58,8 +63,8 @@ class EquiposActivity : AppCompatActivity() {
             loadEquipos(token)
         } else {
             Snackbar.make(
-                findViewById(R.id.main),
-                "Token no encontrado, por favor inicia sesión",
+                findViewById(R.id.root_layout),
+                TOKEN_NOT_FOUND_MSG,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -102,8 +107,8 @@ class EquiposActivity : AppCompatActivity() {
                     }
                 } else {
                     Snackbar.make(
-                        findViewById(R.id.main),
-                        "Token no encontrado, por favor inicia sesión",
+                        findViewById(R.id.root_layout),
+                        TOKEN_NOT_FOUND_MSG,
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
@@ -129,9 +134,9 @@ class EquiposActivity : AppCompatActivity() {
                     val inflater = LayoutInflater.from(this@EquiposActivity)
                     val dialogView = inflater.inflate(R.layout.dialog_baja_equipo, null)
 
-                    val etRazonBaja = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etRazonBaja)
-                    val etFechaBaja = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etFechaBaja)
-                    val etComentarios = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComentarios)
+                    val etRazonBaja = dialogView.findViewById<TextInputEditText>(R.id.etRazonBaja)
+                    val etFechaBaja = dialogView.findViewById<TextInputEditText>(R.id.etFechaBaja)
+                    val etComentarios = dialogView.findViewById<TextInputEditText>(R.id.etComentarios)
 
                     // Function to show a toast message
                     fun showToast(message: String) {
@@ -150,8 +155,8 @@ class EquiposActivity : AppCompatActivity() {
                     }.create()
 
                     // Set up button click listeners
-                    val btnCancelar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCancelar)
-                    val btnConfirmar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnConfirmar)
+                    val btnCancelar = dialogView.findViewById<MaterialButton>(R.id.btnCancelar)
+                    val btnConfirmar = dialogView.findViewById<MaterialButton>(R.id.btnConfirmar)
 
                     btnCancelar.setOnClickListener {
                         dialog.dismiss()
@@ -222,8 +227,8 @@ class EquiposActivity : AppCompatActivity() {
                             }
                         } else {
                             Snackbar.make(
-                                findViewById(R.id.main),
-                                "Token no encontrado, por favor inicia sesión",
+                                findViewById(R.id.root_layout),
+                                TOKEN_NOT_FOUND_MSG,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -240,7 +245,7 @@ class EquiposActivity : AppCompatActivity() {
     }
 
 
-    private fun loadEquipos(token: String, nombre: String? = null, estado: String? = null) {
+    private fun loadEquipos(token: String) {
         val retrofit = RetrofitClient.getClient(token)
         val apiService = retrofit.create(EquiposApiService::class.java)
 
@@ -295,8 +300,8 @@ class EquiposActivity : AppCompatActivity() {
                 }
             } else {
                 Snackbar.make(
-                    findViewById(R.id.main),
-                    "Token no encontrado, por favor inicia sesión",
+                    findViewById(R.id.root_layout),
+                    TOKEN_NOT_FOUND_MSG,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -338,7 +343,9 @@ class EquiposActivity : AppCompatActivity() {
                 applyFilters() // Aplica los filtros cada vez que se cambia el estado
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No se requiere acción cuando no hay selección en el spinner
+            }
         }
 
         // Listener para el evento de cierre del SearchView (opcional)

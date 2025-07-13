@@ -22,6 +22,10 @@ import kotlinx.coroutines.launch
 
 class IngresarModeloFragment(private val onConfirm: (Modelo) -> Unit) : BottomSheetDialogFragment() {
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     private lateinit var tfNombre: EditText
     private lateinit var btnConfirmar: Button
     private lateinit var marcaPickerFragment: SelectorMarcaFragment
@@ -77,7 +81,7 @@ class IngresarModeloFragment(private val onConfirm: (Modelo) -> Unit) : BottomSh
                             Snackbar.make(view, "El modelo '$nombre' ya existe en la base de datos", Snackbar.LENGTH_LONG).show()
                         } else {
                             // Si no existe, mostrar el diálogo de confirmación
-                            showConfirmationDialog(nombre, marca, view)
+                            showConfirmationDialog(nombre, marca)
                         }
                     }.onFailure { error ->
                         Snackbar.make(view, "Error al verificar el modelo: ${error.message}", Snackbar.LENGTH_LONG).show()
@@ -90,12 +94,12 @@ class IngresarModeloFragment(private val onConfirm: (Modelo) -> Unit) : BottomSh
                 }
             }
         } else {
-            Snackbar.make(view, "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(view, TOKEN_NOT_FOUND_MESSAGE, Snackbar.LENGTH_LONG).show()
         }
     }
 
     // Función para mostrar el diálogo de confirmación
-    private fun showConfirmationDialog(nombre: String, marca : Marca, view: View) {
+    private fun showConfirmationDialog(nombre: String, marca : Marca) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Confirmación")
             .setMessage("¿Desea confirmar el ingreso del modelo '$nombre'?")

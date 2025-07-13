@@ -133,32 +133,42 @@ class DetalleEquipoFragment(
 
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
-            val nuevoNombre = nombreInput.text.toString()
+            val nuevoNombre = nombreInput.text.toString().trim()
+            val nuevoIdentificacionInterna = identificacionInternaInput.text.toString().trim()
+            val nuevoNroSerie = nroSerieInput.text.toString().trim()
+            val nuevaGarantia = garantiaInput.text.toString().trim()
+            val nuevaFechaAdquisicion = fechaAdquisicionInput.text.toString().trim()
+            val nuevoModelo = selectedModelo
+            val nuevoPais = selectedPais
+            val nuevoTipoEquipo = selectedTipoEquipo
+            val nuevoProveedor = selectedProveedor
+            val nuevaUbicacion = selectedUbicacion
+
+            if (nuevoNombre.isEmpty() || nuevoIdentificacionInterna.isEmpty() || nuevoNroSerie.isEmpty() || nuevaGarantia.isEmpty() || nuevaFechaAdquisicion.isEmpty() || nuevoModelo == null || nuevoPais == null || nuevoTipoEquipo == null || nuevoProveedor == null || nuevaUbicacion == null) {
+                Snackbar.make(view, "Todos los campos son obligatorios", Snackbar.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val nuevoEstado = Estado.entries[estadoSpinner.selectedItemPosition]
 
-            // Validar los campos obligatorios antes de editar el equipo
-            if (nuevoNombre.isNotEmpty()) {
-                val nuevoEquipo = Equipo(
-                    equiposUbicaciones = equipo.equiposUbicaciones,
-                    estado = nuevoEstado,
-                    fechaAdquisicion = fechaAdquisicionInput.text.toString(),
-                    garantia = garantiaInput.text.toString(),
-                    id = equipo.id,
-                    idInterno = identificacionInternaInput.text.toString(),
-                    idModelo = selectedModelo,
-                    idPais = selectedPais,
-                    idProveedor = selectedProveedor,
-                    idTipo = selectedTipoEquipo,
-                    idUbicacion = selectedUbicacion,
-                    imagen = equipo.imagen,
-                    nombre = nuevoNombre,
-                    nroSerie = nroSerieInput.text.toString()
-                )
-                onEdit(nuevoEquipo)
-                dismiss()
-            } else {
-                Snackbar.make(view, "El nombre es obligatorio", Snackbar.LENGTH_LONG).show()
-            }
+            val nuevoEquipo = Equipo(
+                equiposUbicaciones = equipo.equiposUbicaciones,
+                estado = nuevoEstado,
+                fechaAdquisicion = nuevaFechaAdquisicion,
+                garantia = nuevaGarantia,
+                id = equipo.id,
+                idInterno = nuevoIdentificacionInterna,
+                idModelo = nuevoModelo,
+                idPais = nuevoPais,
+                idProveedor = nuevoProveedor,
+                idTipo = nuevoTipoEquipo,
+                idUbicacion = nuevaUbicacion,
+                imagen = equipo.imagen,
+                nombre = nuevoNombre,
+                nroSerie = nuevoNroSerie
+            )
+            onEdit(nuevoEquipo)
+            dismiss()
         }
 
         return view
@@ -216,7 +226,7 @@ class DetalleEquipoFragment(
                         selectedTipoEquipo = tipoEquipo
                         tipoEquipoInput.setText(tipoEquipo.nombreTipo)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar tipos de equipo", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -246,7 +256,7 @@ class DetalleEquipoFragment(
                         selectedModelo = null
                         modeloInput.setText("")
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar marcas", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -276,7 +286,7 @@ class DetalleEquipoFragment(
                         selectedMarca = modelo.idMarca
                         marcaInput.setText(modelo.idMarca?.nombre ?: "")
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar modelos", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -303,7 +313,7 @@ class DetalleEquipoFragment(
                         selectedPais = pais
                         paisInput.setText(pais.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar países", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -330,7 +340,7 @@ class DetalleEquipoFragment(
                         selectedProveedor = proveedor
                         proveedorInput.setText(proveedor.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar proveedores", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -357,7 +367,7 @@ class DetalleEquipoFragment(
                         selectedUbicacion = ubicacion
                         ubicacionInput.setText(ubicacion.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar ubicaciones", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -390,7 +400,7 @@ class DetalleEquipoFragment(
     private fun cargarImagenEquipo() {
         // Si el equipo tiene una imagen válida, cargarla con Glide
         if (!equipo.imagen.isNullOrBlank() && equipo.imagen != "null") {
-            Glide.with(this)
+            Glide.with(requireContext())
                 .load(equipo.imagen)
                 .placeholder(R.drawable.equipos)
                 .error(R.drawable.equipos)
@@ -417,7 +427,7 @@ class DetalleEquipoFragment(
 
         // Cargar la imagen en pantalla completa
         if (!equipo.imagen.isNullOrBlank() && equipo.imagen != "null") {
-            Glide.with(this)
+            Glide.with(requireContext())
                 .load(equipo.imagen)
                 .placeholder(R.drawable.equipos)
                 .error(R.drawable.equipos)
