@@ -116,6 +116,12 @@ class DashboardActivity : AppCompatActivity() {
                     logout()
                     true
                 }
+                R.id.nav_paises -> {
+                    val intent = Intent(this, com.codigocreativo.mobile.features.paises.PaisesActivity::class.java)
+                    startActivity(intent)
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
                 else -> false
             }
         }
