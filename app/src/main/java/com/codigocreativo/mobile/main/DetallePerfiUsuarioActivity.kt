@@ -35,8 +35,6 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var editFechaNacimiento: EditText
     private lateinit var editNombreUsuario: EditText
     private lateinit var editTelefono: EditText
-    private lateinit var tvInstitucion: TextView
-    private lateinit var tvPerfil: TextView
     private lateinit var btnSave: Button
     private lateinit var username: TextView
 
@@ -70,8 +68,6 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
         // Deshabilitar edición del nombre de usuario
         editNombreUsuario.isEnabled = false
         editTelefono = findViewById(R.id.edit_telefono)
-        tvInstitucion = findViewById(R.id.tv_institucion)
-        tvPerfil = findViewById(R.id.tv_perfil)
         btnSave = findViewById(R.id.btn_save)
         username = findViewById(R.id.username)
 
@@ -190,10 +186,6 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
         } else {
             editTelefono.setText("")
         }
-        
-        // Configurar institución y perfil (solo lectura)
-        tvInstitucion.text = usuario.idInstitucion.nombre
-        tvPerfil.text = usuario.idPerfil.nombrePerfil
         
         // Configurar nombre de usuario en el header
         username.text = usuario.nombreUsuario
@@ -351,10 +343,6 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
                     editTelefono.setText("")
                     Log.d("DetallePerfilUsuarioActivity", "No hay teléfonos en la sesión")
                 }
-                
-                // Set institution and profile from session data
-                tvInstitucion.text = user.idInstitucion.nombre
-                tvPerfil.text = user.idPerfil.nombrePerfil
                 
                 // Set username in header
                 username.text = user.nombreUsuario

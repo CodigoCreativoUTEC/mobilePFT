@@ -30,18 +30,12 @@ class DetalleUsuarioFragment(
     private lateinit var perfilPickerFragment: SelectorPerfilFragment
     private lateinit var btnConfirmar: Button
     private lateinit var estadoSpinner: Spinner
-    private lateinit var institucionSpinner: Spinner
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detalle_usuario, container, false)
-
-        val instituciones = listOf(
-            Institucion(1, "CodigoCreativo"),
-            Institucion(2, "Otra Institucion") // Agrega más según necesites
-        )
 
         // Initialize views
         nombreInput = view.findViewById(R.id.nombreInput)
@@ -57,7 +51,6 @@ class DetalleUsuarioFragment(
             .replace(R.id.fragmentPerfilPicker, perfilPickerFragment)
             .commit()
         estadoSpinner = view.findViewById(R.id.estadoSpinner)
-        institucionSpinner = view.findViewById(R.id.institucionSpinner)
 
         // Populate fields with data from the usuario object
         nombreInput.setText(usuario.nombre)
@@ -67,6 +60,8 @@ class DetalleUsuarioFragment(
         telefonoInput.setText(usuario.usuariosTelefonos?.joinToString(", ") { it.numero } ?: "")
         cedulaInput.setText(usuario.cedula)
         nombreUsuarioInput.setText(usuario.nombreUsuario)
+        // Deshabilitar edición del nombre de usuario
+        nombreUsuarioInput.isEnabled = false
         perfilPickerFragment.setSelectedPerfil(usuario.idPerfil.toString())
 
         // Populate estadoSpinner with Estado enum values
@@ -74,14 +69,6 @@ class DetalleUsuarioFragment(
         estadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         estadoSpinner.adapter = estadoAdapter
         estadoSpinner.setSelection(Estado.values().indexOf(usuario.estado))
-
-        // Populate institucionSpinner with Institucion enum values
-        val institucionAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, instituciones.map { it.nombre })
-        institucionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        institucionSpinner.adapter = institucionAdapter
-        val currentInstitucionIndex = instituciones.indexOfFirst { it.id == usuario.idInstitucion.id }
-        if (currentInstitucionIndex != -1) institucionSpinner.setSelection(currentInstitucionIndex)
-
 
         // Configurar el botón de confirmar
         btnConfirmar.setOnClickListener {
@@ -93,7 +80,6 @@ class DetalleUsuarioFragment(
             val nuevoCedula = cedulaInput.text.toString()
             val nuevoNombreUsuario = nombreUsuarioInput.text.toString()
             val nuevoPerfil = perfilPickerFragment.getSelectedPerfil()
-
 
             if (nuevoNombre.isNotBlank() && nuevoApellido.isNotBlank() && nuevoFechaNacimiento.isNotBlank() &&
                 nuevoEmail.isNotBlank() && nuevoTelefono.isNotBlank() && nuevoCedula.isNotBlank() &&
@@ -109,9 +95,6 @@ class DetalleUsuarioFragment(
                 // Log the phone ID for debugging
                 android.util.Log.d("DetalleUsuarioFragment", "Original phone ID: $originalPhoneId, New phone number: $nuevoTelefono")
 
-                // Obtener la institución seleccionada
-                val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
-
                 // Update the usuario object with new data
                 val updatedUsuario = Usuario(
                     id = usuario.id,
@@ -124,7 +107,7 @@ class DetalleUsuarioFragment(
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,
                     idPerfil = nuevoPerfil,
-                    idInstitucion = institucionSeleccionada,
+                    idInstitucion = usuario.idInstitucion, // Keep original institution
                     estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
 
@@ -132,7 +115,7 @@ class DetalleUsuarioFragment(
                 onEdit(updatedUsuario)
                 dismiss()
             } else {
-                Snackbar.make(view, "Llene todos los campos para editar el usuario", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, "Por favor complete todos los campos", Snackbar.LENGTH_LONG).show()
             }
         }
 

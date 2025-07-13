@@ -136,36 +136,6 @@
                         android:drawableStart="@drawable/ic_user_avatar"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Institución (solo lectura) -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Institución"
-                    android:layout_marginBottom="12dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/institucionInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:enabled="false"
-                        android:drawableStart="@drawable/ic_user_avatar"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Perfil (solo lectura) -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Perfil"
-                    android:layout_marginBottom="12dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/perfilInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:enabled="false"
-                        android:drawableStart="@drawable/ic_user_avatar"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <!-- Selector de Estado -->
                 <TextView
                     android:layout_width="match_parent"
@@ -178,22 +148,6 @@
                     android:layout_marginBottom="4dp"/>
                 <Spinner
                     android:id="@+id/estadoSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"/>
-
-                <!-- Selector de Institución -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Seleccionar Institución"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="@color/my_primary"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="4dp"/>
-                <Spinner
-                    android:id="@+id/institucionSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"/>

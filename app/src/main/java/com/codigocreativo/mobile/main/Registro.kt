@@ -96,16 +96,13 @@ class Registro : AppCompatActivity() {
         // Paso 2: Llenar el spinner con instituciones disponibles
         // Paso 3: Usar la institución seleccionada en createUsuario
 
-        // En onCreate, después de obtener referencias a los elementos de la interfaz:
-        val institucionSpinner = findViewById<android.widget.Spinner>(R.id.institucionSpinner)
-        val instituciones = listOf(
-            Institucion(1, "CodigoCreativo"),
-            Institucion(2, "Otra Institucion")
-        )
-        val institucionAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, instituciones.map { it.nombre })
-        institucionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        institucionSpinner.adapter = institucionAdapter
+        // En onCreate, elimina:
+        // val institucionSpinner = findViewById<android.widget.Spinner>(R.id.institucionSpinner)
+        // val instituciones = listOf(...)
+        // val institucionAdapter = ...
+        // institucionSpinner.adapter = institucionAdapter
 
+        // En el onClick de btnRegister, elimina el paso del spinner y la lista de instituciones:
         btnRegister.setOnClickListener {
             if (!validarCamposRegistro(
                     tilFirstName, etFirstName,
@@ -138,8 +135,8 @@ class Registro : AppCompatActivity() {
 
             if (!validateFields(etCedula, etEmail, etPassword, etConfirmPassword)) return@setOnClickListener
 
-            // En el onClick de btnRegister, pasar el spinner y la lista de instituciones:
-            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone, institucionSpinner, instituciones)
+            // En el onClick de btnRegister, elimina el paso del spinner y la lista de instituciones:
+            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone)
             registrarUsuario(nuevoUsuario)
         }
     }
@@ -374,7 +371,7 @@ class Registro : AppCompatActivity() {
 
     private fun createUsuario(
         etCedula: TextInputEditText, etEmail: TextInputEditText, etPassword: TextInputEditText, etFirstName: TextInputEditText, etLastName: TextInputEditText,
-        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText, institucionSpinner: android.widget.Spinner, instituciones: List<Institucion>
+        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText
     ): Usuario {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         
@@ -385,7 +382,6 @@ class Registro : AppCompatActivity() {
             telefonos.add(Telefono(0, phoneNumber))
         }
 
-        val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
         val usuario = Usuario(
             id = 0, // Este será ignorado por el servidor para nuevos usuarios
             cedula = etCedula.text.toString().trim(),
@@ -396,7 +392,7 @@ class Registro : AppCompatActivity() {
             nombre = etFirstName.text.toString().trim(),
             apellido = etLastName.text.toString().trim(),
             nombreUsuario = etUsername.text.toString().trim(),
-            idInstitucion = institucionSeleccionada,
+            idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"),
             idPerfil = perfilSeleccionado!!,
             usuariosTelefonos = telefonos
         )
@@ -500,8 +496,11 @@ class Registro : AppCompatActivity() {
                 Log.d("Registro", "Resultado de API: $result")
 
                 result.onSuccess {
-                    Snackbar.make(findViewById(android.R.id.content), "Usuario registrado correctamente", Snackbar.LENGTH_LONG).show()
-                    finish()
+                    Toast.makeText(this@Registro, "Usuario ingresado correctamente", Toast.LENGTH_LONG).show()
+                    // Agregar un pequeño delay para que el usuario vea el mensaje
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        finish()
+                    }, 2000) // 2 segundos de delay
                 }.onFailure { error ->
                     Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
                     Log.e("Registro", "Error completo: $error")

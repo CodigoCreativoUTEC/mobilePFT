@@ -82,6 +82,14 @@ class PaisesActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
+                
+                // Verificar que la posición sea válida y la lista no esté vacía
+                if (position < 0 || position >= filteredList.size) {
+                    Log.e("PaisesActivity", "Posición inválida: $position, tamaño de lista: ${filteredList.size}")
+                    adapter.notifyItemChanged(position)
+                    return
+                }
+                
                 val pais = filteredList[position]
 
                 AlertDialog.Builder(this@PaisesActivity)
@@ -113,6 +121,8 @@ class PaisesActivity : AppCompatActivity() {
                                         Snackbar.LENGTH_LONG
                                     ).show()
                                     Log.e("PaisesActivity", "Error al dar de baja el país: ${error.message}")
+                                    // Restaurar el elemento si falla la eliminación
+                                    adapter.notifyItemChanged(position)
                                 }
                             }
                         } else {
@@ -121,6 +131,8 @@ class PaisesActivity : AppCompatActivity() {
                                 TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
+                            // Restaurar el elemento si no hay token
+                            adapter.notifyItemChanged(position)
                         }
                     }
                     .setNegativeButton("No") { dialog, _ ->
@@ -192,16 +204,16 @@ class PaisesActivity : AppCompatActivity() {
                         Log.e("PaisesActivity", "Error al actualizar el país: ${error.message}\nPayload: ${updatedPais}")
                     }
                 }
-                            } else {
-                    Snackbar.make(
-                        findViewById(R.id.recyclerView),
-                        TOKEN_NOT_FOUND_MESSAGE,
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
+            } else {
+                Snackbar.make(
+                    findViewById(R.id.recyclerView),
+                    TOKEN_NOT_FOUND_MESSAGE,
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
+        }
 
-            fragment.show(supportFragmentManager, "DetallePaisFragment")
+        fragment.show(supportFragmentManager, "DetallePaisFragment")
     }
 
     private fun showIngresarPaisFragment() {

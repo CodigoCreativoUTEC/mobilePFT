@@ -181,55 +181,6 @@
                 android:drawableStart="@drawable/ic_phone"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Institución y perfil -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Institución:"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/tv_institucion"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Institución actual"
-                android:textColor="@color/my_primary"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Perfil:"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/tv_perfil"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Perfil actual"
-                android:textColor="@color/my_primary"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-        </LinearLayout>
-
         <!-- Botón de guardar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save"
