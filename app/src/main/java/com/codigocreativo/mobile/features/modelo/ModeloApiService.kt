@@ -1,10 +1,8 @@
 package com.codigocreativo.mobile.features.modelo
 
-import com.codigocreativo.mobile.features.marca.Marca
-import com.codigocreativo.mobile.features.proveedores.Proveedor
+
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST

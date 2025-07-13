@@ -226,7 +226,7 @@ class DetalleEquipoFragment(
                         selectedTipoEquipo = tipoEquipo
                         tipoEquipoInput.setText(tipoEquipo.nombreTipo)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar tipos de equipo", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -256,7 +256,7 @@ class DetalleEquipoFragment(
                         selectedModelo = null
                         modeloInput.setText("")
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar marcas", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -286,7 +286,7 @@ class DetalleEquipoFragment(
                         selectedMarca = modelo.idMarca
                         marcaInput.setText(modelo.idMarca?.nombre ?: "")
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar modelos", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -313,7 +313,7 @@ class DetalleEquipoFragment(
                         selectedPais = pais
                         paisInput.setText(pais.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar países", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -340,7 +340,7 @@ class DetalleEquipoFragment(
                         selectedProveedor = proveedor
                         proveedorInput.setText(proveedor.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar proveedores", Snackbar.LENGTH_LONG).show()
                 }
             }
@@ -367,7 +367,7 @@ class DetalleEquipoFragment(
                         selectedUbicacion = ubicacion
                         ubicacionInput.setText(ubicacion.nombre)
                     }
-                }.onFailure { exception ->
+                }.onFailure { _ ->
                     Snackbar.make(requireView(), "Error al cargar ubicaciones", Snackbar.LENGTH_LONG).show()
                 }
             }

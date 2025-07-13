@@ -19,8 +19,6 @@ import com.codigocreativo.mobile.features.proveedores.ProveedoresActivity
 import com.codigocreativo.mobile.features.tipoEquipo.TipoEquipoActivity
 import com.codigocreativo.mobile.features.usuarios.UsuariosActivity
 import com.codigocreativo.mobile.utils.SessionManager
-import com.codigocreativo.mobile.network.User
-import com.codigocreativo.mobile.main.AccessDeniedActivity
 import com.google.android.material.snackbar.Snackbar
 
 class DashboardActivity : AppCompatActivity() {

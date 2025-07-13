@@ -1,9 +1,6 @@
 package com.codigocreativo.mobile.features.usuarios
 
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimple
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestSimpleConTelefonos
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestCorrecto
-import com.codigocreativo.mobile.features.usuarios.UsuarioRequestFinal
+
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

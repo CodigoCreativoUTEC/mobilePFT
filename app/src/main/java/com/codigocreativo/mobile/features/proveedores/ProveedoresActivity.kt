@@ -1,16 +1,10 @@
 package com.codigocreativo.mobile.features.proveedores
 
-import android.content.Intent
+
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,16 +14,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codigocreativo.mobile.R
-import com.codigocreativo.mobile.main.DashboardActivity
 import com.codigocreativo.mobile.network.RetrofitClient
 import com.codigocreativo.mobile.network.DataRepository
 import com.codigocreativo.mobile.utils.Estado
 import com.codigocreativo.mobile.utils.SessionManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import java.util.Locale
+
 
 class ProveedoresActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
 
     private lateinit var adapter: ProveedorAdapter
     private lateinit var recyclerView: RecyclerView
@@ -57,7 +54,7 @@ class ProveedoresActivity : AppCompatActivity() {
         } else {
             Snackbar.make(
                 findViewById(R.id.main),
-                "Token no encontrado, por favor inicia sesión",
+                TOKEN_NOT_FOUND_MESSAGE,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -98,7 +95,7 @@ class ProveedoresActivity : AppCompatActivity() {
                 } else {
                     Snackbar.make(
                         findViewById(R.id.main),
-                        "Token no encontrado, por favor inicia sesión",
+                        TOKEN_NOT_FOUND_MESSAGE,
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
@@ -155,7 +152,7 @@ class ProveedoresActivity : AppCompatActivity() {
                         } else {
                             Snackbar.make(
                                 findViewById(R.id.main),
-                                "Token no encontrado, por favor inicia sesión",
+                                TOKEN_NOT_FOUND_MESSAGE,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
@@ -234,7 +231,7 @@ class ProveedoresActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     findViewById(R.id.main),
-                    "Token no encontrado, por favor inicia sesión",
+                    TOKEN_NOT_FOUND_MESSAGE,
                     Snackbar.LENGTH_LONG
                 ).show()
             }
@@ -275,7 +272,7 @@ class ProveedoresActivity : AppCompatActivity() {
         })
 
         // Listener para aplicar filtros cuando se selecciona un estado diferente en el AutoCompleteTextView
-        filterStatus.setOnItemClickListener { _, _, position, _ ->
+        filterStatus.setOnItemClickListener { _, _, _, _ ->
             applyFilters() // Aplica los filtros cada vez que se cambia el estado
         }
 
@@ -302,28 +299,5 @@ class ProveedoresActivity : AppCompatActivity() {
         if (token != null) {
             loadProveedores(token, nombre, estado?.name)
         }
-    }
-
-    // Función para filtrar la lista de proveedores(actualizada)
-    private fun filterProveedores(nombre: String?, estado: Estado?) {
-        val nameFilter = nombre?.lowercase(Locale.getDefault()) ?: ""
-
-        // Filtrar la lista de proveedores
-        filteredList = proveedoresList.filter { proveedor ->
-            val matchesName = proveedor.nombre.lowercase(Locale.getDefault()).contains(nameFilter)
-            val matchesStatus = estado == null || proveedor.estado == estado
-
-            Log.d("ProveedoresActivity", "Filtrando: ${proveedor.nombre} - matchesName: $matchesName, matchesStatus: $matchesStatus (estado: ${proveedor.estado}, filtro: $estado)")
-
-            matchesName && matchesStatus
-        }.toMutableList()
-
-        Log.d("ProveedoresActivity", "Resultado filtrado: ${filteredList.size} proveedores")
-        filteredList.forEach { proveedor ->
-            Log.d("ProveedoresActivity", "Proveedor filtrado: ${proveedor.nombre}, Estado: ${proveedor.estado}")
-        }
-
-        // Actualizar el RecyclerView con la lista filtrada
-        adapter.updateList(filteredList)
     }
 }

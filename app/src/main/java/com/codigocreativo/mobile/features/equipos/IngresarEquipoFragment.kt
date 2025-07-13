@@ -1,7 +1,6 @@
 package com.codigocreativo.mobile.features.equipos
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -29,17 +28,18 @@ import com.codigocreativo.mobile.utils.Estado
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
 import android.app.DatePickerDialog
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
-class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : BottomSheetDialogFragment() {
+
+class IngresarEquipoFragment(
+    private val onConfirm: (EquipoRequest) -> Unit
+) : BottomSheetDialogFragment() {
+
+    companion object {
+        private const val DEFAULT_DATE = "2024-01-01"
+    }
 
     private lateinit var nombreInput: EditText
     private lateinit var btnConfirmar: Button
@@ -129,7 +129,7 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
             }
         } catch (e: Exception) {
             Log.e("IngresarEquipoFragment", "Error formateando fecha: ${e.message}")
-            "2024-01-01" // Fecha por defecto
+            DEFAULT_DATE // Fecha por defecto
         }
     }
 
@@ -184,11 +184,11 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
             val nroSerie = nroSerieInput.text.toString().trim()
             val garantia = garantiaInput.text.toString().trim()
             val fechaAdquisicion = fechaAdquisicionInput.text.toString().trim()
-            val modelo = modeloPickerFragment.getSelectedModelo()
-            val pais = paisPickerFragment.getSelectedCountry()
-            val tipoEquipo = tipoEquipoPickerFragment.getSelectedTipo()
-            val proveedor = proveedorPickerFragment.getSelectedProveedor()
-            val ubicacion = ubicacionPickerFragment.getSelectedUbicacion()
+            val modelo = modeloPickerFragment["selectedModelo"]
+            val pais = paisPickerFragment["selectedCountry"]
+            val tipoEquipo = tipoEquipoPickerFragment["selectedTipo"]
+            val proveedor = proveedorPickerFragment["selectedProveedor"]
+            val ubicacion = ubicacionPickerFragment["selectedUbicacion"]
 
             if (nombre.isEmpty() || identificacionInterna.isEmpty() || nroSerie.isEmpty() || garantia.isEmpty() || fechaAdquisicion.isEmpty() || modelo == null || pais == null || tipoEquipo == null || proveedor == null || ubicacion == null) {
                 Snackbar.make(view, "Todos los campos son obligatorios", Snackbar.LENGTH_LONG).show()
@@ -209,16 +209,16 @@ class IngresarEquipoFragment(private val onConfirm: (EquipoRequest) -> Unit) : B
     }
 
     private fun crearEquipo(imagenUrl: String): Equipo {
-        val modelo = modeloPickerFragment.getSelectedModelo()
-        val pais = paisPickerFragment.getSelectedCountry()
-        val tipoEquipo = tipoEquipoPickerFragment.getSelectedTipo()
-        val proveedor = proveedorPickerFragment.getSelectedProveedor()
-        val ubicacion = ubicacionPickerFragment.getSelectedUbicacion()
+        val modelo = modeloPickerFragment["selectedModelo"]
+        val pais = paisPickerFragment["selectedCountry"]
+        val tipoEquipo = tipoEquipoPickerFragment["selectedTipo"]
+        val proveedor = proveedorPickerFragment["selectedProveedor"]
+        val ubicacion = ubicacionPickerFragment["selectedUbicacion"]
 
         val nombre = nombreInput.text.toString().trim()
         val nroSerie = nroSerieInput.text.toString().trim()
-        val garantia = formatearFecha(garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
-        val fechaAdquisicion = formatearFecha(fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: "2024-01-01")
+        val garantia = formatearFecha(garantiaInput.text.toString().takeIf { it.isNotEmpty() } ?: DEFAULT_DATE)
+        val fechaAdquisicion = formatearFecha(fechaAdquisicionInput.text.toString().takeIf { it.isNotEmpty() } ?: DEFAULT_DATE)
         val estado = Estado.ACTIVO
         val identificacionInterna = identificacionInternaInput.text.toString().trim()
 

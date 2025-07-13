@@ -92,4 +92,8 @@ class SelectorTipoEquipoFragment : Fragment() {
             pendingSelection = nombreTipoEquipo
         }
     }
+
+    operator fun get(key: String): TipoEquipo? {
+        return if (key == "selectedTipo") getSelectedTipo() else null
+    }
 }

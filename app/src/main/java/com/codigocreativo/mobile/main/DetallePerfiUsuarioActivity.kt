@@ -19,6 +19,10 @@ import java.util.*
 
 class DetallePerfilUsuarioActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TOKEN_NOT_FOUND_MESSAGE = "Token no encontrado, por favor inicia sesión"
+    }
+
     private val dataRepository = DataRepository()
     private var usuarioActual: Usuario? = null
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -52,7 +56,7 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
             // Cargar los detalles del usuario usando el token
             cargarDetallesUsuario(token)
         } else {
-            Snackbar.make(findViewById(R.id.main), "Token no encontrado, por favor inicia sesión", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(findViewById(R.id.main), TOKEN_NOT_FOUND_MESSAGE, Snackbar.LENGTH_LONG).show()
         }
     }
 
