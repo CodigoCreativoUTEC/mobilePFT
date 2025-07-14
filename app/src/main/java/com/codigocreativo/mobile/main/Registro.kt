@@ -500,8 +500,11 @@ class Registro : AppCompatActivity() {
                 Log.d("Registro", "Resultado de API: $result")
 
                 result.onSuccess {
-                    Snackbar.make(findViewById(android.R.id.content), "Usuario registrado correctamente", Snackbar.LENGTH_LONG).show()
-                    finish()
+                    Toast.makeText(this@Registro, "Usuario ingresado correctamente", Toast.LENGTH_LONG).show()
+                    // Agregar un pequeño delay para que el usuario vea el mensaje
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        finish()
+                    }, 2000) // 2 segundos de delay
                 }.onFailure { error ->
                     Log.e("Registro", "Error al registrar usuario: ${error.message}", error)
                     Log.e("Registro", "Error completo: $error")
