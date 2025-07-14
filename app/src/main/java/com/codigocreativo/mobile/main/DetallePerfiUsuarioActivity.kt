@@ -344,6 +344,10 @@ class DetallePerfilUsuarioActivity : AppCompatActivity() {
                     Log.d("DetallePerfilUsuarioActivity", "No hay teléfonos en la sesión")
                 }
                 
+                // Set institution and profile from session data
+                tvInstitucion.text = user.idInstitucion.nombre
+                tvPerfil.text = user.idPerfil.nombrePerfil
+                
                 // Set username in header
                 username.text = user.nombreUsuario
                 

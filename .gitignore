@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.idea/other.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/app/release/app-release.aab
+/app/debug/app-debug.aab

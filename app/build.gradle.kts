@@ -10,7 +10,6 @@ sonar {
         property("sonar.projectName", "mobilePFT")
     }
 }
-
 android {
     namespace = "com.codigocreativo.mobile"
     compileSdk = 34

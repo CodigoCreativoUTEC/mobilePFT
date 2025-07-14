@@ -96,13 +96,16 @@ class Registro : AppCompatActivity() {
         // Paso 2: Llenar el spinner con instituciones disponibles
         // Paso 3: Usar la institución seleccionada en createUsuario
 
-        // En onCreate, elimina:
-        // val institucionSpinner = findViewById<android.widget.Spinner>(R.id.institucionSpinner)
-        // val instituciones = listOf(...)
-        // val institucionAdapter = ...
-        // institucionSpinner.adapter = institucionAdapter
+        // En onCreate, después de obtener referencias a los elementos de la interfaz:
+        val institucionSpinner = findViewById<android.widget.Spinner>(R.id.institucionSpinner)
+        val instituciones = listOf(
+            Institucion(1, "CodigoCreativo"),
+            Institucion(2, "Otra Institucion")
+        )
+        val institucionAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, instituciones.map { it.nombre })
+        institucionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        institucionSpinner.adapter = institucionAdapter
 
-        // En el onClick de btnRegister, elimina el paso del spinner y la lista de instituciones:
         btnRegister.setOnClickListener {
             if (!validarCamposRegistro(
                     tilFirstName, etFirstName,
@@ -135,8 +138,8 @@ class Registro : AppCompatActivity() {
 
             if (!validateFields(etCedula, etEmail, etPassword, etConfirmPassword)) return@setOnClickListener
 
-            // En el onClick de btnRegister, elimina el paso del spinner y la lista de instituciones:
-            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone)
+            // En el onClick de btnRegister, pasar el spinner y la lista de instituciones:
+            val nuevoUsuario = createUsuario(etCedula, etEmail, etPassword, etFirstName, etLastName, etUsername, birthDate, etPhone, institucionSpinner, instituciones)
             registrarUsuario(nuevoUsuario)
         }
     }
@@ -371,7 +374,7 @@ class Registro : AppCompatActivity() {
 
     private fun createUsuario(
         etCedula: TextInputEditText, etEmail: TextInputEditText, etPassword: TextInputEditText, etFirstName: TextInputEditText, etLastName: TextInputEditText,
-        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText
+        etUsername: TextInputEditText, birthDate: Date, etPhone: TextInputEditText, institucionSpinner: android.widget.Spinner, instituciones: List<Institucion>
     ): Usuario {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         
@@ -382,6 +385,7 @@ class Registro : AppCompatActivity() {
             telefonos.add(Telefono(0, phoneNumber))
         }
 
+        val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
         val usuario = Usuario(
             id = 0, // Este será ignorado por el servidor para nuevos usuarios
             cedula = etCedula.text.toString().trim(),
@@ -392,7 +396,7 @@ class Registro : AppCompatActivity() {
             nombre = etFirstName.text.toString().trim(),
             apellido = etLastName.text.toString().trim(),
             nombreUsuario = etUsername.text.toString().trim(),
-            idInstitucion = Institucion(id = 1, nombre = "CodigoCreativo"),
+            idInstitucion = institucionSeleccionada,
             idPerfil = perfilSeleccionado!!,
             usuariosTelefonos = telefonos
         )

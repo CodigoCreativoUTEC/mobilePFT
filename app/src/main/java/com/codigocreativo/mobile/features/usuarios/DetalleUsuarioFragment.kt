@@ -95,6 +95,9 @@ class DetalleUsuarioFragment(
                 // Log the phone ID for debugging
                 android.util.Log.d("DetalleUsuarioFragment", "Original phone ID: $originalPhoneId, New phone number: $nuevoTelefono")
 
+                // Obtener la institución seleccionada
+                val institucionSeleccionada = instituciones[institucionSpinner.selectedItemPosition]
+
                 // Update the usuario object with new data
                 val updatedUsuario = Usuario(
                     id = usuario.id,
@@ -107,7 +110,7 @@ class DetalleUsuarioFragment(
                     cedula = nuevoCedula,
                     nombreUsuario = nuevoNombreUsuario,
                     idPerfil = nuevoPerfil,
-                    idInstitucion = usuario.idInstitucion, // Keep original institution
+                    idInstitucion = institucionSeleccionada,
                     estado = Estado.values()[estadoSpinner.selectedItemPosition]
                 )
 
